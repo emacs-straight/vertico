@@ -5,7 +5,6 @@
 ;; Author: Daniel Mendler
 ;; Maintainer: Daniel Mendler
 ;; Created: 2021
-;; License: GPL-3.0-or-later
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "27.1"))
 ;; Homepage: https://github.com/minad/vertico
@@ -27,11 +26,11 @@
 
 ;;; Commentary:
 
-;; This package provides a minimalistic vertical completion system, which is
-;; based on the default completion system. By reusing the default system,
-;; Vertico achieve full compatibility with built-in Emacs commands and
-;; completion tables. Vertico is pretty bare-bone and only provides a minimal
-;; set of commands.
+;; This package provides a minimalistic vertical completion UI, which is based
+;; on the default completion system. By reusing the default system, Vertico
+;; achieve full compatibility with built-in Emacs commands and completion
+;; tables. Vertico is pretty bare-bone and only provides a minimal set of
+;; commands.
 
 ;;; Code:
 
@@ -136,7 +135,7 @@
 (defvar-local vertico--keep nil
   "Keep current candidate index `vertico--index'.")
 
-(defun vertico--pred (x y)
+(defun vertico--sort-predicate (x y)
   "Sorting predicate which compares X and Y."
   (or (< (cdr x) (cdr y))
       (and (= (cdr x) (cdr y))
@@ -194,7 +193,7 @@
                          (+ (lsh (gethash (car cand) vertico--history-hash #xFFFF) 13)
                             (length (car cand)))))
       (setq cand (cdr cand))))
-  (setq candidates (sort candidates #'vertico--pred))
+  (setq candidates (sort candidates #'vertico--sort-predicate))
   ;; Drop decoration from the candidates
   (let ((cand candidates))
     (while cand
@@ -227,18 +226,28 @@
     (if (= (length highlighted) (length candidates))
         highlighted candidates)))
 
+(defun vertico--move-to-front (elem list)
+  "Move ELEM to front of LIST."
+  (if-let (head (car (member elem list)))
+      (nconc (list head) (delq head list))
+    list))
+
+(defun vertico--file-predicate ()
+  "Filter predicate for files."
+  (let ((ignore (concat "\\(?:\\`\\|/\\)\\.?\\./\\'"
+                        (and completion-ignored-extensions
+                             (concat "\\|" (regexp-opt completion-ignored-extensions) "\\'")))))
+    (if-let (pred minibuffer-completion-predicate)
+        (lambda (x) (and (not (string-match-p ignore x)) (funcall pred x)))
+      (lambda (x) (not (string-match-p ignore x))))))
+
 (defun vertico--recompute-candidates (input metadata)
   "Recompute candidates with INPUT string and METADATA."
-  (let* ((ignore-re (concat "\\(?:\\`\\|/\\)\\.?\\./\\'"
-                            (and completion-ignored-extensions
-                                 (concat "\\|" (regexp-opt completion-ignored-extensions) "\\'"))))
-         (all (completion-all-completions
+  (let* ((all (completion-all-completions
                input
                minibuffer-completion-table
                (if minibuffer-completing-file-name
-                   (if-let (pred minibuffer-completion-predicate)
-                       (lambda (x) (and (not (string-match-p ignore-re x)) (funcall pred x)))
-                     (lambda (x) (not (string-match-p ignore-re x))))
+                   (vertico--file-predicate)
                  minibuffer-completion-predicate)
                (- (point) (minibuffer-prompt-end))
                metadata))
@@ -246,16 +255,15 @@
                    (prog1 (cdr last)
                      (setcdr last nil))
                  0))
+         (def (or (car-safe minibuffer-default) minibuffer-default))
          (total (length all)))
     (when (<= total vertico-sort-threshold)
       (setq all (if-let (sort (completion-metadata-get metadata 'display-sort-function))
                     (funcall sort all)
                   (vertico--sort input all))))
-    (when-let* ((def (cond
-                      ((stringp (car-safe minibuffer-default)) (car minibuffer-default))
-                      ((stringp minibuffer-default) minibuffer-default)))
-                (rest (member def all)))
-      (setq all (nconc (list (car rest)) (delete def all))))
+    (when (stringp def)
+      (setq all (vertico--move-to-front def all)))
+    (setq all (vertico--move-to-front (vertico--input-after-boundary input) all))
     (when-let (group (completion-metadata-get metadata 'x-group-function))
       (setq all (mapcan #'cdr (funcall group all))))
     (list base total all)))
@@ -292,26 +300,25 @@
         (setq pos end)))
     (apply #'concat (nreverse chunks))))
 
+(defun vertico--input-after-boundary (input)
+  "Compute INPUT string after completion boundary."
+  (substring input (car (completion-boundaries input minibuffer-completion-table
+                                               minibuffer-completion-predicate ""))))
+
 (defun vertico--format-candidates (input metadata)
   "Format current candidates with INPUT string and METADATA."
   (let* ((index (min (max 0 (- vertico--index (/ vertico-count 2)))
                      (max 0 (- vertico--total vertico-count))))
-         (candidates (seq-subseq vertico--candidates index
-                                 (min (+ index vertico-count) vertico--total)))
-         (ann-candidates
-          (vertico--annotate
-           metadata
-           (vertico--highlight
-            (substring input
-                       (car (completion-boundaries input minibuffer-completion-table
-                                                   minibuffer-completion-predicate "")))
-            metadata
-            candidates)))
+         (candidates
+          (thread-last (seq-subseq vertico--candidates index
+                                   (min (+ index vertico-count) vertico--total))
+            (vertico--highlight (vertico--input-after-boundary input) metadata)
+            (vertico--annotate metadata)))
          (max-width (- (* 2 (window-width)) 5))
          (title)
-         (chunks (list #(" " 0 1 (cursor t))))
+         (chunks (and (eobp) (list #(" " 0 1 (cursor t)))))
          (group (completion-metadata-get metadata 'x-group-function)))
-    (dolist (ann-cand ann-candidates)
+    (dolist (ann-cand candidates)
       (push (if (= index (1+ vertico--index))
                 #("\n" 0 1 (face vertico-current))
               "\n")
@@ -344,12 +351,12 @@
     (apply #'concat (nreverse chunks))))
 
 (defun vertico--display-candidates (str)
-  "Update candidates overlay with STR."
+  "Update candidates overlay `vertico--candidates-ov' with STR."
   (move-overlay vertico--candidates-ov (point-max) (point-max))
   (overlay-put vertico--candidates-ov 'after-string str))
 
 (defun vertico--display-count ()
-  "Update count overlay."
+  "Update count overlay `vertico--count-ov'."
   (when vertico-count-format
     (move-overlay vertico--count-ov (point-min) (point-min))
     (overlay-put vertico--count-ov 'before-string
@@ -362,7 +369,7 @@
                                  vertico--total)))))
 
 (defun vertico--tidy-shadowed-file ()
-  "Tidy shadowed file name."
+  "Tidy shadowed file name, see `rfn-eshadow-overlay'."
   (when (and minibuffer-completing-file-name
              (eq this-command #'self-insert-command)
              (bound-and-true-p rfn-eshadow-overlay)
@@ -470,13 +477,13 @@
               (nth vertico--index vertico--candidates)))))
 
 (defun vertico--setup ()
-  "Setup completion system."
+  "Setup completion UI."
   (setq vertico--input t
         vertico--candidates-ov (make-overlay (point-max) (point-max) nil t t)
         vertico--count-ov (make-overlay (point-min) (point-min) nil t t))
-  (setq-local orderless-skip-highlighting t ;; Orderless optimization
+  (setq-local resize-mini-windows (or resize-mini-windows 'grow-only) ;; Must be non-nil
+              orderless-skip-highlighting t ;; Orderless optimization
               truncate-lines nil
-              resize-mini-windows 'grow-only
               max-mini-window-height 1.0)
   (use-local-map vertico-map)
   (add-hook 'post-command-hook #'vertico--exhibit -99 'local))
@@ -487,7 +494,7 @@
 
 ;;;###autoload
 (define-minor-mode vertico-mode
-  "Minimal completion system."
+  "VERTical Interactive COmpletion."
   :global t
   (if vertico-mode
       (progn
@@ -497,17 +504,17 @@
     (advice-remove #'completing-read-multiple #'vertico--advice)))
 
 (defun vertico--consult-candidate ()
-  "Return current candidate."
+  "Return current candidate for Consult preview."
   (and vertico--input (vertico--candidate)))
 
 (defun vertico--consult-refresh ()
-  "Refresh completion UI."
+  "Refresh completion UI, used by Consult async/narrowing."
   (when vertico--input
     (setq vertico--input t)
     (vertico--exhibit)))
 
 (defun vertico--embark-target ()
-  "Return embark target."
+  "Return Embark target."
   (and vertico--input
        (cons (completion-metadata-get (completion--field-metadata
                                        (minibuffer-prompt-end))
@@ -515,13 +522,12 @@
 	     (vertico--candidate))))
 
 (defun vertico--embark-candidates ()
-  "Return embark candidates."
+  "Return Embark candidates."
   (and vertico--input
        (cons (completion-metadata-get (completion--field-metadata
                                        (minibuffer-prompt-end))
                                       'category)
-             ;; full candidates?
-             vertico--candidates)))
+             vertico--candidates))) ;; TODO: full candidates?
 
 (with-eval-after-load 'consult
   (add-hook 'consult--completion-candidate-hook #'vertico--consult-candidate)
