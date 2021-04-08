@@ -5,7 +5,7 @@
 ;; Author: Daniel Mendler
 ;; Maintainer: Daniel Mendler
 ;; Created: 2021
-;; Version: 0.1
+;; Version: 0.2
 ;; Package-Requires: ((emacs "27.1"))
 ;; Homepage: https://github.com/minad/vertico
 
@@ -192,13 +192,13 @@
       (setcar cand (cons (car cand)
                          (+ (lsh (gethash (car cand) vertico--history-hash #xFFFF) 13)
                             (length (car cand)))))
-      (setq cand (cdr cand))))
+      (pop cand)))
   (setq candidates (sort candidates #'vertico--sort-predicate))
   ;; Drop decoration from the candidates
   (let ((cand candidates))
     (while cand
       (setcar cand (caar cand))
-      (setq cand (cdr cand))))
+      (pop cand)))
   candidates)
 
 (defun vertico--annotate (metadata candidates)
@@ -280,9 +280,17 @@
                            (>= vertico--index 0)
                            (nth vertico--index vertico--candidates)))
                  (idx (seq-position candidates old)))
+           ;; Update index, when kept candidate is found in new candidates list.
            (setq vertico--index idx)
+         ;; Otherwise select the prompt for missing candidates or matching inputs,
+         ;; except if the input matches the first candidate.
          (setq vertico--keep nil
-               vertico--index (if candidates 0 -1))))
+               vertico--index
+               (if (or (not candidates)
+                       (and (not (equal (vertico--input-after-boundary input) (car candidates)))
+                            (test-completion input minibuffer-completion-table
+                                             minibuffer-completion-predicate)))
+                   -1 0))))
      (setq vertico--base base
            vertico--input input
            vertico--total total
@@ -307,32 +315,26 @@
 
 (defun vertico--format-candidates (input metadata)
   "Format current candidates with INPUT string and METADATA."
-  (let* ((index (min (max 0 (- vertico--index (/ vertico-count 2)))
+  (let* ((group (completion-metadata-get metadata 'x-group-function))
+         (group-format (and group vertico-group-format (concat vertico-group-format "\n")))
+         (index (min (max 0 (- vertico--index (/ vertico-count 2) (if group-format -1 0)))
                      (max 0 (- vertico--total vertico-count))))
          (candidates
           (thread-last (seq-subseq vertico--candidates index
                                    (min (+ index vertico-count) vertico--total))
             (vertico--highlight (vertico--input-after-boundary input) metadata)
             (vertico--annotate metadata)))
-         (max-width (- (* 2 (window-width)) 5))
-         (title)
-         (chunks (and (eobp) (list #(" " 0 1 (cursor t)))))
-         (group (completion-metadata-get metadata 'x-group-function)))
+         (max-width (- (window-width) 4))
+         (current-line 0) (title) (lines))
     (dolist (ann-cand candidates)
-      (push (if (= index (1+ vertico--index))
-                #("\n" 0 1 (face vertico-current))
-              "\n")
-            chunks)
-      (let ((prefix "") (suffix "") (cand))
-        (pcase ann-cand
-          (`(,c ,s) (setq cand c suffix s))
-          (`(,c ,p ,s) (setq cand c prefix p suffix s))
-          (_ (setq cand ann-cand)))
-        (when-let (new-title (and vertico-group-format group (caar (funcall group (list cand)))))
+      (let* ((prefix "") (suffix "")
+             (cand (pcase ann-cand
+                     (`(,c ,s) (setq suffix s) c)
+                     (`(,c ,p ,s) (setq prefix p suffix s) c)
+                     (c c))))
+        (when-let (new-title (and group-format (caar (funcall group (list cand)))))
           (unless (equal title new-title)
-            (push (format vertico-group-format new-title) chunks)
-            (push "\n" chunks)
-            (setq title new-title)))
+            (push (format group-format (setq title new-title)) lines)))
         (when (string-match-p "\n" cand)
           (setq cand (thread-last cand
                        (replace-regexp-in-string "[\t ]+" " ")
@@ -343,12 +345,23 @@
               cand (concat prefix cand
                            (if (text-property-not-all 0 (length suffix) 'face nil suffix)
                                suffix
-                             (propertize suffix 'face 'completions-annotations))))
+                             (propertize suffix 'face 'completions-annotations))
+                           "\n"))
         (when (= index vertico--index)
+          (setq current-line (length lines))
           (add-face-text-property 0 (length cand) 'vertico-current 'append cand))
-        (push cand chunks)
+        (push cand lines)
         (setq index (1+ index))))
-    (apply #'concat (nreverse chunks))))
+    (when (> (length lines) vertico-count)
+      (if (< current-line (- vertico-count 1))
+          (setq lines (nthcdr (- (length lines) vertico-count) lines))
+        (setcdr (nthcdr (- vertico-count 1) lines) nil)))
+    (when lines
+      (setcar lines (substring (car lines) 0 -1)))
+    (apply #'concat
+           (and (eobp) #(" " 0 1 (cursor t)))
+           (and lines (if (< vertico--index 0) #("\n" 0 1 (face vertico-current)) "\n"))
+           (nreverse lines))))
 
 (defun vertico--display-candidates (str)
   "Update candidates overlay `vertico--candidates-ov' with STR."
