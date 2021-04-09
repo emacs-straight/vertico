@@ -121,7 +121,7 @@
   "Index of current candidate or negative for prompt selection.")
 
 (defvar-local vertico--input nil
-  "Current input string or t.")
+  "Cons of last minibuffer contents and boundaries or t.")
 
 (defvar-local vertico--candidates nil
   "List of candidates.")
@@ -241,16 +241,17 @@
         (lambda (x) (and (not (string-match-p ignore x)) (funcall pred x)))
       (lambda (x) (not (string-match-p ignore x))))))
 
-(defun vertico--recompute-candidates (input metadata)
-  "Recompute candidates with INPUT string and METADATA."
-  (let* ((all (completion-all-completions
-               input
+(defun vertico--recompute-candidates (content bounds metadata)
+  "Recompute candidates with CONTENT string, BOUNDS and METADATA."
+  (let* ((pt (- (point) (minibuffer-prompt-end)))
+         (field (substring content (car bounds) (+ pt (cdr bounds))))
+         (all (completion-all-completions
+               content
                minibuffer-completion-table
                (if minibuffer-completing-file-name
                    (vertico--file-predicate)
                  minibuffer-completion-predicate)
-               (- (point) (minibuffer-prompt-end))
-               metadata))
+               pt metadata))
          (base (if-let (last (last all))
                    (prog1 (cdr last)
                      (setcdr last nil))
@@ -260,18 +261,21 @@
     (when (<= total vertico-sort-threshold)
       (setq all (if-let (sort (completion-metadata-get metadata 'display-sort-function))
                     (funcall sort all)
-                  (vertico--sort input all))))
+                  (vertico--sort content all))))
+    ;; Move special candidates: "field" appears at the top, before "field/", before default value
     (when (stringp def)
       (setq all (vertico--move-to-front def all)))
-    (setq all (vertico--move-to-front (vertico--input-after-boundary input) all))
+    (when (and minibuffer-completing-file-name (not (string-suffix-p "/" field)))
+      (setq all (vertico--move-to-front (concat field "/") all)))
+    (setq all (vertico--move-to-front field all))
     (when-let (group (completion-metadata-get metadata 'x-group-function))
       (setq all (mapcan #'cdr (funcall group all))))
     (list base total all)))
 
-(defun vertico--update-candidates (input metadata)
-  "Preprocess candidates with INPUT string and METADATA."
+(defun vertico--update-candidates (content bounds metadata)
+  "Preprocess candidates with CONTENT string, BOUNDS and METADATA."
   (pcase (let ((while-no-input-ignore-events '(selection-request)))
-           (while-no-input (vertico--recompute-candidates input metadata)))
+           (while-no-input (vertico--recompute-candidates content bounds metadata)))
     ('nil (abort-recursive-edit))
     (`(,base ,total ,candidates)
      (unless (and vertico--keep (< vertico--index 0))
@@ -282,17 +286,17 @@
                  (idx (seq-position candidates old)))
            ;; Update index, when kept candidate is found in new candidates list.
            (setq vertico--index idx)
-         ;; Otherwise select the prompt for missing candidates or matching inputs,
-         ;; except if the input matches the first candidate.
+         ;; Otherwise select the prompt for missing candidates or for matching content, as long as
+         ;; the full content after the boundary is empty, including content after point.
          (setq vertico--keep nil
                vertico--index
                (if (or (not candidates)
-                       (and (not (equal (vertico--input-after-boundary input) (car candidates)))
-                            (test-completion input minibuffer-completion-table
+                       (and (= (car bounds) (length content))
+                            (test-completion content minibuffer-completion-table
                                              minibuffer-completion-predicate)))
                    -1 0))))
      (setq vertico--base base
-           vertico--input input
+           vertico--input (cons content bounds)
            vertico--total total
            vertico--candidates candidates))))
 
@@ -308,13 +312,8 @@
         (setq pos end)))
     (apply #'concat (nreverse chunks))))
 
-(defun vertico--input-after-boundary (input)
-  "Compute INPUT string after completion boundary."
-  (substring input (car (completion-boundaries input minibuffer-completion-table
-                                               minibuffer-completion-predicate ""))))
-
-(defun vertico--format-candidates (input metadata)
-  "Format current candidates with INPUT string and METADATA."
+(defun vertico--format-candidates (content bounds metadata)
+  "Format current candidates with CONTENT string, BOUNDS and METADATA."
   (let* ((group (completion-metadata-get metadata 'x-group-function))
          (group-format (and group vertico-group-format (concat vertico-group-format "\n")))
          (index (min (max 0 (- vertico--index (/ vertico-count 2) (if group-format -1 0)))
@@ -322,7 +321,7 @@
          (candidates
           (thread-last (seq-subseq vertico--candidates index
                                    (min (+ index vertico-count) vertico--total))
-            (vertico--highlight (vertico--input-after-boundary input) metadata)
+            (vertico--highlight (substring content (car bounds)) metadata)
             (vertico--annotate metadata)))
          (max-width (- (window-width) 4))
          (current-line 0) (title) (lines))
@@ -360,7 +359,7 @@
       (setcar lines (substring (car lines) 0 -1)))
     (apply #'concat
            (and (eobp) #(" " 0 1 (cursor t)))
-           (and lines (if (< vertico--index 0) #("\n" 0 1 (face vertico-current)) "\n"))
+           (and lines "\n")
            (nreverse lines))))
 
 (defun vertico--display-candidates (str)
@@ -392,18 +391,28 @@
                  (eq ?/ (char-before (- (point) 2)))))
     (delete-region (overlay-start rfn-eshadow-overlay) (overlay-end rfn-eshadow-overlay))))
 
-(defun vertico--exhibit ()
-  "Exhibit completion UI."
-  (vertico--tidy-shadowed-file)
-  (let ((metadata (completion--field-metadata (minibuffer-prompt-end)))
-        (input (minibuffer-contents-no-properties)))
-    (unless (equal vertico--input input)
-      (vertico--update-candidates input metadata))
-    (vertico--display-candidates (vertico--format-candidates input metadata))
-    (vertico--display-count)
+(defun vertico--prompt-selection ()
+  "Highlight the prompt if selected."
+  (let ((inhibit-modification-hooks t))
     (if (or (>= vertico--index 0) (vertico--require-match))
         (remove-text-properties (minibuffer-prompt-end) (point-max) '(face nil))
       (add-text-properties (minibuffer-prompt-end) (point-max) '(face vertico-current)))))
+
+(defun vertico--exhibit ()
+  "Exhibit completion UI."
+  (vertico--tidy-shadowed-file)
+  (let* ((metadata (completion--field-metadata (minibuffer-prompt-end)))
+         (content (minibuffer-contents-no-properties))
+         (pt (- (point) (minibuffer-prompt-end)))
+         (bounds (completion-boundaries (substring content 0 pt)
+                                        minibuffer-completion-table
+                                        minibuffer-completion-predicate
+                                        (substring content pt))))
+    (unless (equal vertico--input (cons content bounds))
+      (vertico--update-candidates content bounds metadata))
+    (vertico--display-candidates (vertico--format-candidates content bounds metadata))
+    (vertico--display-count)
+    (vertico--prompt-selection)))
 
 (defun vertico--require-match ()
   "Return t if match is required."
@@ -453,7 +462,7 @@
   (unless arg (vertico-insert))
   (let ((input (minibuffer-contents-no-properties)))
     (if (or (memq minibuffer--require-match '(nil confirm-after-completion))
-            (equal "" input)
+            (equal "" input) ;; The questionable null completion
             (test-completion input
                              minibuffer-completion-table
                              minibuffer-completion-predicate)
@@ -515,40 +524,6 @@
         (advice-add #'completing-read-multiple :around #'vertico--advice))
     (advice-remove #'completing-read-default #'vertico--advice)
     (advice-remove #'completing-read-multiple #'vertico--advice)))
-
-(defun vertico--consult-candidate ()
-  "Return current candidate for Consult preview."
-  (and vertico--input (vertico--candidate)))
-
-(defun vertico--consult-refresh ()
-  "Refresh completion UI, used by Consult async/narrowing."
-  (when vertico--input
-    (setq vertico--input t)
-    (vertico--exhibit)))
-
-(defun vertico--embark-target ()
-  "Return Embark target."
-  (and vertico--input
-       (cons (completion-metadata-get (completion--field-metadata
-                                       (minibuffer-prompt-end))
-                                      'category)
-	     (vertico--candidate))))
-
-(defun vertico--embark-candidates ()
-  "Return Embark candidates."
-  (and vertico--input
-       (cons (completion-metadata-get (completion--field-metadata
-                                       (minibuffer-prompt-end))
-                                      'category)
-             vertico--candidates))) ;; TODO: full candidates?
-
-(with-eval-after-load 'consult
-  (add-hook 'consult--completion-candidate-hook #'vertico--consult-candidate)
-  (add-hook 'consult--completion-refresh-hook #'vertico--consult-refresh))
-
-(with-eval-after-load 'embark
-  (add-hook 'embark-target-finders #'vertico--embark-target)
-  (add-hook 'embark-candidate-collectors #'vertico--embark-candidates))
 
 (provide 'vertico)
 ;;; vertico.el ends here
