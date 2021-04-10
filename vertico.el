@@ -301,14 +301,14 @@
 
 (defun vertico--flatten-string (prop str)
   "Flatten STR with display or invisible PROP."
-  (let ((len (length str)) (pos 0) (chunks))
-    (while (/= pos len)
-      (let ((end (next-single-property-change pos prop str len)))
+  (let ((end (length str)) (pos 0) (chunks))
+    (while (< pos end)
+      (let ((next (next-single-property-change pos prop str end)))
         (if-let (val (get-text-property pos prop str))
             (when (and (eq prop 'display) (stringp val))
               (push val chunks))
-          (push (substring str pos end) chunks))
-        (setq pos end)))
+          (push (substring str pos next) chunks))
+        (setq pos next)))
     (apply #'concat (nreverse chunks))))
 
 (defun vertico--format-candidates (content bounds metadata)
@@ -356,15 +356,17 @@
         (setcdr (nthcdr (- vertico-count 1) lines) nil)))
     (when lines
       (setcar lines (substring (car lines) 0 -1)))
-    (apply #'concat
-           (and (eobp) #(" " 0 1 (cursor t)))
-           (and lines "\n")
-           (nreverse lines))))
+    (nreverse lines)))
 
-(defun vertico--display-candidates (str)
-  "Update candidates overlay `vertico--candidates-ov' with STR."
+(defun vertico--display-candidates (lines)
+  "Update candidates overlay `vertico--candidates-ov' with LINES."
   (move-overlay vertico--candidates-ov (point-max) (point-max))
-  (overlay-put vertico--candidates-ov 'after-string str))
+  (overlay-put vertico--candidates-ov 'after-string
+               (apply #'concat #(" " 0 1 (cursor t)) (and lines "\n") lines))
+  (let* ((resize (default-value 'resize-mini-windows))
+         (delta (- (max (length lines) (if resize 0 vertico-count)) (window-height) -1)))
+    (when (or (> delta 0) (eq resize t))
+      (window-resize nil delta))))
 
 (defun vertico--display-count ()
   "Update count overlay `vertico--count-ov'."
@@ -393,9 +395,17 @@
 (defun vertico--prompt-selection ()
   "Highlight the prompt if selected."
   (let ((inhibit-modification-hooks t))
-    (if (or (>= vertico--index 0) (vertico--require-match))
-        (remove-text-properties (minibuffer-prompt-end) (point-max) '(face nil))
-      (add-text-properties (minibuffer-prompt-end) (point-max) '(face vertico-current)))))
+    (vertico--add-face 'vertico-current (minibuffer-prompt-end) (point-max)
+                       (and (< vertico--index 0) (not (vertico--require-match))))))
+
+(defun vertico--add-face (face beg end add)
+  "Add FACE between BEG and END depending if ADD is t, otherwise remove."
+  (while (< beg end)
+    (let* ((val (get-text-property beg 'face))
+           (faces (remq face (if (listp val) val (list val))))
+           (next (next-single-property-change beg 'face nil end)))
+      (add-text-properties beg next `(face ,(if add (cons face faces) faces)))
+      (setq beg next))))
 
 (defun vertico--exhibit ()
   "Exhibit completion UI."
@@ -421,9 +431,9 @@
                        (t (cons 0 (length after)))))))
     (unless (equal vertico--input (cons content pt))
       (vertico--update-candidates pt content bounds metadata))
-    (vertico--display-candidates (vertico--format-candidates content bounds metadata))
+    (vertico--prompt-selection)
     (vertico--display-count)
-    (vertico--prompt-selection)))
+    (vertico--display-candidates (vertico--format-candidates content bounds metadata))))
 
 (defun vertico--require-match ()
   "Return t if match is required."
@@ -514,9 +524,9 @@
   (setq vertico--input t
         vertico--candidates-ov (make-overlay (point-max) (point-max) nil t t)
         vertico--count-ov (make-overlay (point-min) (point-min) nil t t))
-  (setq-local resize-mini-windows (or resize-mini-windows 'grow-only) ;; Must be non-nil
-              orderless-skip-highlighting t ;; Orderless optimization
-              truncate-lines nil
+  (setq-local orderless-skip-highlighting t ;; Orderless optimization
+              resize-mini-windows 'grow-only
+              truncate-lines t
               max-mini-window-height 1.0)
   (use-local-map vertico-map)
   (add-hook 'post-command-hook #'vertico--exhibit -99 'local))
