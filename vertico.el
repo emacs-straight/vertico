@@ -36,6 +36,7 @@
 
 (require 'seq)
 (eval-when-compile
+  (require 'cl-lib)
   (require 'subr-x))
 
 (defgroup vertico nil
@@ -105,6 +106,9 @@
     map)
   "Minibuffer keymap.")
 
+(defvar-local vertico--highlight #'identity
+  "Deferred candidate highlighting function.")
+
 (defvar-local vertico--history-hash nil
   "History hash table.")
 
@@ -161,13 +165,12 @@
                (alen (length adir)))
           (dolist (elem file-name-history)
             (let* ((len (length elem))
-                   (file (cond
-                          ((and (> len dlen)
-                                (eq t (compare-strings dir 0 dlen elem 0 dlen)))
-                           (substring elem dlen))
-                          ((and (> len alen)
-                                (eq t (compare-strings adir 0 alen elem 0 alen)))
-                           (substring elem alen)))))
+                   (file (cond ((and (> len dlen)
+                                     (eq t (compare-strings dir 0 dlen elem 0 dlen)))
+                                (substring elem dlen))
+                               ((and (> len alen)
+                                     (eq t (compare-strings adir 0 alen elem 0 alen)))
+                                (substring elem alen)))))
               (when file
                 (when-let (slash (string-match-p "/" file))
                   (setq file (substring file 0 (1+ slash))))
@@ -211,25 +214,11 @@
         (mapcar (lambda (cand) (list cand (or (funcall ann cand) ""))) candidates)
       candidates)))
 
-(defvar orderless-skip-highlighting)
-(defun vertico--highlight (input metadata candidates)
-  "Highlight CANDIDATES with INPUT using the completion style specified by METADATA."
-  (let* ((orderless-skip-highlighting)
-         (highlighted (nconc
-                       (completion-all-completions input
-                                                   candidates
-                                                   nil
-                                                   (length input)
-                                                   metadata)
-                       nil)))
-    ;; Check if everything went alright, all the candidates should still be present.
-    (if (= (length highlighted) (length candidates))
-        highlighted candidates)))
-
 (defun vertico--move-to-front (elem list)
   "Move ELEM to front of LIST."
-  (if-let (head (car (member elem list)))
-      (nconc (list head) (delq head list))
+  (if-let (found (member elem list))
+      (let ((head (list (car found))))
+        (nconc head (delq (setcar found nil) list)))
     list))
 
 (defun vertico--file-predicate ()
@@ -241,20 +230,44 @@
         (lambda (x) (and (not (string-match-p ignore x)) (funcall pred x)))
       (lambda (x) (not (string-match-p ignore x))))))
 
+(declare-function orderless-highlight-matches "ext:orderless")
+(defun vertico--all-completions (&rest args)
+  "Compute all completions for ARGS with deferred highlighting."
+  (cl-letf* ((orig-pcm (symbol-function #'completion-pcm--hilit-commonality))
+             (orig-flex (symbol-function #'completion-flex-all-completions))
+             ((symbol-function #'completion-flex-all-completions)
+              (lambda (&rest args)
+                ;; Unfortunately for flex we have to undo the deferred highlighting, since flex uses
+                ;; the completion-score for sorting, which is applied during highlighting.
+                (cl-letf (((symbol-function #'completion-pcm--hilit-commonality) orig-pcm))
+                  (apply orig-flex args))))
+             ;; Defer the following highlighting functions
+             (hl #'identity)
+             ((symbol-function #'completion-hilit-commonality)
+              (lambda (cands prefix &optional base)
+                (setq hl (lambda (x) (nconc (completion-hilit-commonality x prefix base) nil)))
+                (and cands (nconc cands base))))
+             ((symbol-function #'completion-pcm--hilit-commonality)
+              (lambda (pattern cands)
+                (setq hl (lambda (x) (completion-pcm--hilit-commonality pattern x)))
+                cands))
+             ((symbol-function #'orderless-highlight-matches)
+              (lambda (pattern cands)
+                (setq hl (lambda (x) (orderless-highlight-matches pattern x)))
+                cands)))
+    (cons (apply #'completion-all-completions args) hl)))
+
 (defun vertico--recompute-candidates (pt content bounds metadata)
   "Recompute candidates given PT, CONTENT, BOUNDS and METADATA."
   (let* ((field (substring content (car bounds) (+ pt (cdr bounds))))
-         (all (completion-all-completions
-               content
-               minibuffer-completion-table
-               (if minibuffer-completing-file-name
-                   (vertico--file-predicate)
-                 minibuffer-completion-predicate)
-               pt metadata))
-         (base (if-let (last (last all))
-                   (prog1 (cdr last)
-                     (setcdr last nil))
-                 0))
+         (all-hl (vertico--all-completions content
+                                           minibuffer-completion-table
+                                           (if minibuffer-completing-file-name
+                                               (vertico--file-predicate)
+                                             minibuffer-completion-predicate)
+                                           pt metadata))
+         (all (car all-hl))
+         (base (if-let (last (last all)) (prog1 (cdr last) (setcdr last nil)) 0))
          (def (or (car-safe minibuffer-default) minibuffer-default))
          (total (length all)))
     (when (<= total vertico-sort-threshold)
@@ -269,14 +282,14 @@
     (setq all (vertico--move-to-front field all))
     (when-let (group (completion-metadata-get metadata 'x-group-function))
       (setq all (mapcan #'cdr (funcall group all))))
-    (list base total all)))
+    (list base total all (cdr all-hl))))
 
 (defun vertico--update-candidates (pt content bounds metadata)
   "Preprocess candidates given PT, CONTENT, BOUNDS and METADATA."
   (pcase (let ((while-no-input-ignore-events '(selection-request)))
            (while-no-input (vertico--recompute-candidates pt content bounds metadata)))
     ('nil (abort-recursive-edit))
-    (`(,base ,total ,candidates)
+    (`(,base ,total ,candidates ,hl)
      (unless (and vertico--keep (< vertico--index 0))
        (if-let* ((old (and candidates
                            vertico--keep
@@ -297,6 +310,7 @@
      (setq vertico--input (cons content pt)
            vertico--base base
            vertico--total total
+           vertico--highlight hl
            vertico--candidates candidates))))
 
 (defun vertico--flatten-string (prop str)
@@ -311,8 +325,8 @@
         (setq pos next)))
     (apply #'concat (nreverse chunks))))
 
-(defun vertico--format-candidates (content bounds metadata)
-  "Format current candidates with CONTENT string, BOUNDS and METADATA."
+(defun vertico--format-candidates (metadata)
+  "Format current candidates with METADATA."
   (let* ((group (completion-metadata-get metadata 'x-group-function))
          (group-format (and group vertico-group-format (concat vertico-group-format "\n")))
          (index (min (max 0 (- vertico--index (/ vertico-count 2) (if group-format -1 0)))
@@ -320,7 +334,7 @@
          (candidates
           (thread-last (seq-subseq vertico--candidates index
                                    (min (+ index vertico-count) vertico--total))
-            (vertico--highlight (substring content (car bounds)) metadata)
+            (funcall vertico--highlight)
             (vertico--annotate metadata)))
          (max-width (- (window-width) 4))
          (current-line 0) (title) (lines))
@@ -375,10 +389,9 @@
     (overlay-put vertico--count-ov 'before-string
                  (format (car vertico-count-format)
                          (format (cdr vertico-count-format)
-                                 (cond
-                                  ((>= vertico--index 0) (1+ vertico--index))
-                                  ((vertico--require-match) "!")
-                                  (t "*"))
+                                 (cond ((>= vertico--index 0) (1+ vertico--index))
+                                       ((vertico--allow-prompt-selection) "*")
+                                       (t "!"))
                                  vertico--total)))))
 
 (defun vertico--tidy-shadowed-file ()
@@ -396,7 +409,7 @@
   "Highlight the prompt if selected."
   (let ((inhibit-modification-hooks t))
     (vertico--add-face 'vertico-current (minibuffer-prompt-end) (point-max)
-                       (and (< vertico--index 0) (not (vertico--require-match))))))
+                       (and (< vertico--index 0) (vertico--allow-prompt-selection)))))
 
 (defun vertico--add-face (face beg end add)
   "Add FACE between BEG and END depending if ADD is t, otherwise remove."
@@ -433,18 +446,20 @@
       (vertico--update-candidates pt content bounds metadata))
     (vertico--prompt-selection)
     (vertico--display-count)
-    (vertico--display-candidates (vertico--format-candidates content bounds metadata))))
+    (vertico--display-candidates (vertico--format-candidates metadata))))
 
-(defun vertico--require-match ()
-  "Return t if match is required."
-  (not (memq minibuffer--require-match '(nil confirm confirm-after-completion))))
+(defun vertico--allow-prompt-selection ()
+  "Return t if prompt can be selected."
+  (or (memq minibuffer--require-match '(nil confirm confirm-after-completion))
+      ;; Allow prompt selection if default is not an element of candidates
+      (when-let (def (or (car-safe minibuffer-default) minibuffer-default))
+        (and (= (minibuffer-prompt-end) (point)) (not (member def vertico--candidates))))))
 
 (defun vertico--goto (index)
   "Go to candidate with INDEX."
   (setq vertico--keep t
         vertico--index
-        (max (if (and (vertico--require-match) vertico--candidates)
-                 0 -1)
+        (max (if (or (vertico--allow-prompt-selection) (not vertico--candidates)) -1 0)
              (min index (- vertico--total 1)))))
 
 (defun vertico-beginning-of-buffer ()
@@ -524,8 +539,7 @@
   (setq vertico--input t
         vertico--candidates-ov (make-overlay (point-max) (point-max) nil t t)
         vertico--count-ov (make-overlay (point-min) (point-min) nil t t))
-  (setq-local orderless-skip-highlighting t ;; Orderless optimization
-              resize-mini-windows 'grow-only
+  (setq-local resize-mini-windows 'grow-only
               truncate-lines t
               max-mini-window-height 1.0)
   (use-local-map vertico-map)
