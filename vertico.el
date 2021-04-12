@@ -5,7 +5,7 @@
 ;; Author: Daniel Mendler
 ;; Maintainer: Daniel Mendler
 ;; Created: 2021
-;; Version: 0.3
+;; Version: 0.4
 ;; Package-Requires: ((emacs "27.1"))
 ;; Homepage: https://github.com/minad/vertico
 
@@ -88,8 +88,7 @@
   "Face used to highlight the currently selected candidate.")
 
 (defvar vertico-map
-  (let ((map (make-sparse-keymap)))
-    (set-keymap-parent map minibuffer-local-map)
+  (let ((map (make-composed-keymap nil minibuffer-local-map)))
     (define-key map [remap beginning-of-buffer] #'vertico-beginning-of-buffer)
     (define-key map [remap minibuffer-beginning-of-buffer] #'vertico-beginning-of-buffer)
     (define-key map [remap end-of-buffer] #'vertico-end-of-buffer)
@@ -104,7 +103,7 @@
     (define-key map [C-return] #'vertico-exit-input)
     (define-key map "\t" #'vertico-insert)
     map)
-  "Minibuffer keymap.")
+  "Vertico minibuffer keymap derived from `minibuffer-local-map'.")
 
 (defvar-local vertico--highlight #'identity
   "Deferred candidate highlighting function.")
@@ -370,8 +369,6 @@
       (if (< current-line (- vertico-count 1))
           (setq lines (nthcdr (- (length lines) vertico-count) lines))
         (setcdr (nthcdr (- vertico-count 1) lines) nil)))
-    (when lines
-      (setcar lines (substring (car lines) 0 -1)))
     (nreverse lines)))
 
 (defun vertico--display-candidates (lines)
@@ -527,13 +524,13 @@
     (delete-minibuffer-contents)
     (insert cand)))
 
-(defun vertico--candidate ()
-  "Return current candidate string."
-  (let ((content (minibuffer-contents-no-properties)))
-    (if (< vertico--index 0)
-        content
-      (concat (substring content 0 vertico--base)
-              (nth vertico--index vertico--candidates)))))
+(defun vertico--candidate (&optional hl)
+  "Return current candidate string with optional highlighting if HL is non-nil."
+  (let ((content (minibuffer-contents)))
+    (if-let (cand (and (>= vertico--index 0) (nth vertico--index vertico--candidates)))
+        (concat (substring content 0 vertico--base)
+                (if hl (car (funcall vertico--highlight (list cand))) cand))
+      content)))
 
 (defun vertico--setup ()
   "Setup completion UI."
