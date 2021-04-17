@@ -5,7 +5,7 @@
 ;; Author: Daniel Mendler <mail@daniel-mendler.de>
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
-;; Version: 0.4
+;; Version: 0.5
 ;; Package-Requires: ((emacs "27.1"))
 ;; Homepage: https://github.com/minad/vertico
 
@@ -471,9 +471,9 @@
              (min index (- vertico--total 1)))))
 
 (defun vertico-first ()
-  "Go to first candidate."
+  "Go to first candidate, or to the prompt when the first candidate is selected."
   (interactive)
-  (vertico--goto 0))
+  (vertico--goto (if (> vertico--index 0) 0 -1)))
 
 (defun vertico-last ()
   "Go to last candidate."
