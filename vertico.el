@@ -230,6 +230,7 @@
       (lambda (x) (not (string-match-p ignore x))))))
 
 ;; bug#47711: Deferred highlighting for `completion-all-completions'
+;; XXX There is one complication: `completion--twq-all' already adds `completions-common-part'.
 (declare-function orderless-highlight-matches "ext:orderless")
 (defun vertico--all-completions (&rest args)
   "Compute all completions for ARGS with deferred highlighting."
@@ -530,6 +531,12 @@
 (defun vertico-insert ()
   "Insert current candidate in minibuffer."
   (interactive)
+  ;; XXX There is a small bug here, depending on interpretation. When
+  ;; completing "~/emacs/master/li|/calc" where "|" is the cursor,
+  ;; then the returned candidate only includes the prefix
+  ;; "~/emacs/master/lisp/", but not the suffix "/calc". Default
+  ;; completion has the same problem when selecting in the
+  ;; *Completions* buffer.
   (when-let (cand (and (>= vertico--index 0) (vertico--candidate)))
     (delete-minibuffer-contents)
     (insert cand)))
