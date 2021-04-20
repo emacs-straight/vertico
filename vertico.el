@@ -44,10 +44,6 @@
   :group 'convenience
   :prefix "vertico-")
 
-(defcustom vertico-sort-threshold 20000
-  "Candidates will only be sorted if there are fewer than this threshold."
-  :type 'integer)
-
 (defcustom vertico-count-format (cons "%-6s " "%s/%s")
   "Format string used for the candidate count."
   :type '(choice (const nil) (cons string string)))
@@ -140,9 +136,9 @@
 
 (defun vertico--sort-predicate (x y)
   "Sorting predicate which compares X and Y."
-  (or (< (cdr x) (cdr y))
-      (and (= (cdr x) (cdr y))
-           (string< (car x) (car y)))))
+  (or (< (length x) (length y))
+      (and (= (length x) (length y))
+           (string< x y))))
 
 (defun vertico--sort (input candidates)
   "Sort CANDIDATES by history, length and alphabetically, given current INPUT."
@@ -186,22 +182,31 @@
         (unless (gethash elem vertico--history-hash)
           (puthash elem index vertico--history-hash))
         (setq index (1+ index))))))
-  ;; Decorate each candidate with (index<<13) + length. This way we sort first by index and then by
-  ;; length. We assume that the candidates are shorter than 2**13 characters and that the history is
-  ;; shorter than 2**16 entries.
-  (let ((cand candidates))
-    (while cand
-      (setcar cand (cons (car cand)
-                         (+ (lsh (gethash (car cand) vertico--history-hash #xFFFF) 13)
-                            (length (car cand)))))
-      (pop cand)))
-  (setq candidates (sort candidates #'vertico--sort-predicate))
-  ;; Drop decoration from the candidates
-  (let ((cand candidates))
-    (while cand
-      (setcar cand (caar cand))
-      (pop cand)))
-  candidates)
+  ;; Separate history candidates from candidates first.
+  ;; Move the remaining candidates into buckets according to length.
+  (let* ((max-bucket 40)
+         (buckets (make-vector (1+ max-bucket) nil))
+         (hcands))
+    (dolist (cand candidates)
+      (if-let (idx (gethash cand vertico--history-hash))
+          (push (cons idx cand) hcands)
+        (let ((idx (min max-bucket (length cand))))
+          (aset buckets idx (cons cand (aref buckets idx))))))
+    ;; Sort history candidates
+    (setq hcands (sort hcands #'car-less-than-car))
+    (let ((cand hcands))
+      (while cand
+        (setcar cand (cdar cand))
+        (pop cand)))
+    (nconc
+     ;; Sorted History candidates
+     hcands
+     ;; Sort bucket candidates
+     (mapcan
+      (lambda (bucket) (sort bucket #'string<))
+      (nbutlast (append buckets nil)))
+     ;; Last bucket needs special treatment
+     (sort (aref buckets max-bucket) #'vertico--sort-predicate))))
 
 (defun vertico--annotate (metadata candidates)
   "Annotate CANDIDATES with annotation function specified by METADATA."
@@ -261,9 +266,11 @@
 (defun vertico--recompute-candidates (pt content bounds metadata)
   "Recompute candidates given PT, CONTENT, BOUNDS and METADATA."
   (let* ((field (substring content (car bounds) (+ pt (cdr bounds))))
+         ;; `minibuffer-completing-file-name' has been obsoleted by the completion category
+         (completing-file (eq 'file (completion-metadata-get metadata 'category)))
          (all-hl (vertico--all-completions content
                                            minibuffer-completion-table
-                                           (if minibuffer-completing-file-name
+                                           (if completing-file
                                                (vertico--file-predicate)
                                              minibuffer-completion-predicate)
                                            pt metadata))
@@ -271,14 +278,13 @@
          (base (or (when-let (z (last all)) (prog1 (cdr z) (setcdr z nil))) 0))
          (def (or (car-safe minibuffer-default) minibuffer-default))
          (total (length all)))
-    (when (<= total vertico-sort-threshold)
-      (setq all (if-let (sort (completion-metadata-get metadata 'display-sort-function))
-                    (funcall sort all)
-                  (vertico--sort content all))))
+    (setq all (if-let (sort (completion-metadata-get metadata 'display-sort-function))
+                  (funcall sort all)
+                (vertico--sort content all)))
     ;; Move special candidates: "field" appears at the top, before "field/", before default value
     (when (stringp def)
       (setq all (vertico--move-to-front def all)))
-    (when (and minibuffer-completing-file-name (not (string-suffix-p "/" field)))
+    (when (and completing-file (not (string-suffix-p "/" field)))
       (setq all (vertico--move-to-front (concat field "/") all)))
     (setq all (vertico--move-to-front field all))
     (when-let (group (completion-metadata-get metadata 'x-group-function))
@@ -403,8 +409,7 @@
 
 (defun vertico--tidy-shadowed-file ()
   "Tidy shadowed file name, see `rfn-eshadow-overlay'."
-  (when (and minibuffer-completing-file-name
-             (eq this-command #'self-insert-command)
+  (when (and (eq this-command #'self-insert-command)
              (bound-and-true-p rfn-eshadow-overlay)
              (overlay-buffer rfn-eshadow-overlay)
              (= (point) (point-max))
