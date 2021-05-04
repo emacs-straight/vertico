@@ -5,7 +5,7 @@
 ;; Author: Daniel Mendler <mail@daniel-mendler.de>
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
-;; Version: 0.7
+;; Version: 0.8
 ;; Package-Requires: ((emacs "27.1"))
 ;; Homepage: https://github.com/minad/vertico
 
@@ -220,9 +220,9 @@
 ;; bug#47711: Deferred highlighting for `completion-all-completions'
 ;; XXX There is one complication: `completion--twq-all' already adds `completions-common-part'.
 (declare-function orderless-highlight-matches "ext:orderless")
+(require 'orderless nil 'noerror)
 (defun vertico--all-completions (&rest args)
   "Compute all completions for ARGS with deferred highlighting."
-  (require 'orderless nil 'noerror)
   (cl-letf* ((orig-pcm (symbol-function #'completion-pcm--hilit-commonality))
              (orig-flex (symbol-function #'completion-flex-all-completions))
              ((symbol-function #'completion-flex-all-completions)
@@ -390,9 +390,8 @@
            (resize (default-value 'resize-mini-windows))
            (dp (- (max (cdr (window-text-pixel-size))
                        (* lh (1+ (if resize height vertico-count))))
-                  (window-pixel-height)))
-           (dl (ceiling dp lh)))
-      (when (or (> dl 0) (eq resize t)) (window-resize nil dl)))))
+                  (window-pixel-height))))
+      (when (or (> dp 0) (eq resize t)) (window-resize nil dp nil nil 'pixelwise)))))
 
 (defun vertico--display-count ()
   "Update count overlay `vertico--count-ov'."
