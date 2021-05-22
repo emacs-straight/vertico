@@ -194,14 +194,22 @@
      ;; Last bucket needs special treatment
      (sort (aref buckets max-bucket) #'vertico--sort-predicate))))
 
-(defun vertico--annotate (metadata candidates)
+(defun vertico--affixate (metadata candidates)
   "Annotate CANDIDATES with annotation function specified by METADATA."
   (if-let (aff (or (completion-metadata-get metadata 'affixation-function)
                    (plist-get completion-extra-properties :affixation-function)))
       (funcall aff candidates)
     (if-let (ann (or (completion-metadata-get metadata 'annotation-function)
                      (plist-get completion-extra-properties :annotation-function)))
-        (mapcar (lambda (cand) (list cand "" (or (funcall ann cand) ""))) candidates)
+        (mapcar (lambda (cand)
+                  (let ((suffix (or (funcall ann cand) "")))
+                    (list cand ""
+                          ;; The default completion UI adds the `completions-annotations' face
+                          ;; if no other faces are present.
+                          (if (text-property-not-all 0 (length suffix) 'face nil suffix)
+                              suffix
+                            (propertize suffix 'face 'completions-annotations)))))
+                  candidates)
       candidates)))
 
 (defun vertico--move-to-front (elem list)
@@ -235,7 +243,12 @@
                 (and cands (nconc cands base))))
              ((symbol-function #'completion-pcm--hilit-commonality)
               (lambda (pattern cands)
-                (setq hl (lambda (x) (completion-pcm--hilit-commonality pattern x)))
+                (setq hl (lambda (x)
+                           ;; `completion-pcm--hilit-commonality' sometimes throws an internal error
+                           ;; for example when entering "/sudo:://u".
+                           (condition-case nil
+                               (completion-pcm--hilit-commonality pattern x)
+                             (t x))))
                 cands))
              ((symbol-function #'orderless-highlight-matches)
               (lambda (pattern cands)
@@ -299,9 +312,16 @@
 
 (defun vertico--update-candidates (pt content bounds metadata)
   "Preprocess candidates given PT, CONTENT, BOUNDS and METADATA."
-  ;; bug#38024: Icomplete uses `while-no-input-ignore-events' to repair updating issues
-  (pcase (let ((while-no-input-ignore-events '(selection-request)))
-           (while-no-input (vertico--recompute-candidates pt content bounds metadata)))
+  (pcase
+      ;; If Tramp is used, do not compute the candidates in an interruptible fashion,
+      ;; since this will break the Tramp password and user name prompts (See #23).
+      (if (and (eq 'file (completion-metadata-get metadata 'category))
+               (string-match-p "\\`/[^:]+:" (substitute-in-file-name content)))
+          (vertico--recompute-candidates pt content bounds metadata)
+          ;; bug#38024: Icomplete uses `while-no-input-ignore-events' to repair updating issues
+        (let ((while-no-input-ignore-events '(selection-request))
+              (non-essential t))
+          (while-no-input (vertico--recompute-candidates pt content bounds metadata))))
     ('nil (abort-recursive-edit))
     (`(,base ,total ,candidates ,hl)
      ;; Find position of old candidate in the new list.
@@ -355,7 +375,7 @@
           (thread-last (seq-subseq vertico--candidates index
                                    (min (+ index vertico-count) vertico--total))
             (funcall vertico--highlight)
-            (vertico--annotate metadata)))
+            (vertico--affixate metadata)))
          (max-width (- (window-width) 4))
          (current-line 0) (title) (lines))
     (dolist (cand candidates)
@@ -373,11 +393,7 @@
                        (replace-regexp-in-string "\\`[\t\n ]+\\|[\t\n ]+\\'" ""))
                 cand (truncate-string-to-width cand max-width 0 nil (cdr vertico-multiline))))
         (setq cand (vertico--flatten-string 'invisible (vertico--flatten-string 'display cand))
-              cand (concat prefix cand
-                           (if (text-property-not-all 0 (length suffix) 'face nil suffix)
-                               suffix
-                             (propertize suffix 'face 'completions-annotations))
-                           "\n"))
+              cand (concat prefix cand suffix "\n"))
         (when (= index vertico--index)
           (setq current-line (length lines))
           (add-face-text-property 0 (length cand) 'vertico-current 'append cand))
