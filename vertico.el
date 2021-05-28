@@ -310,13 +310,17 @@
           (setcdr (cdar group-list) (caadr group-list)) ;; Link groups
           (setq group-list (cdr group-list)))))))
 
+(defun vertico--remote-p (path)
+  "Return t if PATH is a remote path."
+  (string-match-p "\\`/[^/|:]+:" (substitute-in-file-name path)))
+
 (defun vertico--update-candidates (pt content bounds metadata)
   "Preprocess candidates given PT, CONTENT, BOUNDS and METADATA."
   (pcase
       ;; If Tramp is used, do not compute the candidates in an interruptible fashion,
       ;; since this will break the Tramp password and user name prompts (See #23).
       (if (and (eq 'file (completion-metadata-get metadata 'category))
-               (string-match-p "\\`/[^/|:]+:" (substitute-in-file-name content)))
+               (or (vertico--remote-p content) (vertico--remote-p default-directory)))
           (vertico--recompute-candidates pt content bounds metadata)
           ;; bug#38024: Icomplete uses `while-no-input-ignore-events' to repair updating issues
         (let ((while-no-input-ignore-events '(selection-request))
@@ -403,8 +407,8 @@
     (while (> index vertico-count)
       (if (< current-line (/ index 2))
           (nbutlast lines)
-        (setq current-line (- current-line 1) lines (cdr lines)))
-      (setq index (- index 1)))
+        (setq current-line (1- current-line) lines (cdr lines)))
+      (setq index (1- index)))
     lines))
 
 (defun vertico--display-candidates (lines)
@@ -467,14 +471,12 @@
   "Exhibit completion UI."
   (vertico--tidy-shadowed-file)
   (let* ((pt (max 0 (- (point) (minibuffer-prompt-end))))
-         (metadata (completion-metadata (buffer-substring-no-properties
-                                         (minibuffer-prompt-end)
-                                         (+ (minibuffer-prompt-end) pt))
-                                        minibuffer-completion-table
-                                        minibuffer-completion-predicate))
          (content (minibuffer-contents-no-properties))
          (before (substring content 0 pt))
          (after (substring content pt))
+         (metadata (completion-metadata before
+                                        minibuffer-completion-table
+                                        minibuffer-completion-predicate))
          ;; bug#47678: `completion-boundaries` fails for `partial-completion`
          ;; if the cursor is moved between the slashes of "~//".
          ;; See also marginalia.el which has the same issue.
@@ -505,7 +507,7 @@
   (setq vertico--keep t
         vertico--index
         (max (if (or (vertico--allow-prompt-selection-p) (not vertico--candidates)) -1 0)
-             (min index (- vertico--total 1)))))
+             (min index (1- vertico--total)))))
 
 (defun vertico-first ()
   "Go to first candidate, or to the prompt when the first candidate is selected."
@@ -515,7 +517,7 @@
 (defun vertico-last ()
   "Go to last candidate."
   (interactive)
-  (vertico--goto (- vertico--total 1)))
+  (vertico--goto (1- vertico--total)))
 
 (defun vertico-scroll-down ()
   "Go back by one page."
@@ -540,8 +542,8 @@
   (interactive)
   (vertico--goto
    (if (and vertico-cycle (= vertico--index (if (vertico--allow-prompt-selection-p) -1 0)))
-       (- vertico--total 1)
-     (- vertico--index 1))))
+       (1- vertico--total)
+     (1- vertico--index))))
 
 (defun vertico-exit (&optional arg)
   "Exit minibuffer with current candidate or input if prefix ARG is given."
