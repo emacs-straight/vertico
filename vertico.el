@@ -520,31 +520,31 @@
   (interactive)
   (vertico--goto (1- vertico--total)))
 
-(defun vertico-scroll-down ()
-  "Go back by one page."
-  (interactive)
-  (vertico--goto (max 0 (- vertico--index vertico-count))))
+(defun vertico-scroll-down (&optional n)
+  "Go back by N pages."
+  (interactive "p")
+  (vertico--goto (max 0 (- vertico--index (* (or n 1) vertico-count)))))
 
-(defun vertico-scroll-up ()
-  "Go forward by one page."
-  (interactive)
-  (vertico--goto (+ vertico--index vertico-count)))
+(defun vertico-scroll-up (&optional n)
+  "Go forward by N pages."
+  (interactive "p")
+  (vertico-scroll-down (- (or n 1))))
 
-(defun vertico-next ()
-  "Go to next candidate."
-  (interactive)
-  (vertico--goto
-   (if (and vertico-cycle (= (1+ vertico--index) vertico--total))
-       -1
-     (1+ vertico--index))))
+(defun vertico-next (&optional n)
+  "Go forward N candidates."
+  (interactive "p")
+  (let ((index (+ vertico--index (or n 1))))
+    (vertico--goto
+     (cond
+      ((not vertico-cycle) index)
+      ((= vertico--total 0) -1)
+      ((vertico--allow-prompt-selection-p) (1- (mod (1+ index) (1+ vertico--total))))
+      (t (mod index vertico--total))))))
 
-(defun vertico-previous ()
-  "Go to previous candidate."
-  (interactive)
-  (vertico--goto
-   (if (and vertico-cycle (= vertico--index (if (vertico--allow-prompt-selection-p) -1 0)))
-       (1- vertico--total)
-     (1- vertico--index))))
+(defun vertico-previous (&optional n)
+  "Go backward N candidates."
+  (interactive "p")
+  (vertico-next (- (or n 1))))
 
 (defun vertico-exit (&optional arg)
   "Exit minibuffer with current candidate or input if prefix ARG is given."
@@ -561,31 +561,36 @@
         (exit-minibuffer)
       (message "Match required"))))
 
-(defun vertico--goto-group (next)
-  "Move to next group if NEXT is non-nil, otherwise move to previous group."
+(defun vertico-next-group (&optional n)
+  "Move N groups forward."
+  (interactive "p")
+  (setq n (or n 1))
   (let* ((end (minibuffer-prompt-end))
          (metadata (completion-metadata (buffer-substring end (max end (point)))
                                         minibuffer-completion-table
                                         minibuffer-completion-predicate))
          (group-fun (or (completion-metadata-get metadata 'group-function) #'ignore))
-         (orig-index vertico--index))
-    (while (let ((last-index vertico--index))
-             (if next (vertico-next) (vertico-previous))
-             (if (or (= vertico--index orig-index) (= vertico--index last-index))
-                 (and (vertico--goto orig-index) nil)
-               (and (> vertico--index 0)
-                    (equal (funcall group-fun (nth (1- vertico--index) vertico--candidates) nil)
-                           (funcall group-fun (nth vertico--index vertico--candidates) nil))))))))
+         (step (if (> n 0) 1 -1))
+         (start-index vertico--index)
+         last-index)
+    (setq n (abs n))
+    (while (> n 0)
+      (setq last-index vertico--index)
+      (vertico-next step)
+      (cond
+       ((or (= vertico--index last-index) (= vertico--index start-index))
+        (vertico--goto start-index)
+        (setq n 0))
+       ((or (<= vertico--index 0)
+            (not (equal (funcall group-fun (nth (1- vertico--index) vertico--candidates) nil)
+                        (funcall group-fun (nth vertico--index vertico--candidates) nil))))
+        (setq n (1- n)
+              start-index vertico--index))))))
 
-(defun vertico-next-group ()
-  "Move to next group."
-  (interactive)
-  (vertico--goto-group 'next))
-
-(defun vertico-previous-group ()
-  "Move to previous group."
-  (interactive)
-  (vertico--goto-group nil))
+(defun vertico-previous-group (&optional n)
+  "Move N groups backward."
+  (interactive "p")
+  (vertico-next-group (- (or n 1))))
 
 (defun vertico-exit-input ()
   "Exit minibuffer with input."
