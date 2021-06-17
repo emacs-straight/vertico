@@ -288,27 +288,32 @@
     (setq all (vertico--move-to-front field all))
     (when-let (group-fun (completion-metadata-get metadata 'group-function))
       (setq all (vertico--group-by group-fun all)))
-    (list base (length all) all hl)))
+    (list base
+          (length all)
+          ;; Find position of old candidate in the new list.
+          (when vertico--keep
+            (if (< vertico--index 0)
+                vertico--index
+              (seq-position all (nth vertico--index vertico--candidates))))
+          all hl)))
 
 (defun vertico--group-by (fun elems)
   "Group ELEMS by FUN."
   (when elems
-    (let ((group-list) (group-hash (make-hash-table :test #'equal)))
+    (let ((list) (ht (make-hash-table :test #'equal)))
       (while elems
         (let* ((key (funcall fun (car elems) nil))
-               (group (gethash key group-hash)))
+               (group (gethash key ht)))
           (if group
               (setcdr group (setcdr (cdr group) elems)) ;; Append to tail of group
-            (setq group (cons elems elems)) ;; (head . tail)
-            (push group group-list)
-            (puthash key group group-hash))
+            (push (puthash key (cons elems elems) ht) list))
           (setq elems (cdr elems))))
-      (setcdr (cdar group-list) nil) ;; Unlink last tail
-      (setq group-list (nreverse group-list))
-      (prog1 (caar group-list)
-        (while (cdr group-list)
-          (setcdr (cdar group-list) (caadr group-list)) ;; Link groups
-          (setq group-list (cdr group-list)))))))
+      (setcdr (cdar list) nil) ;; Unlink last tail
+      (setq list (nreverse list))
+      (prog1 (caar list)
+        (while (cdr list)
+          (setcdr (cdar list) (caadr list)) ;; Link groups
+          (setq list (cdr list)))))))
 
 (defun vertico--remote-p (path)
   "Return t if PATH is a remote path."
@@ -327,15 +332,9 @@
               (non-essential t))
           (while-no-input (vertico--recompute-candidates pt content bounds metadata))))
     ('nil (abort-recursive-edit))
-    (`(,base ,total ,candidates ,hl)
-     ;; Find position of old candidate in the new list.
-     (unless (and vertico--keep (< vertico--index 0))
-       (let ((old (and candidates
-                       vertico--keep
-                       (>= vertico--index 0)
-                       (nth vertico--index vertico--candidates))))
-         (setq vertico--index (and old (seq-position candidates old)))))
+    (`(,base ,total ,index ,candidates ,hl)
      (setq vertico--input (cons content pt)
+           vertico--index index
            vertico--base base
            vertico--total total
            vertico--highlight hl
