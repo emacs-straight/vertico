@@ -13,13 +13,13 @@
 * Introduction
 
 Vertico provides a performant and minimalistic vertical completion UI, which is
-based on the default completion system. By reusing the built-in facilities
-system, Vertico achieves /full compatibility/ with built-in Emacs completion
-commands and completion tables. Vertico only provides the completion UI and
-comes with a minimal set of commands. The code base is small and maintainable
-(~600 lines of code without whitespace and comments).
-
-Additional enhancements can be installed separately via complementary packages.
+based on the default completion system. The main focus of Vertico is to provide
+a UI which behaves /correctly/ under all circumstances. By reusing the built-in
+facilities system, Vertico achieves /full compatibility/ with built-in Emacs
+completion commands and completion tables. Vertico only provides the completion
+UI. Additional enhancements can be installed separately via complementary
+packages. The code base is small and maintainable (~600 lines of code without
+whitespace and comments).
 
 * Features
 
@@ -50,6 +50,9 @@ Here is an example configuration:
     :init
     (vertico-mode)
 
+    ;; Grow and shrink the Vertico minibuffer
+    ;; (setq vertico-resize t)
+
     ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
     ;; (setq vertico-cycle t)
   )
@@ -75,9 +78,6 @@ Here is an example configuration:
     (defun crm-indicator (args)
       (cons (concat "[CRM] " (car args)) (cdr args)))
     (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-
-    ;; Grow and shrink minibuffer
-    ;;(setq resize-mini-windows t)
 
     ;; Do not allow the cursor in the minibuffer prompt
     (setq minibuffer-prompt-properties
