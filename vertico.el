@@ -396,7 +396,7 @@ See `resize-mini-windows' for documentation."
        (setq vertico--lock-candidate nil
              vertico--index
              (if (or vertico--default-missing
-                     (not vertico--candidates)
+                     (= 0 vertico--total)
                      (and (= (car bounds) (length content))
                           (test-completion content minibuffer-completion-table
                                            minibuffer-completion-predicate)))
@@ -416,6 +416,23 @@ See `resize-mini-windows' for documentation."
         (setq pos next)))
     (apply #'concat (nreverse chunks))))
 
+(defun vertico--truncate-multiline (cand max-width)
+  "Truncate multiline CAND to MAX-WIDTH."
+  (truncate-string-to-width
+   (thread-last cand
+     (replace-regexp-in-string "[\t ]+" " ")
+     (replace-regexp-in-string "[\t\n ]*\n[\t\n ]*" (car vertico-multiline))
+     (replace-regexp-in-string "\\`[\t\n ]+\\|[\t\n ]+\\'" ""))
+   max-width 0 nil (cdr vertico-multiline)))
+
+(defun vertico--format-candidate (cand prefix suffix index)
+  "Format CAND given PREFIX, SUFFIX and INDEX."
+  (setq cand (concat prefix cand suffix "\n")
+        cand (vertico--flatten-string 'invisible (vertico--flatten-string 'display cand)))
+  (when (= index vertico--index)
+    (add-face-text-property 0 (length cand) 'vertico-current 'append cand))
+  cand)
+
 (defun vertico--format-candidates (metadata)
   "Format current candidates with METADATA."
   (let* ((group-fun (completion-metadata-get metadata 'group-function))
@@ -428,7 +445,7 @@ See `resize-mini-windows' for documentation."
             (funcall vertico--highlight)
             (vertico--affixate metadata)))
          (max-width (- (window-width) 4))
-         (current-line 0) (title) (lines))
+         (curr-line 0) (title) (lines))
     (dolist (cand candidates)
       (let ((prefix "") (suffix ""))
         (when (consp cand)
@@ -437,24 +454,17 @@ See `resize-mini-windows' for documentation."
           (unless (equal title new-title)
             (push (format group-format (setq title new-title)) lines))
           (setq cand (funcall group-fun cand 'transform)))
-        (when (string-match-p "\n" cand)
-          (setq cand (thread-last cand
-                       (replace-regexp-in-string "[\t ]+" " ")
-                       (replace-regexp-in-string "[\t\n ]*\n[\t\n ]*" (car vertico-multiline))
-                       (replace-regexp-in-string "\\`[\t\n ]+\\|[\t\n ]+\\'" ""))
-                cand (truncate-string-to-width cand max-width 0 nil (cdr vertico-multiline))))
-        (setq cand (vertico--flatten-string 'invisible (vertico--flatten-string 'display cand))
-              cand (concat prefix cand suffix "\n"))
         (when (= index vertico--index)
-          (setq current-line (length lines))
-          (add-face-text-property 0 (length cand) 'vertico-current 'append cand))
-        (push cand lines)
+          (setq curr-line (length lines)))
+        (when (string-match-p "\n" cand)
+          (setq cand (vertico--truncate-multiline cand max-width)))
+        (push (vertico--format-candidate cand prefix suffix index) lines)
         (setq index (1+ index))))
     (setq lines (nreverse lines) index (length lines))
     (while (> index vertico-count)
-      (if (< current-line (/ index 2))
+      (if (< curr-line (/ index 2))
           (nbutlast lines)
-        (setq current-line (1- current-line) lines (cdr lines)))
+        (setq curr-line (1- curr-line) lines (cdr lines)))
       (setq index (1- index)))
     lines))
 
@@ -548,7 +558,7 @@ See `resize-mini-windows' for documentation."
   "Go to candidate with INDEX."
   (setq vertico--lock-candidate t
         vertico--index
-        (max (if (or (vertico--allow-prompt-selection-p) (not vertico--candidates)) -1 0)
+        (max (if (or (vertico--allow-prompt-selection-p) (= 0 vertico--total)) -1 0)
              (min index (1- vertico--total)))))
 
 (defun vertico-first ()
