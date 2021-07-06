@@ -312,7 +312,7 @@ See `resize-mini-windows' for documentation."
       (setq groups (vertico--group-by group-fun all) all (car groups)))
     (list base (length all)
           ;; Default value is missing from collection
-          (and def (= pt 0) (not (member def all)))
+          (and def (equal content "") (not (member def all)))
           ;; Find position of old candidate in the new list.
           (when vertico--lock-candidate
             (if (< vertico--index 0)
@@ -477,6 +477,7 @@ See `resize-mini-windows' for documentation."
 
 (defun vertico--resize-window (height)
   "Resize active minibuffer window to HEIGHT."
+  (setq-local truncate-lines (< (point-max) (- (window-width) 4)))
   (unless (frame-root-window-p (active-minibuffer-window))
     (let* ((window-resize-pixelwise t)
            (dp (- (max (cdr (window-text-pixel-size))
@@ -683,7 +684,6 @@ When the prefix argument is 0, the group order is reset."
         vertico--candidates-ov (make-overlay (point-max) (point-max) nil t t)
         vertico--count-ov (make-overlay (point-min) (point-min) nil t t))
   (setq-local resize-mini-windows 'grow-only
-              truncate-lines (< (minibuffer-prompt-end) (/ (window-width) 2))
               max-mini-window-height 1.0
               completion-auto-help nil
               completion-show-inline-help nil)
