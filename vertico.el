@@ -489,7 +489,7 @@ See `resize-mini-windows' for documentation."
 
 (defun vertico--display-count ()
   "Update count overlay `vertico--count-ov'."
-  (when vertico-count-format
+  (when vertico--count-ov
     (move-overlay vertico--count-ov (point-min) (point-min))
     (overlay-put vertico--count-ov 'before-string
                  (format (car vertico-count-format)
@@ -557,10 +557,11 @@ See `resize-mini-windows' for documentation."
 
 (defun vertico--goto (index)
   "Go to candidate with INDEX."
-  (setq vertico--lock-candidate t
-        vertico--index
-        (max (if (or (vertico--allow-prompt-selection-p) (= 0 vertico--total)) -1 0)
-             (min index (1- vertico--total)))))
+  (let ((prompt (vertico--allow-prompt-selection-p)))
+    (setq vertico--index
+          (max (if (or prompt (= 0 vertico--total)) -1 0)
+               (min index (1- vertico--total)))
+          vertico--lock-candidate (or (>= vertico--index 0) prompt))))
 
 (defun vertico-first ()
   "Go to first candidate, or to the prompt when the first candidate is selected."
@@ -598,20 +599,23 @@ See `resize-mini-windows' for documentation."
   (interactive "p")
   (vertico-next (- (or n 1))))
 
+(defun vertico--match-p (input)
+  "Return t if INPUT is a valid match."
+  (or (memq minibuffer--require-match '(nil confirm-after-completion))
+      (equal "" input) ;; The questionable null completion
+      (test-completion input
+                       minibuffer-completion-table
+                       minibuffer-completion-predicate)
+      (if (eq minibuffer--require-match 'confirm)
+          (eq (ignore-errors (read-char "Confirm")) 13)
+        (and (message "Match required") nil))))
+
 (defun vertico-exit (&optional arg)
   "Exit minibuffer with current candidate or input if prefix ARG is given."
   (interactive "P")
   (unless arg (vertico-insert))
-  (let ((input (minibuffer-contents-no-properties)))
-    (if (or (memq minibuffer--require-match '(nil confirm-after-completion))
-            (equal "" input) ;; The questionable null completion
-            (test-completion input
-                             minibuffer-completion-table
-                             minibuffer-completion-predicate)
-            (and (eq minibuffer--require-match 'confirm)
-                 (eq (ignore-errors (read-char "Confirm")) 13)))
-        (exit-minibuffer)
-      (message "Match required"))))
+  (when (vertico--match-p (minibuffer-contents-no-properties))
+    (exit-minibuffer)))
 
 (defun vertico-next-group (&optional n)
   "Cycle N groups forward.
@@ -668,6 +672,7 @@ When the prefix argument is 0, the group order is reset."
 (defun vertico--candidate (&optional hl)
   "Return current candidate string with optional highlighting if HL is non-nil."
   (let ((content (minibuffer-contents)))
+    (vertico--add-face 'vertico-current 0 (length content) nil content)
     (if (>= vertico--index 0)
         (let ((cand (nth vertico--index vertico--candidates)))
           ;;; XXX Drop the completions-common-part face which is added by `completion--twq-all'.
@@ -682,7 +687,8 @@ When the prefix argument is 0, the group order is reset."
   "Setup completion UI."
   (setq vertico--input t
         vertico--candidates-ov (make-overlay (point-max) (point-max) nil t t)
-        vertico--count-ov (make-overlay (point-min) (point-min) nil t t))
+        vertico--count-ov (and vertico-count-format
+                               (make-overlay (point-min) (point-min) nil t t)))
   (setq-local resize-mini-windows 'grow-only
               max-mini-window-height 1.0
               completion-auto-help nil
