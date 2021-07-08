@@ -479,12 +479,14 @@ See `resize-mini-windows' for documentation."
   "Resize active minibuffer window to HEIGHT."
   (setq-local truncate-lines (< (point-max) (- (window-width) 4)))
   (unless (frame-root-window-p (active-minibuffer-window))
+    (unless vertico-resize
+      (setq height (max height vertico-count)))
     (let* ((window-resize-pixelwise t)
            (dp (- (max (cdr (window-text-pixel-size))
-                       (* (default-line-height) (1+ (if vertico-resize height vertico-count))))
+                       (* (default-line-height) (1+ height)))
                   (window-pixel-height))))
-      (when (and (or (/= height 0) (< dp 0))
-                 (or (> dp 0) (eq vertico-resize t)))
+      (when (or (and (> dp 0) (/= height 0))
+                (and (< dp 0) (eq vertico-resize t)))
         (window-resize nil dp nil nil 'pixelwise)))))
 
 (defun vertico--display-count ()
@@ -691,6 +693,7 @@ When the prefix argument is 0, the group order is reset."
                                (make-overlay (point-min) (point-min) nil t t)))
   (setq-local resize-mini-windows 'grow-only
               max-mini-window-height 1.0
+              truncate-lines (< (point-max) (- (window-width) 4))
               completion-auto-help nil
               completion-show-inline-help nil)
   (use-local-map vertico-map)
