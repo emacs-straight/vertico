@@ -42,10 +42,9 @@
   :group 'convenience
   :prefix "vertico-")
 
-(defcustom vertico-count-format
-  '(7 "%s/%s ")
+(defcustom vertico-count-format (cons "%-6s " "%s/%s")
   "Format string used for the candidate count."
-  :type '(choice (const nil) (list integer string)))
+  :type '(choice (const nil) (cons string string)))
 
 (defcustom vertico-group-format
   (concat
@@ -232,7 +231,7 @@ See `resize-mini-windows' for documentation."
                               suffix
                             (propertize suffix 'face 'completions-annotations)))))
                 candidates)
-      candidates)))
+      (mapcar (lambda (cand) (list cand "" "")) candidates))))
 
 (defun vertico--move-to-front (elem list)
   "Move ELEM to front of LIST."
@@ -426,7 +425,7 @@ See `resize-mini-windows' for documentation."
      (replace-regexp-in-string "\\`[\t\n ]+\\|[\t\n ]+\\'" ""))
    max-width 0 nil (cdr vertico-multiline)))
 
-(defun vertico--format-candidate (cand prefix suffix index)
+(defun vertico--format-candidate (cand prefix suffix index _start)
   "Format CAND given PREFIX, SUFFIX and INDEX."
   (setq cand (concat prefix cand suffix "\n")
         cand (vertico--flatten-string 'invisible (vertico--flatten-string 'display cand)))
@@ -438,35 +437,45 @@ See `resize-mini-windows' for documentation."
   "Format current candidates with METADATA."
   (let* ((group-fun (completion-metadata-get metadata 'group-function))
          (group-format (and group-fun vertico-group-format (concat vertico-group-format "\n")))
-         (index (min (max 0 (- vertico--index (/ vertico-count 2) (if group-format -1 0)))
+         (start (min (max 0 (- vertico--index (/ vertico-count 2) (if group-format -1 0)))
                      (max 0 (- vertico--total vertico-count))))
          (candidates
-          (thread-last (seq-subseq vertico--candidates index
-                                   (min (+ index vertico-count) vertico--total))
+          (thread-last (seq-subseq vertico--candidates start
+                                   (min (+ start vertico-count) vertico--total))
             (funcall vertico--highlight)
             (vertico--affixate metadata)))
-         (max-width (- (window-width) 4))
-         (curr-line 0) (title) (lines))
-    (dolist (cand candidates)
-      (let ((prefix "") (suffix ""))
-        (when (consp cand)
-          (setq prefix (cadr cand) suffix (caddr cand) cand (car cand)))
-        (when-let (new-title (and group-format (funcall group-fun cand nil)))
+         (curr-line 0) (lines))
+    ;; Compute group titles
+    (let ((index start) (title))
+      (dolist (cand candidates)
+        (when-let (new-title (and group-format (funcall group-fun (car cand) nil)))
           (unless (equal title new-title)
             (push (format group-format (setq title new-title)) lines))
-          (setq cand (funcall group-fun cand 'transform)))
+          (setcar cand (funcall group-fun (car cand) 'transform)))
         (when (= index vertico--index)
           (setq curr-line (length lines)))
-        (when (string-match-p "\n" cand)
-          (setq cand (vertico--truncate-multiline cand max-width)))
-        (push (vertico--format-candidate cand prefix suffix index) lines)
+        (push (cons index cand) lines)
         (setq index (1+ index))))
-    (setq lines (nreverse lines) index (length lines))
-    (while (> index vertico-count)
-      (if (< curr-line (/ index 2))
-          (nbutlast lines)
-        (setq curr-line (1- curr-line) lines (cdr lines)))
-      (setq index (1- index)))
+    ;; Drop excess lines
+    (setq lines (nreverse lines))
+    (let ((count (length lines)))
+      (while (> count vertico-count)
+        (if (< curr-line (/ count 2))
+            (nbutlast lines)
+          (setq curr-line (1- curr-line) lines (cdr lines)))
+        (setq count (1- count))))
+    ;; Format candidates
+    (let ((max-width (- (window-width) 4))
+          (line lines) (start))
+      (while line
+        (pcase (car line)
+          (`(,index ,cand ,prefix ,suffix)
+           (setq start (or start index))
+           (when (string-match-p "\n" cand)
+             (setq cand (vertico--truncate-multiline cand max-width)))
+           (setcar line (vertico--format-candidate cand prefix suffix index start))
+           (setq index (1+ index))))
+        (pop line)))
     lines))
 
 (defun vertico--display-candidates (lines)
@@ -492,52 +501,38 @@ See `resize-mini-windows' for documentation."
 
 (defun vertico--format-count ()
   "Format the count string."
-  (when (stringp (car vertico-count-format))
-    (message "Deprecated `vertico-count-format' configuration.")
-    (setq vertico-count-format `(7 "%s/%s")))
-  (concat
-   (format (cadr vertico-count-format)
-           (cond ((>= vertico--index 0) (1+ vertico--index))
-                 ((vertico--allow-prompt-selection-p) "*")
-                 (t "!"))
-           vertico--total)
-   (propertize " " 'display
-               `(space :align-to (+ left ,(car vertico-count-format))))))
+  (format (car vertico-count-format)
+          (format (cdr vertico-count-format)
+                  (cond ((>= vertico--index 0) (1+ vertico--index))
+                        ((vertico--allow-prompt-selection-p) "*")
+                        (t "!"))
+                  vertico--total)))
 
 (defun vertico--display-count ()
   "Update count overlay `vertico--count-ov'."
   (when vertico--count-ov
     (move-overlay vertico--count-ov (point-min) (point-min))
+    ;; Set priority for compatibility with `minibuffer-depth-indicate-mode'
+    (overlay-put vertico--count-ov 'priority 1)
     (overlay-put vertico--count-ov 'before-string (vertico--format-count))))
-
-(defun vertico--tidy-shadowed-file ()
-  "Tidy shadowed file name, see `rfn-eshadow-overlay'."
-  (when (and (eq this-command #'self-insert-command)
-             (bound-and-true-p rfn-eshadow-overlay)
-             (overlay-buffer rfn-eshadow-overlay)
-             (= (point) (point-max))
-             (or (>= (- (point) (overlay-end rfn-eshadow-overlay)) 2)
-                 (eq ?/ (char-before (- (point) 2)))))
-    (delete-region (overlay-start rfn-eshadow-overlay) (overlay-end rfn-eshadow-overlay))))
 
 (defun vertico--prompt-selection ()
   "Highlight the prompt if selected."
   (let ((inhibit-modification-hooks t))
-    (vertico--add-face 'vertico-current (minibuffer-prompt-end) (point-max)
-                       (and (< vertico--index 0) (vertico--allow-prompt-selection-p)))))
+    (if (and (< vertico--index 0) (vertico--allow-prompt-selection-p))
+        (add-face-text-property (minibuffer-prompt-end) (point-max) 'vertico-current 'append)
+      (vertico--remove-face (minibuffer-prompt-end) (point-max) 'vertico-current))))
 
-(defun vertico--add-face (face beg end add &optional obj)
-  "Add FACE between BEG and END from OBJ if ADD is t, otherwise remove."
+(defun vertico--remove-face (beg end face &optional obj)
+  "Remove FACE between BEG and END from OBJ."
   (while (< beg end)
-    (let* ((val (get-text-property beg 'face obj))
-           (faces (remq face (if (listp val) val (list val))))
-           (next (next-single-property-change beg 'face obj end)))
-      (add-text-properties beg next `(face ,(if add (cons face faces) faces)) obj)
+    (let ((val (get-text-property beg 'face obj))
+          (next (next-single-property-change beg 'face obj end)))
+      (put-text-property beg next 'face (remq face (if (listp val) val (list val))) obj)
       (setq beg next))))
 
 (defun vertico--exhibit ()
   "Exhibit completion UI."
-  (vertico--tidy-shadowed-file)
   (let* ((buffer-undo-list t) ;; Overlays affect point position and undo list!
          (pt (max 0 (- (point) (minibuffer-prompt-end))))
          (content (minibuffer-contents-no-properties))
@@ -683,13 +678,13 @@ When the prefix argument is 0, the group order is reset."
 (defun vertico--candidate (&optional hl)
   "Return current candidate string with optional highlighting if HL is non-nil."
   (let ((content (minibuffer-contents)))
-    (vertico--add-face 'vertico-current 0 (length content) nil content)
+    (vertico--remove-face 0 (length content) 'vertico-current content)
     (if (>= vertico--index 0)
         (let ((cand (nth vertico--index vertico--candidates)))
           ;;; XXX Drop the completions-common-part face which is added by `completion--twq-all'.
           ;; This is a hack in Emacs and should better be fixed in Emacs itself, the corresponding
           ;; code is already marked with a FIXME. Should this be reported as a bug?
-          (vertico--add-face 'completions-common-part 0 (length cand) nil cand)
+          (vertico--remove-face 0 (length cand) 'completions-common-part cand)
           (concat (substring content 0 vertico--base)
                   (if hl (car (funcall vertico--highlight (list cand))) cand)))
       content)))
@@ -706,7 +701,10 @@ When the prefix argument is 0, the group order is reset."
               completion-auto-help nil
               completion-show-inline-help nil)
   (use-local-map vertico-map)
-  (add-hook 'post-command-hook #'vertico--exhibit -99 'local))
+  ;; Use -90 to ensure that the exhibit hook runs early such that the
+  ;; candidates are available for Consult preview. It works, but besides
+  ;; that I'dont have a specific reason for this particular value.
+  (add-hook 'post-command-hook #'vertico--exhibit -90 'local))
 
 (defun vertico--advice (orig &rest args)
   "Advice for ORIG completion function, receiving ARGS."

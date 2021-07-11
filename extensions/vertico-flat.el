@@ -32,36 +32,58 @@
 
 (require 'vertico)
 
-(defvar vertico-flat--group-format nil)
+(defcustom vertico-flat-format
+  '(:left      #("{" 0 1 (face minibuffer-prompt))
+    :separator #(" | " 0 3 (face minibuffer-prompt))
+    :right     #("}" 0 1 (face minibuffer-prompt))
+    :ellipsis  #("…" 0 1 (face minibuffer-prompt))
+    :no-match  "[No match]")
+  "Formatting strings."
+  :type 'plist
+  :group 'vertico)
 
 (defun vertico-flat--display (candidates)
   "Display CANDIDATES horizontally."
   (move-overlay vertico--candidates-ov (point-max) (point-max))
-  (when (>= vertico--index 0)
-    (setq candidates
-          (seq-drop-while (lambda (cand)
-                            (let ((face (get-text-property 0 'face cand)))
-                              (not (if (listp face)
-                                       (memq 'vertico-current face)
-                                     (eq 'vertico-current face)))))
-                          candidates)))
-  (setq candidates
-        (seq-map-indexed (lambda (cand idx)
-                           (string-trim
-                            (replace-regexp-in-string
-                             "[ \t]+" (if (= idx 0) #(" " 0 1 (face vertico-current)) " ")
-                             (substring cand 0 -1))))
-                         candidates))
   (overlay-put
    vertico--candidates-ov 'after-string
    (concat #(" " 0 1 (cursor t))
            (if candidates
-               (concat "{" (string-join candidates " | ") "}")
-             "[No match]"))))
+               (concat (plist-get vertico-flat-format :left)
+                       (string-join candidates (plist-get vertico-flat-format :separator))
+                       (plist-get vertico-flat-format :right))
+             (plist-get vertico-flat-format :no-match)))))
 
-(defun vertico-flat--affixate (_ candidates)
-  "Return CANDIDATES without adding annotations."
-  candidates)
+(defun vertico-flat--format-candidates (_metadata)
+  "Format candidates."
+  (let* ((index (max 0 vertico--index))
+         (count vertico-count)
+         (candidates (nthcdr vertico--index vertico--candidates))
+         (width (- (window-width) 4
+                   (length (plist-get vertico-flat-format :left))
+                   (length (plist-get vertico-flat-format :separator))
+                   (length (plist-get vertico-flat-format :right))
+                   (length (plist-get vertico-flat-format :ellipsis))
+                   (car (posn-col-row (posn-at-point (1- (point-max)))))))
+         (result))
+    (while (and candidates (> width 0) (> count 0))
+      (let ((cand (car candidates)))
+        (setq cand (car (funcall vertico--highlight (list cand))))
+        (when (string-match-p "\n" cand)
+          (setq cand (vertico--truncate-multiline cand width)))
+        (setq cand (string-trim
+                    (replace-regexp-in-string
+                     "[ \t]+" (if (= index vertico--index) #(" " 0 1 (face vertico-current)) " ")
+                     (vertico--format-candidate cand "" "" index vertico--index))))
+        (setq index (1+ index)
+              count (1- count)
+              width (- width (string-width cand) (length (plist-get vertico-flat-format :separator))))
+        (when (or (not result) (> width 0))
+          (push cand result))
+        (pop candidates)))
+    (unless (or (= vertico--total 0) (= index vertico--total))
+      (push (plist-get vertico-flat-format :ellipsis) result))
+    (nreverse result)))
 
 ;;;###autoload
 (define-minor-mode vertico-flat-mode
@@ -69,13 +91,10 @@
   :global t
   (cond
    (vertico-flat-mode
-    (setq vertico-flat--group-format vertico-group-format
-          vertico-group-format nil)
-    (advice-add #'vertico--affixate :override #'vertico-flat--affixate)
+    (advice-add #'vertico--format-candidates :override #'vertico-flat--format-candidates)
     (advice-add #'vertico--display-candidates :override #'vertico-flat--display))
    (t
-    (setq vertico-group-format vertico-flat--group-format)
-    (advice-remove #'vertico--affixate #'vertico-flat--affixate)
+    (advice-remove #'vertico--format-candidates #'vertico-flat--format-candidates)
     (advice-remove #'vertico--display-candidates #'vertico-flat--display))))
 
 (provide 'vertico-flat)

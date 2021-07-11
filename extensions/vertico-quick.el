@@ -35,14 +35,22 @@
 (require 'vertico)
 
 (defface vertico-quick1
-  '((t :weight bold :background "#d5baff" :foreground "black"))
-  "First quick key."
+  '((((class color) (min-colors 88) (background dark))
+     :background "#7042a2" :weight bold :foreground "white")
+    (((class color) (min-colors 88) (background light))
+     :weight bold :background "#d5baff" :foreground "black")
+    (t :background "magenta" :foreground "white"))
+  "Face used for the first quick key."
   :group 'vertico
   :group 'faces)
 
 (defface vertico-quick2
-  '((t :weight bold :background "#8ae4f2" :foreground "black"))
-  "Second quick key."
+  '((((class color) (min-colors 88) (background dark))
+     :background "#004065" :weight bold :foreground "white")
+    (((class color) (min-colors 88) (background light))
+     :weight bold :background "#8ae4f2" :foreground "black")
+    (t :background "blue" :foreground "white"))
+  "Face used for the second quick key."
   :group 'vertico
   :group 'faces)
 
@@ -56,62 +64,57 @@
   :type 'string
   :group 'vertico)
 
-(defvar-local vertico-quick--index 0)
-(defvar-local vertico-quick--list 0)
+(defvar-local vertico-quick--list nil)
 (defvar-local vertico-quick--first nil)
 
-(defun vertico-quick--format-candidate (orig cand prefix suffix index)
+(defun vertico-quick--format-candidate (orig cand prefix suffix index start)
   "Format candidate, see `vertico--format-candidate' for arguments."
   (let* ((fst (length vertico-quick1))
          (snd (length vertico-quick2))
          (len (+ fst snd))
-         (idx vertico-quick--index))
-    (setq vertico-quick--index (1+ idx))
-    (funcall orig cand
-             (concat
-              (if (>= idx fst)
-                  (let ((first (elt vertico-quick2 (mod (/ (- idx fst) len) snd)))
-                        (second (elt (concat vertico-quick1 vertico-quick2) (mod (- idx fst) len))))
-                    (push (cons (+ (lsh first 16) second) index) vertico-quick--list)
-                    (cond
-                     ((eq first vertico-quick--first)
-                      (concat " " (propertize (char-to-string second) 'face 'vertico-quick1)))
-                     (vertico-quick--first
-                      "   ")
-                     (t
-                      (concat (propertize (char-to-string first) 'face 'vertico-quick1)
-                              (propertize (char-to-string second) 'face 'vertico-quick2)))))
-                (let ((first (elt vertico-quick1 (mod idx fst))))
-                  (push (cons first index) vertico-quick--list)
-                  (if vertico-quick--first
-                      "  "
-                    (concat (propertize (char-to-string first) 'face 'vertico-quick1) " "))))
-              (make-string (max 1 (- (length prefix) 2)) ?\s))
-             suffix
-             index)))
+         (idx (- index start))
+         (keys (if (>= idx fst)
+                   (let ((first (elt vertico-quick2 (mod (/ (- idx fst) len) snd)))
+                         (second (elt (concat vertico-quick1 vertico-quick2) (mod (- idx fst) len))))
+                     (push (cons first t) vertico-quick--list)
+                     (push (cons (+ first (lsh second 16)) index) vertico-quick--list)
+                     (cond
+                      ((eq first vertico-quick--first)
+                       (concat " " (propertize (char-to-string second) 'face 'vertico-quick1)))
+                      (vertico-quick--first "  ")
+                      (t
+                       (concat (propertize (char-to-string first) 'face 'vertico-quick1)
+                               (propertize (char-to-string second) 'face 'vertico-quick2)))))
+                 (let ((first (elt vertico-quick1 (mod idx fst))))
+                   (push (cons first index) vertico-quick--list)
+                   (if vertico-quick--first
+                       "  "
+                     (concat (propertize (char-to-string first) 'face 'vertico-quick1) " "))))))
+    (if (bound-and-true-p vertico-flat-mode)
+        (setq keys (replace-regexp-in-string " " "" keys)
+              cand (string-trim cand)
+              cand (substring cand (min (length cand) (length keys))))
+      (setq keys (concat keys (make-string (max 1 (- (length prefix) 2)) ?\s))))
+    (funcall orig cand keys suffix index start)))
 
 ;;;###autoload
 (defun vertico-quick-jump ()
   "Jump to candidate using quick keys."
   (interactive)
-  (cl-letf* ((vertico-quick--index 0)
-             (vertico-quick--list nil)
-             (key nil)
-             (orig-format (symbol-function #'vertico--format-candidate))
-             ((symbol-function #'vertico--format-candidate)
-              (apply-partially #'vertico-quick--format-candidate orig-format)))
+  (cl-letf ((vertico-quick--list nil) (key nil)
+            ((symbol-function #'vertico--format-candidate)
+             (apply-partially #'vertico-quick--format-candidate
+                              (symbol-function #'vertico--format-candidate))))
     (vertico--exhibit)
     (setq key (read-key))
-    (when (seq-position vertico-quick2 key)
+    (when (and (alist-get key vertico-quick--list)
+               (seq-position vertico-quick2 key))
       (let ((vertico-quick--first key)
-            (vertico-quick--index 0)
             (vertico-quick--list))
         (vertico--exhibit))
-      (setq key (+ (lsh key 16) (read-key))))
-    (if-let (idx (alist-get key vertico-quick--list))
-        (setq vertico--index idx)
-      (message "Invalid key")
-      nil)))
+      (setq key (+ key (lsh (read-key) 16))))
+    (when-let (idx (alist-get key vertico-quick--list))
+      (setq vertico--index idx))))
 
 ;;;###autoload
 (defun vertico-quick-exit ()

@@ -57,6 +57,16 @@
       ;; (setq vertico-cycle t)
       )
 
+    ;; Configure directory extension
+    (use-package vertico-directory
+      ;; More convenient directory navigation commands
+      :bind (:map vertico-map
+                  ("RET" . vertico-directory-enter)
+                  ("DEL" . vertico-directory-delete-char)
+                  ("M-DEL" . vertico-directory-delete-word))
+      ;; Tidy shadowed file names
+      :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+
     ;; Use the `orderless' completion style.
     ;; Enable `partial-completion' for files to allow path expansion.
     ;; You may prefer to use `initials' instead of `partial-completion'.
@@ -156,6 +166,8 @@
   - [[https://github.com/minad/vertico/blob/main/extensions/vertico-buffer.el][vertico-buffer.el]]: Enable =vertico-buffer-mode= to display Vertico in a separate buffer
   - [[https://github.com/minad/vertico/blob/main/extensions/vertico-directory.el][vertico-directory.el]]: Commands for Ido-like directory navigation
   - [[https://github.com/minad/vertico/blob/main/extensions/vertico-flat.el][vertico-flat.el]]: Enable =vertico-flat-mode= to enable a flat, horizontal display
+  - [[https://github.com/minad/vertico/blob/main/extensions/vertico-indexed.el][vertico-indexed.el]]: Select indexed candidates with prefix arguments
+  - [[https://github.com/minad/vertico/blob/main/extensions/vertico-mouse.el][vertico-mouse.el]]: Mouse support for scrolling and candidate selection
   - [[https://github.com/minad/vertico/blob/main/extensions/vertico-quick.el][vertico-quick.el]]: Select using Avy-style quick keys
   - [[https://github.com/minad/vertico/blob/main/extensions/vertico-repeat.el][vertico-repeat.el]]: The command =vertico-repeat= repeats the last completion session
   - [[https://github.com/minad/vertico/blob/main/extensions/vertico-reverse.el][vertico-reverse.el]]: Enable =vertico-reverse-mode= to reverse the display
@@ -254,8 +266,10 @@
      (advice-add #'vertico--setup :before #'disable-selection)
    #+end_src
 
-   In order to fix the issues properly, ~org-set-tags-command~ should be
-   implemented using ~completing-read-multiple~ as discussed on the [[https://lists.gnu.org/archive/html/emacs-orgmode/2020-07/msg00222.html][mailing list]].
+   *Update:* ~org-set-tags-command~ is changed to use ~completing-read-multiple~ in
+   the current Org development version (9.5) as has been [[https://lists.gnu.org/archive/html/emacs-orgmode/2020-07/msg00222.html][proposed before]]. This
+   fix improves the compatibilty with many completion UIs, including Vertico.
+   See the recent [[https://lists.gnu.org/archive/html/emacs-orgmode/2021-07/msg00287.html][mailing list discussion]].
 
 ** ~org-refile~
 
