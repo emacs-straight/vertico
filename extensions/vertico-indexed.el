@@ -46,15 +46,17 @@
   "Format candidate, see `vertico--format-candidate' for arguments."
   (setq vertico-indexed--min start vertico-indexed--max index)
   (funcall orig cand
-           (concat (propertize (format "%-2s " (- index start))
+           (concat (propertize (format
+                                (format "%%%ds " (if (> vertico-count 10) 2 1))
+                                (- index start))
                                'face 'vertico-indexed)
                    prefix)
            suffix index start))
 
-(defun vertico-indexed--handle-prefix (orig)
+(defun vertico-indexed--handle-prefix (orig &optional _)
   "Handle prefix argument before calling ORIG function."
   (let ((vertico--index (if current-prefix-arg
-                            (+ vertico-indexed--start (prefix-numeric-value current-prefix-arg))
+                            (+ vertico-indexed--min (prefix-numeric-value current-prefix-arg))
                           vertico--index)))
     (if (or (< vertico--index vertico-indexed--min)
             (> vertico--index vertico-indexed--max))
