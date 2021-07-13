@@ -73,11 +73,7 @@ See `resize-mini-windows' for documentation."
   "Replacements for multiline strings."
   :type '(cons string string))
 
-(defcustom vertico-sort-override-function nil
-  "Sorting function override, which takes precedence over the `display-sort-function'."
-  :type '(choice (const nil) function))
-
-(defcustom vertico-sort-function #'vertico-sort-recency-length-alpha
+(defcustom vertico-sort-function #'vertico-sort-history-length-alpha
   "Default sorting function, which is used if no `display-sort-function' is specified."
   :type '(choice (const nil) function))
 
@@ -200,18 +196,17 @@ See `resize-mini-windows' for documentation."
 The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
   `(defun ,(intern (mapconcat #'symbol-name `(vertico sort ,@by) "-")) (candidates)
      ,(concat "Sort candidates by " (mapconcat #'symbol-name by ", ") ".")
-     (let* ((buckets (make-vector ,bsize nil))
-            (recent-cands))
-       ,@(if (eq (car by) 'recency)
+     (let* ((buckets (make-vector ,bsize nil)) (hcands))
+       ,@(if (eq (car by) 'history)
              `((dolist (% candidates)
-                 ;; Find recent-cands or fill buckets
+                 ;; Find recent candidates or fill buckets
                  (if-let (idx (gethash % vertico--history-hash))
-                     (push (cons idx %) recent-cands)
+                     (push (cons idx %) hcands)
                    (let ((idx (min ,(1- bsize) ,bindex)))
                      (aset buckets idx (cons % (aref buckets idx))))))
                ;; Sort recent candidates
-               (setq recent-cands (sort recent-cands #'car-less-than-car))
-               (let ((cand recent-cands))
+               (setq hcands (sort hcands #'car-less-than-car))
+               (let ((cand hcands))
                  (while cand
                    (setcar cand (cdar cand))
                    (pop cand))))
@@ -219,15 +214,15 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
                ;; Fill buckets
                (let ((idx (min ,(1- bsize) ,bindex)))
                  (aset buckets idx (cons % (aref buckets idx)))))))
-       (nconc recent-cands
+       (nconc hcands
               ;; Sort bucket candidates
               (mapcan (lambda (bucket) (sort bucket #',bpred))
                       (nbutlast (append buckets nil)))
               ;; Last bucket needs special treatment
               (sort (aref buckets ,(1- bsize)) #',pred)))))
 
-(vertico--define-sort (recency length alpha) 32 (length %) string< vertico--length-string<)
-(vertico--define-sort (recency alpha) 32 (if (eq % "") 0 (/ (aref % 0) 4)) string< string<)
+(vertico--define-sort (history length alpha) 32 (length %) string< vertico--length-string<)
+(vertico--define-sort (history alpha) 32 (if (eq % "") 0 (/ (aref % 0) 4)) string< string<)
 (vertico--define-sort (length alpha) 32 (length %) string< vertico--length-string<)
 (vertico--define-sort (alpha) 32 (if (eq % "") 0 (/ (aref % 0) 4)) string< string<)
 
@@ -294,6 +289,10 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
           (cons (apply #'completion-all-completions args) hl))
       (cons (apply #'completion-all-completions args) hl))))
 
+(defun vertico--sort-function (metadata)
+  "Return the sorting function given the completion METADATA."
+  (or (completion-metadata-get metadata 'display-sort-function) vertico-sort-function))
+
 (defun vertico--recompute-candidates (pt content bounds metadata)
   "Recompute candidates given PT, CONTENT, BOUNDS and METADATA."
   (pcase-let* ((field (substring content (car bounds) (+ pt (cdr bounds))))
@@ -305,6 +304,7 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
                                                         pt metadata))
                (base (or (when-let (z (last all)) (prog1 (cdr z) (setcdr z nil))) 0))
                (def (or (car-safe minibuffer-default) minibuffer-default))
+               (sort (vertico--sort-function metadata))
                (groups))
     ;; Filter the ignored file extensions. We cannot use modified predicate for this filtering,
     ;; since this breaks the special casing in the `completion-file-name-table' for `file-exists-p'
@@ -315,12 +315,9 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
                                  (concat "\\|" (regexp-opt completion-ignored-extensions) "\\'")))))
         (setq all (cl-delete-if (lambda (x) (string-match-p ignore x)) all))))
     ;; Sort using the `display-sort-function' or the Vertico sort functions
-    (when-let (sort (or vertico-sort-override-function
-                        (completion-metadata-get metadata 'display-sort-function)
-                        vertico-sort-function))
-      (unless (eq sort #'identity)
-        (vertico--update-history-hash (substring content 0 base))
-        (setq all (funcall sort all))))
+    (unless (memq sort '(nil identity))
+      (vertico--update-history-hash (substring content 0 base))
+      (setq all (funcall sort all)))
     ;; Move special candidates: "field" appears at the top, before "field/", before default value
     (when (stringp def)
       (setq all (vertico--move-to-front def all)))
@@ -696,7 +693,6 @@ When the prefix argument is 0, the group order is reset."
 (defun vertico--candidate (&optional hl)
   "Return current candidate string with optional highlighting if HL is non-nil."
   (let ((content (minibuffer-contents)))
-    (vertico--remove-face 0 (length content) 'vertico-current content)
     (if (>= vertico--index 0)
         (let ((cand (nth vertico--index vertico--candidates)))
           ;;; XXX Drop the completions-common-part face which is added by `completion--twq-all'.
@@ -705,6 +701,8 @@ When the prefix argument is 0, the group order is reset."
           (vertico--remove-face 0 (length cand) 'completions-common-part cand)
           (concat (substring content 0 vertico--base)
                   (if hl (car (funcall vertico--highlight-function (list cand))) cand)))
+      ;; Remove prompt face
+      (vertico--remove-face 0 (length content) 'vertico-current content)
       content)))
 
 (defun vertico--setup ()
