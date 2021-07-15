@@ -34,8 +34,9 @@
 ;;; Code:
 
 (require 'seq)
-(require 'cl-lib)
-(eval-when-compile (require 'subr-x))
+(eval-when-compile
+  (require 'cl-lib)
+  (require 'subr-x))
 
 (defgroup vertico nil
   "VERTical Interactive COmpletion."
@@ -191,31 +192,33 @@ See `resize-mini-windows' for documentation."
       (and (= (length x) (length y))
            (string< x y))))
 
+(defun vertico--sort-decorated (list)
+  "Sort decorated LIST and remove decorations."
+  (setq list (sort list #'car-less-than-car))
+  (let ((item list))
+    (while item
+      (setcar item (cdar item))
+      (pop item)))
+  list)
+
 (defmacro vertico--define-sort (by bsize bindex bpred pred)
   "Generate optimized sorting function.
 The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
   `(defun ,(intern (mapconcat #'symbol-name `(vertico sort ,@by) "-")) (candidates)
      ,(concat "Sort candidates by " (mapconcat #'symbol-name by ", ") ".")
-     (let* ((buckets (make-vector ,bsize nil)) (hcands))
-       ,@(if (eq (car by) 'history)
-             `((dolist (% candidates)
-                 ;; Find recent candidates or fill buckets
-                 (if-let (idx (gethash % vertico--history-hash))
-                     (push (cons idx %) hcands)
-                   (let ((idx (min ,(1- bsize) ,bindex)))
-                     (aset buckets idx (cons % (aref buckets idx))))))
-               ;; Sort recent candidates
-               (setq hcands (sort hcands #'car-less-than-car))
-               (let ((cand hcands))
-                 (while cand
-                   (setcar cand (cdar cand))
-                   (pop cand))))
-           `((dolist (% candidates)
-               ;; Fill buckets
-               (let ((idx (min ,(1- bsize) ,bindex)))
-                 (aset buckets idx (cons % (aref buckets idx)))))))
-       (nconc hcands
-              ;; Sort bucket candidates
+     (let* ((buckets (make-vector ,bsize nil))
+            ,@(and (eq (car by) 'history) '((hcands))))
+       (dolist (% candidates)
+         ,(if (eq (car by) 'history)
+              ;; Find recent candidates or fill buckets
+              `(if-let (idx (gethash % vertico--history-hash))
+                   (push (cons idx %) hcands)
+                 (let ((idx (min ,(1- bsize) ,bindex)))
+                   (aset buckets idx (cons % (aref buckets idx)))))
+             ;; Fill buckets
+            `(let ((idx (min ,(1- bsize) ,bindex)))
+               (aset buckets idx (cons % (aref buckets idx))))))
+       (nconc ,@(and (eq (car by) 'history) '((vertico--sort-decorated hcands)))
               (mapcan (lambda (bucket) (sort bucket #',bpred))
                       (nbutlast (append buckets nil)))
               ;; Last bucket needs special treatment
@@ -293,6 +296,13 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
   "Return the sorting function given the completion METADATA."
   (or (completion-metadata-get metadata 'display-sort-function) vertico-sort-function))
 
+(defun vertico--filter-files (files)
+  "Filter FILES by `completion-ignored-extensions'."
+  (let ((re (concat "\\(?:\\(?:\\`\\|/\\)\\.\\.?/\\|"
+                    (regexp-opt completion-ignored-extensions)
+                    "\\)\\'")))
+    (or (seq-remove (lambda (x) (string-match-p re x)) files) files)))
+
 (defun vertico--recompute-candidates (pt content bounds metadata)
   "Recompute candidates given PT, CONTENT, BOUNDS and METADATA."
   (pcase-let* ((field (substring content (car bounds) (+ pt (cdr bounds))))
@@ -310,10 +320,7 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
     ;; since this breaks the special casing in the `completion-file-name-table' for `file-exists-p'
     ;; and `file-directory-p'.
     (when completing-file
-      (let ((ignore (concat "\\(?:\\`\\|/\\)\\.?\\./\\'"
-                            (and completion-ignored-extensions
-                                 (concat "\\|" (regexp-opt completion-ignored-extensions) "\\'")))))
-        (setq all (cl-delete-if (lambda (x) (string-match-p ignore x)) all))))
+      (setq all (vertico--filter-files all)))
     ;; Sort using the `display-sort-function' or the Vertico sort functions
     (unless (memq sort '(nil identity))
       (vertico--update-history-hash (substring content 0 base))
@@ -736,6 +743,16 @@ When the prefix argument is 0, the group order is reset."
         (advice-add #'completing-read-multiple :around #'vertico--advice))
     (advice-remove #'completing-read-default #'vertico--advice)
     (advice-remove #'completing-read-multiple #'vertico--advice)))
+
+;; Emacs 28: Do not show Vertico commands in M-X
+(dolist (sym '(vertico-next vertico-next-group vertico-previous vertico-previous-group
+               vertico-scroll-down vertico-scroll-up vertico-exit vertico-insert
+               vertico-exit-input vertico-save vertico-first vertico-last))
+  (put sym 'completion-predicate #'vertico--command-p))
+
+(defun vertico--command-p (_sym buffer)
+  "Return non-nil if Vertico is active in BUFFER."
+  (buffer-local-value 'vertico--input buffer))
 
 (provide 'vertico)
 ;;; vertico.el ends here
