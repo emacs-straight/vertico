@@ -41,6 +41,7 @@
 (defgroup vertico nil
   "VERTical Interactive COmpletion."
   :group 'convenience
+  :group 'minibuffer
   :prefix "vertico-")
 
 (defcustom vertico-count-format (cons "%-6s " "%s/%s")
@@ -305,6 +306,9 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
 
 (defun vertico--recompute-candidates (pt content bounds metadata)
   "Recompute candidates given PT, CONTENT, BOUNDS and METADATA."
+  ;; Redisplay the minibuffer such that the input becomes immediately
+  ;; visible before the expensive candidate recomputation is performed (Issue #89).
+  (redisplay)
   (pcase-let* ((field (substring content (car bounds) (+ pt (cdr bounds))))
                ;; `minibuffer-completing-file-name' has been obsoleted by the completion category
                (completing-file (eq 'file (completion-metadata-get metadata 'category)))
@@ -474,10 +478,16 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
               (funcall vertico--highlight-function)
               (vertico--affixate metadata))))
       (dolist (cand candidates)
-        (when-let (new-title (and group-format (funcall group-fun (car cand) nil)))
-          (unless (equal title new-title)
-            (push (format group-format (setq title new-title)) lines))
-          (setcar cand (funcall group-fun (car cand) 'transform)))
+        (let ((str (car cand)))
+          (when-let (new-title (and group-format (funcall group-fun str nil)))
+            (unless (equal title new-title)
+              (setq title new-title)
+              ;; Restore group title highlighting for prefix titles
+              (when (string-prefix-p title str)
+                (setq title (substring str 0 (length title)))
+                (vertico--remove-face 0 (length title) 'completions-first-difference title))
+              (push (format group-format title) lines))
+            (setcar cand (funcall group-fun str 'transform))))
         (when (= index vertico--index)
           (setq curr-line (length lines)))
         (push (cons index cand) lines)
@@ -575,7 +585,7 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
                                                 minibuffer-completion-predicate
                                                 after)
                        (t (cons 0 (length after)))))))
-    (unless (equal vertico--input (cons content pt))
+    (unless (or (input-pending-p) (equal vertico--input (cons content pt)))
       (vertico--update-candidates pt content bounds metadata))
     (vertico--prompt-selection)
     (vertico--display-count)
