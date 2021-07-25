@@ -26,10 +26,10 @@
 
 ;;; Commentary:
 
-;; Vertico provides a performant and minimalistic vertical completion
-;; UI, which is based on the default completion system. By reusing the
-;; built-in facilities, Vertico achieves full compatibility with
-;; built-in Emacs completion commands and completion tables.
+;; Vertico provides a performant and minimalistic vertical completion UI
+;; based on the default completion system. By reusing the built-in
+;; facilities, Vertico achieves full compatibility with built-in Emacs
+;; completion commands and completion tables.
 
 ;;; Code:
 
@@ -314,7 +314,8 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
   "Recompute candidates given PT, CONTENT, BOUNDS and METADATA."
   ;; Redisplay the minibuffer such that the input becomes immediately
   ;; visible before the expensive candidate recomputation is performed (Issue #89).
-  (redisplay)
+  ;; Do not redisplay during initialization, since this leads to flicker.
+  (when (consp vertico--input) (redisplay))
   (pcase-let* ((field (substring content (car bounds) (+ pt (cdr bounds))))
                ;; `minibuffer-completing-file-name' has been obsoleted by the completion category
                (completing-file (eq 'file (completion-metadata-get metadata 'category)))
