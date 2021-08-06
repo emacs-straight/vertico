@@ -172,6 +172,10 @@
   :custom_id: extensions
   :end:
 
+  *NOTE*: The extensions currently require manual installation, e.g., via
+  ~package-install-file~. Please ensure that you are using the /newest/ Vertico
+  commit when using extensions.
+
   We maintain small extension packages to Vertico in this repository in the
   subdirectory [[https://github.com/minad/vertico/tree/main/extensions][extensions/]]. The extensions can be installed additionally to
   Vertico. Currently these extensions are available:
@@ -231,6 +235,8 @@
   6. Install Consult if you want additional featureful completion commands,
      e.g, the buffer switcher ~consult-buffer~ with preview or the line-based
      search ~consult-line~.
+  7. Install Embark-Consult and Wgrep for export from =consult-line= to =occur-mode=
+     buffers and from =consult-grep= to editable =grep-mode= buffers.
 
   You don't have to use all of these components. Use only the ones you like and
   the ones which fit well into your setup. The steps 1. to 4. introduce no new
