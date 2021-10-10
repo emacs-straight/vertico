@@ -69,9 +69,7 @@
   "Save Vertico status for `vertico-repeat'."
   (when vertico--input
     (unless vertico-repeat--restore
-      (setq vertico-repeat--command (if (boundp 'current-minibuffer-command)
-                                        current-minibuffer-command
-                                      this-command)
+      (setq vertico-repeat--command this-command
             vertico-repeat--input ""
             vertico-repeat--candidate nil
             vertico-repeat--restore nil))
