@@ -37,18 +37,19 @@
   "Face used for mouse highlighting."
   :group 'vertico-faces)
 
-(defun vertico--mouse-candidate-map (index)
-  "Return keymap for candidate with INDEX."
-  (let ((map (make-sparse-keymap)))
-    (define-key map [mouse-1] (lambda ()
-                                (interactive)
-                                (let ((vertico--index index))
-                                  (vertico-exit))))
-    (define-key map [mouse-3] (lambda ()
-                                (interactive)
-                                (let ((vertico--index index))
-                                  (vertico-insert))))
-    map))
+(defun vertico-mouse-exit (event)
+  "Exit after mouse EVENT."
+  (interactive "@e")
+  (when-let* ((obj (posn-string (event-start event)))
+              (vertico--index (get-text-property (cdr obj) 'vertico--mouse-index (car obj))))
+    (vertico-exit)))
+
+(defun vertico-mouse-insert (event)
+  "Insert after mouse EVENT."
+  (interactive "@e")
+  (when-let* ((obj (posn-string (event-start event)))
+              (vertico--index (get-text-property (cdr obj) 'vertico--mouse-index (car obj))))
+    (vertico-insert)))
 
 (defun vertico-mouse--format-candidate (orig cand prefix suffix index start)
   "Format candidate, see `vertico--format-candidate' for arguments."
@@ -60,7 +61,7 @@
     (when (= index vertico--index)
       (add-face-text-property 0 (length cand) 'vertico-current 'append cand)))
   (add-text-properties 0 (1- (length cand))
-                       `(mouse-face vertico-mouse keymap ,(vertico--mouse-candidate-map index))
+                       `(mouse-face vertico-mouse vertico--mouse-index ,index)
                        cand)
   cand)
 
@@ -83,9 +84,13 @@
   :global t :group 'vertico
   (cond
    (vertico-mouse-mode
+    (define-key vertico-map [mouse-1] #'vertico-mouse-exit)
+    (define-key vertico-map [mouse-3] #'vertico-mouse-insert)
     (advice-add #'vertico--format-candidate :around #'vertico-mouse--format-candidate)
     (advice-add #'vertico--setup :after #'vertico-mouse--setup))
    (t
+    (assq-delete-all 'mouse-1 vertico-map)
+    (assq-delete-all 'mouse-3 vertico-map)
     (advice-remove #'vertico--format-candidate #'vertico-mouse--format-candidate)
     (advice-remove #'vertico--setup #'vertico-reverse--setup))))
 
