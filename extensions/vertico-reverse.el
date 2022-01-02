@@ -6,7 +6,7 @@
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (vertico "0.17"))
+;; Package-Requires: ((emacs "27.1") (vertico "0.18"))
 ;; Homepage: https://github.com/minad/vertico
 
 ;; This file is part of GNU Emacs.
@@ -33,7 +33,7 @@
 (require 'vertico)
 
 (defvar vertico-reverse-map
-  (let ((map (make-composed-keymap nil vertico-map)))
+  (let ((map (make-sparse-keymap)))
     (define-key map [remap beginning-of-buffer] #'vertico-last)
     (define-key map [remap minibuffer-beginning-of-buffer] #'vertico-last)
     (define-key map [remap end-of-buffer] #'vertico-first)
@@ -46,7 +46,7 @@
     (define-key map [remap backward-paragraph] #'vertico-next-group)
     (define-key map [remap forward-paragraph] #'vertico-previous-group)
     map)
-  "Vertico keymap adapted to reversed candidate order.")
+  "Additional keymap activated in reverse mode.")
 
 (defun vertico-reverse--display (lines)
   "Display LINES in reverse."
@@ -59,21 +59,19 @@
     (overlay-put vertico--candidates-ov 'before-string string))
   (vertico--resize-window (length lines)))
 
-(defun vertico-reverse--setup ()
-  "Setup reverse keymap."
-  (use-local-map vertico-reverse-map))
-
 ;;;###autoload
 (define-minor-mode vertico-reverse-mode
   "Reverse the Vertico display."
   :global t :group 'vertico
   (cond
    (vertico-reverse-mode
-    (advice-add #'vertico--display-candidates :override #'vertico-reverse--display)
-    (advice-add #'vertico--setup :after #'vertico-reverse--setup))
+    (unless (eq (cadr vertico-map) vertico-reverse-map)
+      (setcdr vertico-map (cons vertico-reverse-map (cdr vertico-map))))
+    (advice-add #'vertico--display-candidates :override #'vertico-reverse--display))
    (t
-    (advice-remove #'vertico--display-candidates #'vertico-reverse--display)
-    (advice-remove #'vertico--setup #'vertico-reverse--setup))))
+    (when (eq (cadr vertico-map) vertico-reverse-map)
+      (setcdr vertico-map (cddr vertico-map)))
+    (advice-remove #'vertico--display-candidates #'vertico-reverse--display))))
 
 (provide 'vertico-reverse)
 ;;; vertico-reverse.el ends here

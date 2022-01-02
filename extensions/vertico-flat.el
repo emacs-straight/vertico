@@ -6,7 +6,7 @@
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (vertico "0.17"))
+;; Package-Requires: ((emacs "27.1") (vertico "0.18"))
 ;; Homepage: https://github.com/minad/vertico
 
 ;; This file is part of GNU Emacs.
@@ -28,8 +28,14 @@
 
 ;; This package is a Vertico extension providing a horizontal display.
 ;;
-;; The mode can be bound to a key to toggle to the horizontal display.
+;; The mode can be enabled pre command or completion category via
+;; `vertico-multiform-mode'. Alternatively the mode can be bound to a
+;; key to toggle to the horizontal display:
+;;
 ;; (define-key vertico-map "\M-F" #'vertico-flat-mode)
+;;
+;; `vertico-flat-mode' can be made to look like `ido-mode' by setting
+;; `vertico-cycle' to `t'.
 
 ;;; Code:
 
@@ -49,6 +55,13 @@
   "Formatting strings."
   :type 'plist
   :group 'vertico)
+
+(defvar vertico-flat-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [remap left-char] #'vertico-previous)
+    (define-key map [remap right-char] #'vertico-next)
+    map)
+  "Additional keymap activated in flat mode.")
 
 (defun vertico-flat--display (candidates)
   "Display CANDIDATES horizontally."
@@ -112,9 +125,13 @@
     ;; Shrink current minibuffer window
     (when-let (win (active-minibuffer-window))
       (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise))
+    (unless (eq (cadr vertico-map) vertico-flat-map)
+      (setcdr vertico-map (cons vertico-flat-map (cdr vertico-map))))
     (advice-add #'vertico--arrange-candidates :override #'vertico-flat--arrange-candidates)
     (advice-add #'vertico--display-candidates :override #'vertico-flat--display))
    (t
+    (when (eq (cadr vertico-map) vertico-flat-map)
+      (setcdr vertico-map (cddr vertico-map)))
     (advice-remove #'vertico--arrange-candidates #'vertico-flat--arrange-candidates)
     (advice-remove #'vertico--display-candidates #'vertico-flat--display))))
 

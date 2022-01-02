@@ -6,7 +6,7 @@
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (vertico "0.17"))
+;; Package-Requires: ((emacs "27.1") (vertico "0.18"))
 ;; Homepage: https://github.com/minad/vertico
 
 ;; This file is part of GNU Emacs.
@@ -47,31 +47,33 @@
 ;;; Code:
 
 (require 'vertico)
+(eval-when-compile
+  (require 'cl-lib))
 
 (defcustom vertico-multiform-command-modes nil
-  "Alist of commands and list of modes to turn on per command.
+  "Alist of commands/regexps and list of modes to turn on per command.
 Takes precedence over `vertico-multiform-category-modes'."
   :group 'vertico
-  :type '(alist :key-type symbol :value-type (repeat symbol)))
+  :type '(alist :key-type (choice symbol regexp) :value-type (repeat symbol)))
 
 (defcustom vertico-multiform-category-modes nil
-  "Alist of categories and list of modes to turn on per category.
+  "Alist of categories/regexps and list of modes to turn on per category.
 Has lower precedence than `vertico-multiform-command-modes'."
   :group 'vertico
-  :type '(alist :key-type symbol :value-type (repeat symbol)))
+  :type '(alist :key-type (choice symbol regexp) :value-type (repeat symbol)))
 
 (defcustom vertico-multiform-command-settings nil
-  "Alist of commands and alist of variables to set per command.
+  "Alist of commands/regexps and alist of variables to set per command.
 Takes precedence over `vertico-multiform-category-settings'."
   :group 'vertico
-  :type '(alist :key-type symbol
+  :type '(alist :key-type (choice symbol regexp)
                 :value-type (alist :key-type symbol :value-type sexp)))
 
 (defcustom vertico-multiform-category-settings nil
-  "Alist of categories and alist of variables to set per category.
+  "Alist of categories/regexps and alist of variables to set per category.
 Has lower precedence than `vertico-multiform-command-settings'."
   :group 'vertico
-  :type '(alist :key-type symbol
+  :type '(alist :key-type (choice symbol regexp)
                 :value-type (alist :key-type symbol :value-type sexp)))
 
 (defvar vertico-multiform--stack nil)
@@ -82,6 +84,16 @@ Has lower precedence than `vertico-multiform-command-settings'."
     (with-selected-window win
       (dolist (f (car vertico-multiform--stack))
         (funcall f arg)))))
+
+(defun vertico-multiform--lookup (key list)
+  "Lookup symbolic KEY in LIST.
+The keys in LIST can be symbols or regexps."
+  (and (symbolp key)
+       (cl-loop for x in list
+                if (if (symbolp (car x))
+                       (eq key (car x))
+                     (string-match-p (car x) (symbol-name key)))
+                return x)))
 
 (defun vertico-multiform--setup ()
   "Enable modes at minibuffer setup."
@@ -100,14 +112,14 @@ Has lower precedence than `vertico-multiform-command-settings'."
                    (vertico-multiform--toggle -1)
                    (pop vertico-multiform--stack))))
     (add-hook 'minibuffer-exit-hook exit)
-    (dolist (x (or (and cat (alist-get cat vertico-multiform-category-settings))
-                   (alist-get this-command vertico-multiform-command-settings)))
+    (dolist (x (cdr (or (vertico-multiform--lookup this-command vertico-multiform-command-settings)
+                        (and cat (vertico-multiform--lookup cat vertico-multiform-category-settings)))))
       (set (make-local-variable (car x)) (cdr x)))
     (push (mapcar (lambda (m)
                     (let ((v (intern (format "vertico-%s-mode" m))))
                       (if (fboundp v) v m)))
-                  (or (and cat (alist-get cat vertico-multiform-category-modes))
-                      (alist-get this-command vertico-multiform-command-modes)))
+                  (cdr (or (vertico-multiform--lookup this-command vertico-multiform-command-modes)
+                           (and cat (vertico-multiform--lookup cat vertico-multiform-category-modes)))))
           vertico-multiform--stack)
     (vertico-multiform--toggle 1)
     (vertico--setup)))

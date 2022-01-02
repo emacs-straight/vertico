@@ -6,7 +6,7 @@
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (vertico "0.17"))
+;; Package-Requires: ((emacs "27.1") (vertico "0.18"))
 ;; Homepage: https://github.com/minad/vertico
 
 ;; This file is part of GNU Emacs.
@@ -92,8 +92,11 @@
 (defun vertico-buffer--setup ()
   "Setup minibuffer overlay, which pushes the minibuffer content down."
   (add-hook 'pre-redisplay-functions 'vertico-buffer--redisplay nil 'local)
-  (let ((temp (generate-new-buffer "*vertico*")))
-    (setq vertico-buffer--window (display-buffer temp vertico-buffer-display-action))
+  (let ((action vertico-buffer-display-action)
+        (temp (generate-new-buffer "*vertico*")))
+    (setq vertico-buffer--window
+          ;; Temporarily select the original window such that `display-buffer-same-window' works.
+          (with-minibuffer-selected-window (display-buffer temp action)))
     (set-window-buffer vertico-buffer--window (current-buffer))
     (kill-buffer temp))
   (let ((sym (make-symbol "vertico-buffer--destroy"))

@@ -6,7 +6,7 @@
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (vertico "0.17"))
+;; Package-Requires: ((emacs "27.1") (vertico "0.18"))
 ;; Homepage: https://github.com/minad/vertico
 
 ;; This file is part of GNU Emacs.
@@ -28,7 +28,10 @@
 
 ;; This package is a Vertico extension providing a grid display.
 ;;
-;; The mode can be bound to a key to toggle to the grid display.
+;; The mode can be enabled pre command or completion category via
+;; `vertico-multiform-mode'. Alternatively the mode can be bound to a
+;; key to toggle to the grid display:
+;;
 ;; (define-key vertico-map "\M-G" #'vertico-grid-mode)
 
 ;;; Code:
@@ -58,6 +61,13 @@
 When scrolling beyond this limit, candidates may be truncated."
   :type 'integer
   :group 'vertico)
+
+(defvar vertico-grid-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [remap left-char] #'vertico-grid-left)
+    (define-key map [remap right-char] #'vertico-grid-right)
+    map)
+  "Additional keymap activated in grid mode.")
 
 (defvar-local vertico-grid--columns 1
   "Current number of grid columns.")
@@ -142,12 +152,12 @@ When scrolling beyond this limit, candidates may be truncated."
     ;; Shrink current minibuffer window
     (when-let (win (active-minibuffer-window))
       (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise))
-    (define-key vertico-map [remap left-char] #'vertico-grid-left)
-    (define-key vertico-map [remap right-char] #'vertico-grid-right)
+    (unless (eq (cadr vertico-map) vertico-grid-map)
+      (setcdr vertico-map (cons vertico-grid-map (cdr vertico-map))))
     (advice-add #'vertico--arrange-candidates :override #'vertico-grid--arrange-candidates))
    (t
-    (assq-delete-all 'left-char (assq 'remap vertico-map))
-    (assq-delete-all 'right-char (assq 'remap vertico-map))
+    (when (eq (cadr vertico-map) vertico-grid-map)
+      (setcdr vertico-map (cddr vertico-map)))
     (advice-remove #'vertico--arrange-candidates #'vertico-grid--arrange-candidates))))
 
 ;; Emacs 28: Do not show Vertico commands in M-X
