@@ -28,14 +28,15 @@
 
 ;; This package is a Vertico extension providing a horizontal display.
 ;;
-;; The mode can be enabled pre command or completion category via
-;; `vertico-multiform-mode'. Alternatively the mode can be bound to a
-;; key to toggle to the horizontal display:
+;; The mode can be enabled globally or via `vertico-multiform-mode' per
+;; command or completion category. Alternatively the flat display can be
+;; toggled temporarily if `vertico-multiform-mode' is enabled:
 ;;
-;; (define-key vertico-map "\M-F" #'vertico-flat-mode)
+;; (define-key vertico-map "\M-F" #'vertico-multiform-flat)
 ;;
-;; `vertico-flat-mode' can be made to look like `ido-mode' by setting
-;; `vertico-cycle' to `t'.
+;; The flat display can be made to look like `ido-mode' by setting
+;; `vertico-cycle' to t. See also the `vertico-flat-format'
+;; configuration variable for further tweaks.
 
 ;;; Code:
 
@@ -47,11 +48,13 @@
   :group 'vertico)
 
 (defcustom vertico-flat-format
-  '(:left      #("{" 0 1 (face minibuffer-prompt))
-    :separator #(" | " 0 3 (face minibuffer-prompt))
-    :right     #("}" 0 1 (face minibuffer-prompt))
-    :ellipsis  #("…" 0 1 (face minibuffer-prompt))
-    :no-match  "[No match]")
+  '(:left       #("{" 0 1 (face minibuffer-prompt))
+    :separator  #(" | " 0 3 (face minibuffer-prompt))
+    :right      #("}" 0 1 (face minibuffer-prompt))
+    :ellipsis   #("…" 0 1 (face minibuffer-prompt))
+    :only-match #("[%s]" 0 1 (face minibuffer-prompt)
+                  1 3 (face success) 3 4 (face minibuffer-prompt))
+    :no-match   "[No match]")
   "Formatting strings."
   :type 'plist
   :group 'vertico)
@@ -63,18 +66,22 @@
     map)
   "Additional keymap activated in flat mode.")
 
-(defun vertico-flat--display (candidates)
+(defun vertico-flat--display-candidates (candidates)
   "Display CANDIDATES horizontally."
-  (setq-local truncate-lines nil)
+  (setq-local truncate-lines nil
+              resize-mini-windows t)
   (move-overlay vertico--candidates-ov (point-max) (point-max))
   (overlay-put
    vertico--candidates-ov 'after-string
    (concat #(" " 0 1 (cursor t))
-           (if candidates
-               (concat (plist-get vertico-flat-format :left)
-                       (string-join candidates (plist-get vertico-flat-format :separator))
-                       (plist-get vertico-flat-format :right))
-             (plist-get vertico-flat-format :no-match)))))
+           (cond
+            ((and (not candidates) (plist-get vertico-flat-format :no-match)))
+            ((and (= vertico--total 1)
+                  (when-let (fmt (plist-get vertico-flat-format :only-match))
+                    (format fmt (substring-no-properties (car candidates))))))
+             (t (concat (plist-get vertico-flat-format :left)
+                        (string-join candidates (plist-get vertico-flat-format :separator))
+                        (plist-get vertico-flat-format :right)))))))
 
 (defun vertico-flat--arrange-candidates ()
   "Arrange candidates."
@@ -117,23 +124,20 @@
 (define-minor-mode vertico-flat-mode
   "Flat, horizontal display for Vertico."
   :global t :group 'vertico
+  ;; Shrink current minibuffer window
+  (when-let (win (active-minibuffer-window))
+    (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise))
   (cond
    (vertico-flat-mode
-    ;; Allow toggling between flat and grid modes
-    (when (and (bound-and-true-p vertico-grid-mode) (fboundp 'vertico-grid-mode))
-      (vertico-grid-mode -1))
-    ;; Shrink current minibuffer window
-    (when-let (win (active-minibuffer-window))
-      (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise))
     (unless (eq (cadr vertico-map) vertico-flat-map)
       (setcdr vertico-map (cons vertico-flat-map (cdr vertico-map))))
     (advice-add #'vertico--arrange-candidates :override #'vertico-flat--arrange-candidates)
-    (advice-add #'vertico--display-candidates :override #'vertico-flat--display))
+    (advice-add #'vertico--display-candidates :override #'vertico-flat--display-candidates))
    (t
     (when (eq (cadr vertico-map) vertico-flat-map)
       (setcdr vertico-map (cddr vertico-map)))
     (advice-remove #'vertico--arrange-candidates #'vertico-flat--arrange-candidates)
-    (advice-remove #'vertico--display-candidates #'vertico-flat--display))))
+    (advice-remove #'vertico--display-candidates #'vertico-flat--display-candidates))))
 
 (provide 'vertico-flat)
 ;;; vertico-flat.el ends here

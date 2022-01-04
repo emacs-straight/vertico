@@ -90,7 +90,7 @@
           (set-window-vscroll mbwin 100))))))
 
 (defun vertico-buffer--setup ()
-  "Setup minibuffer overlay, which pushes the minibuffer content down."
+  "Setup buffer display."
   (add-hook 'pre-redisplay-functions 'vertico-buffer--redisplay nil 'local)
   (let ((action vertico-buffer-display-action)
         (temp (generate-new-buffer "*vertico*")))
@@ -123,6 +123,9 @@
       (overlay-put vertico--count-ov 'window vertico-buffer--window))
     (setq-local show-trailing-whitespace nil
                 truncate-lines t
+                face-remapping-alist
+                (copy-tree `((mode-line-inactive mode-line)
+                             ,@face-remapping-alist))
                 mode-line-format
                 (list (format " %s "
                               (propertize
@@ -131,8 +134,7 @@
                                         ":? *\\'" ""
                                         (minibuffer-prompt))
                                        depth)
-                               'face 'mode-line-buffer-id))
-                      '(:eval (vertico--format-count)))
+                               'face 'mode-line-buffer-id)))
                 cursor-in-non-selected-windows 'box
                 vertico-count (- (/ (window-pixel-height vertico-buffer--window)
                                     (default-line-height)) 2))))

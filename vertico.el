@@ -555,7 +555,9 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
 
 (defun vertico--resize-window (height)
   "Resize active minibuffer window to HEIGHT."
-  (setq-local truncate-lines (< (point) (* 0.8 (window-width))))
+  (setq-local truncate-lines (< (point) (* 0.8 (window-width)))
+              resize-mini-windows 'grow-only
+              max-mini-window-height 1.0)
   (unless (frame-root-window-p (active-minibuffer-window))
     (unless vertico-resize
       (setq height (max height vertico-count)))
@@ -578,11 +580,9 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
 
 (defun vertico--display-count ()
   "Update count overlay `vertico--count-ov'."
-  (when vertico--count-ov
-    (move-overlay vertico--count-ov (point-min) (point-min))
-    ;; Set priority for compatibility with `minibuffer-depth-indicate-mode'
-    (overlay-put vertico--count-ov 'priority 1)
-    (overlay-put vertico--count-ov 'before-string (vertico--format-count))))
+  (move-overlay vertico--count-ov (point-min) (point-min))
+  (overlay-put vertico--count-ov 'before-string
+               (if vertico-count-format (vertico--format-count) "")))
 
 (defun vertico--prompt-selection ()
   "Highlight the prompt if selected."
@@ -732,28 +732,27 @@ When the prefix argument is 0, the group order is reset."
 (defun vertico--candidate (&optional hl)
   "Return current candidate string with optional highlighting if HL is non-nil."
   (let ((content (substring (or (car-safe vertico--input) (minibuffer-contents)))))
-    (if (>= vertico--index 0)
-        (let ((cand (substring (nth vertico--index vertico--candidates))))
-          ;;; XXX Drop the completions-common-part face which is added by `completion--twq-all'.
-          ;; This is a hack in Emacs and should better be fixed in Emacs itself, the corresponding
-          ;; code is already marked with a FIXME. Should this be reported as a bug?
-          (vertico--remove-face 0 (length cand) 'completions-common-part cand)
-          (concat (substring content 0 vertico--base)
-                  (if hl (car (funcall vertico--highlight-function (list cand))) cand)))
-      ;; Remove prompt face
-      (vertico--remove-face 0 (length content) 'vertico-current content)
-      content)))
+    (cond
+     ((>= vertico--index 0)
+      (let ((cand (substring (nth vertico--index vertico--candidates))))
+        ;; XXX Drop the completions-common-part face which is added by `completion--twq-all'.
+        ;; This is a hack in Emacs and should better be fixed in Emacs itself, the corresponding
+        ;; code is already marked with a FIXME. Should this be reported as a bug?
+        (vertico--remove-face 0 (length cand) 'completions-common-part cand)
+        (concat (substring content 0 vertico--base)
+                (if hl (car (funcall vertico--highlight-function (list cand))) cand))))
+     ((and (equal content "") (or (car-safe minibuffer-default) minibuffer-default)))
+     (t (vertico--remove-face 0 (length content) 'vertico-current content) ;; Remove prompt face
+        content))))
 
 (defun vertico--setup ()
   "Setup completion UI."
   (setq vertico--input t
         vertico--candidates-ov (make-overlay (point-max) (point-max) nil t t)
-        vertico--count-ov (and vertico-count-format
-                               (make-overlay (point-min) (point-min) nil t t)))
-  (setq-local resize-mini-windows 'grow-only
-              max-mini-window-height 1.0
-              truncate-lines t
-              completion-auto-help nil
+        vertico--count-ov (make-overlay (point-min) (point-min) nil t t))
+  ;; Set priority for compatibility with `minibuffer-depth-indicate-mode'
+  (overlay-put vertico--count-ov 'priority 1)
+  (setq-local completion-auto-help nil
               completion-show-inline-help nil)
   (use-local-map vertico-map)
   ;; Use -90 to ensure that the exhibit hook runs early such that the

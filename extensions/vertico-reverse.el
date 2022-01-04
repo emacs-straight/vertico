@@ -48,7 +48,7 @@
     map)
   "Additional keymap activated in reverse mode.")
 
-(defun vertico-reverse--display (lines)
+(defun vertico-reverse--display-candidates (lines)
   "Display LINES in reverse."
   (move-overlay vertico--candidates-ov (point-min) (point-min))
   (setq lines (nreverse lines))
@@ -56,22 +56,27 @@
     (setq lines (nconc (make-list (max 0 (- vertico-count (length lines))) "\n") lines)))
   (let ((string (apply #'concat lines)))
     (add-face-text-property 0 (length string) 'default 'append string)
-    (overlay-put vertico--candidates-ov 'before-string string))
+    (overlay-put vertico--candidates-ov 'before-string string)
+    (overlay-put vertico--candidates-ov 'after-string nil))
   (vertico--resize-window (length lines)))
 
 ;;;###autoload
 (define-minor-mode vertico-reverse-mode
   "Reverse the Vertico display."
   :global t :group 'vertico
+  ;; Reset overlays
+  (dolist (buf (buffer-list))
+    (when-let (ov (buffer-local-value 'vertico--candidates-ov buf))
+      (overlay-put ov 'before-string nil)))
   (cond
    (vertico-reverse-mode
     (unless (eq (cadr vertico-map) vertico-reverse-map)
       (setcdr vertico-map (cons vertico-reverse-map (cdr vertico-map))))
-    (advice-add #'vertico--display-candidates :override #'vertico-reverse--display))
+    (advice-add #'vertico--display-candidates :override #'vertico-reverse--display-candidates))
    (t
     (when (eq (cadr vertico-map) vertico-reverse-map)
       (setcdr vertico-map (cddr vertico-map)))
-    (advice-remove #'vertico--display-candidates #'vertico-reverse--display))))
+    (advice-remove #'vertico--display-candidates #'vertico-reverse--display-candidates))))
 
 (provide 'vertico-reverse)
 ;;; vertico-reverse.el ends here

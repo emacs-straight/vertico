@@ -28,11 +28,11 @@
 
 ;; This package is a Vertico extension providing a grid display.
 ;;
-;; The mode can be enabled pre command or completion category via
-;; `vertico-multiform-mode'. Alternatively the mode can be bound to a
-;; key to toggle to the grid display:
+;; The mode can be enabled globally or via `vertico-multiform-mode' per
+;; command or completion category. Alternatively the grid display can be
+;; toggled temporarily if `vertico-multiform-mode' is enabled:
 ;;
-;; (define-key vertico-map "\M-G" #'vertico-grid-mode)
+;; (define-key vertico-map "\M-G" #'vertico-multiform-grid)
 
 ;;; Code:
 
@@ -110,7 +110,7 @@ When scrolling beyond this limit, candidates may be truncated."
                          (string-width (or (nth (+ row (* col vertico-count)) cands) ""))))))
     (dotimes (col (1- vertico-grid--columns))
       (cl-incf (aref width (1+ col)) (+ (aref width col) sep)))
-    (cl-loop for row from 0 to (1- vertico-count) collect
+    (cl-loop for row from 0 to (1- (min vertico-count vertico--total)) collect
              (let ((line (list "\n")))
                (cl-loop for col from (1- vertico-grid--columns) downto 0 do
                         (when-let (cand (nth (+ row (* col vertico-count)) cands))
@@ -144,14 +144,11 @@ When scrolling beyond this limit, candidates may be truncated."
 (define-minor-mode vertico-grid-mode
   "Grid display for Vertico."
   :global t :group 'vertico
+  ;; Shrink current minibuffer window
+  (when-let (win (active-minibuffer-window))
+    (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise))
   (cond
    (vertico-grid-mode
-    ;; Allow toggling between flat and grid modes
-    (when (and (bound-and-true-p vertico-flat-mode) (fboundp 'vertico-flat-mode))
-      (vertico-flat-mode -1))
-    ;; Shrink current minibuffer window
-    (when-let (win (active-minibuffer-window))
-      (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise))
     (unless (eq (cadr vertico-map) vertico-grid-map)
       (setcdr vertico-map (cons vertico-grid-map (cdr vertico-map))))
     (advice-add #'vertico--arrange-candidates :override #'vertico-grid--arrange-candidates))
