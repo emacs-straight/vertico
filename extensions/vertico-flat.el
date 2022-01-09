@@ -87,7 +87,7 @@
   "Arrange candidates."
   (let* ((index (max 0 vertico--index)) (count vertico-count)
          (candidates (nthcdr vertico--index vertico--candidates))
-         (width (- (* vertico-flat-max-lines (- (window-width) 4))
+         (width (- (* vertico-flat-max-lines (- (vertico--window-width) 4))
                    (length (plist-get vertico-flat-format :left))
                    (length (plist-get vertico-flat-format :separator))
                    (length (plist-get vertico-flat-format :right))
@@ -129,13 +129,11 @@
     (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise))
   (cond
    (vertico-flat-mode
-    (unless (eq (cadr vertico-map) vertico-flat-map)
-      (setcdr vertico-map (cons vertico-flat-map (cdr vertico-map))))
+    (add-to-list 'minor-mode-map-alist `(vertico--input . ,vertico-flat-map))
     (advice-add #'vertico--arrange-candidates :override #'vertico-flat--arrange-candidates)
     (advice-add #'vertico--display-candidates :override #'vertico-flat--display-candidates))
    (t
-    (when (eq (cadr vertico-map) vertico-flat-map)
-      (setcdr vertico-map (cddr vertico-map)))
+    (setq minor-mode-map-alist (delete `(vertico--input . ,vertico-flat-map) minor-mode-map-alist))
     (advice-remove #'vertico--arrange-candidates #'vertico-flat--arrange-candidates)
     (advice-remove #'vertico--display-candidates #'vertico-flat--display-candidates))))
 

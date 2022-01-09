@@ -248,12 +248,11 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
                      (plist-get completion-extra-properties :annotation-function)))
         (cl-loop for cand in cands collect
                  (let ((suffix (or (funcall ann cand) "")))
-                   (list cand ""
-                         ;; The default completion UI adds the `completions-annotations' face
-                         ;; if no other faces are present.
-                         (if (text-property-not-all 0 (length suffix) 'face nil suffix)
-                             suffix
-                           (propertize suffix 'face 'completions-annotations)))))
+                   ;; The default completion UI adds the `completions-annotations' face
+                   ;; if no other faces are present.
+                   (unless (text-property-not-all 0 (length suffix) 'face nil suffix)
+                     (setq suffix (propertize suffix 'face 'completions-annotations)))
+                   (list cand "" suffix)))
       (cl-loop for cand in cands collect (list cand "" "")))))
 
 (defun vertico--move-to-front (elem list)
@@ -324,18 +323,16 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
                ;; if the cursor is moved between the slashes of "~//".
                ;; See also marginalia.el which has the same issue.
                (bounds (or (condition-case nil
-                               (completion-boundaries before
-                                                      minibuffer-completion-table
-                                                      minibuffer-completion-predicate
-                                                      after)
+                               (completion-boundaries
+                                before minibuffer-completion-table
+                                minibuffer-completion-predicate after)
                              (t (cons 0 (length after))))))
                (field (substring content (car bounds) (+ pt (cdr bounds))))
                ;; `minibuffer-completing-file-name' has been obsoleted by the completion category
                (completing-file (eq 'file (vertico--metadata-get 'category)))
-               (`(,all . ,hl) (vertico--all-completions content
-                                                        minibuffer-completion-table
-                                                        minibuffer-completion-predicate
-                                                        pt vertico--metadata))
+               (`(,all . ,hl) (vertico--all-completions
+                               content minibuffer-completion-table
+                               minibuffer-completion-predicate pt vertico--metadata))
                (base (or (when-let (z (last all)) (prog1 (cdr z) (setcdr z nil))) 0))
                (base-str (substring content 0 base))
                (def (or (car-safe minibuffer-default) minibuffer-default))
@@ -346,8 +343,7 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
     ;; Filter the ignored file extensions. We cannot use modified predicate for this filtering,
     ;; since this breaks the special casing in the `completion-file-name-table' for `file-exists-p'
     ;; and `file-directory-p'.
-    (when completing-file
-      (setq all (vertico--filter-files all)))
+    (when completing-file (setq all (vertico--filter-files all)))
     ;; Sort using the `display-sort-function' or the Vertico sort functions
     (setq all (delete-consecutive-dups (funcall (or (vertico--sort-function) #'identity) all)))
     ;; Move special candidates: "field" appears at the top, before "field/", before default value
@@ -472,6 +468,10 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
               (setq pos nexti))))))
     (if chunks (apply #'concat (nreverse chunks)) str)))
 
+(defun vertico--window-width ()
+  "Return minimum width of windows, which display the minibuffer."
+  (cl-loop for win in (get-buffer-window-list) minimize (window-width win)))
+
 (defun vertico--truncate-multiline (cand max-width)
   "Truncate multiline CAND to MAX-WIDTH."
   (truncate-string-to-width
@@ -536,7 +536,7 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
                  (nbutlast lines)
                (setq curr-line (1- curr-line) lines (cdr lines))))
     ;; Format candidates
-    (let ((max-width (- (window-width) 4)) start)
+    (let ((max-width (- (vertico--window-width) 4)) start)
       (cl-loop for line on lines do
                (pcase (car line)
                  (`(,index ,cand ,prefix ,suffix)
@@ -555,7 +555,7 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
 
 (defun vertico--resize-window (height)
   "Resize active minibuffer window to HEIGHT."
-  (setq-local truncate-lines (< (point) (* 0.8 (window-width)))
+  (setq-local truncate-lines (< (point) (* 0.8 (vertico--window-width)))
               resize-mini-windows 'grow-only
               max-mini-window-height 1.0)
   (unless (frame-root-window-p (active-minibuffer-window))
@@ -612,8 +612,8 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
 
 (defun vertico--allow-prompt-selection-p ()
   "Return t if prompt can be selected."
-  (or vertico--default-missing
-      (memq minibuffer--require-match '(nil confirm confirm-after-completion))))
+  (or vertico--default-missing (memq minibuffer--require-match
+                                     '(nil confirm confirm-after-completion))))
 
 (defun vertico--goto (index)
   "Go to candidate with INDEX."
@@ -682,19 +682,17 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
 When the prefix argument is 0, the group order is reset."
   (interactive "p")
   (when (cdr vertico--groups)
-    (if (eq n 0)
-        (setq vertico--groups nil
-              vertico--all-groups nil
-              vertico--lock-groups nil)
-      (setq vertico--groups
-            (vertico--cycle vertico--groups
-                            (let ((len (length vertico--groups)))
-                              (- len (mod (- (or n 1)) len))))
-            vertico--all-groups
-            (vertico--cycle vertico--all-groups
-                            (seq-position vertico--all-groups
-                                          (car vertico--groups)))
-            vertico--lock-groups t))
+    (if (setq vertico--lock-groups (not (eq n 0)))
+        (setq vertico--groups
+              (vertico--cycle vertico--groups
+                              (let ((len (length vertico--groups)))
+                                (- len (mod (- (or n 1)) len))))
+              vertico--all-groups
+              (vertico--cycle vertico--all-groups
+                              (seq-position vertico--all-groups
+                                            (car vertico--groups))))
+      (setq vertico--groups nil
+            vertico--all-groups nil))
     (setq vertico--lock-candidate nil
           vertico--input nil)))
 

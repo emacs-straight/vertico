@@ -40,6 +40,11 @@
 (eval-when-compile
   (require 'cl-lib))
 
+(defcustom vertico-grid-min-columns 2
+  "Minimal number of grid columns."
+  :type 'integer
+  :group 'vertico)
+
 (defcustom vertico-grid-max-columns 8
   "Maximal number of grid columns."
   :type 'integer
@@ -80,12 +85,13 @@ When scrolling beyond this limit, candidates may be truncated."
         (setq w (max w (length (car cand))) n (1+ n))
         (pop cand))
       (setq vertico-grid--columns
-            (max 1 (min vertico-grid-max-columns
-                        (floor (window-width) (+ w (length vertico-grid-separator))))))))
+            (max vertico-grid-min-columns
+                 (min vertico-grid-max-columns
+                      (floor (vertico--window-width) (+ w (length vertico-grid-separator))))))))
   (let* ((sep (length vertico-grid-separator))
          (count (* vertico-count vertico-grid--columns))
          (start (* count (floor (max 0 vertico--index) count)))
-         (width (- (/ (window-width) vertico-grid--columns) sep))
+         (width (- (/ (vertico--window-width) vertico-grid--columns) sep))
          (cands
           (seq-map-indexed (lambda (cand index)
                              (cl-incf index start)
@@ -149,12 +155,10 @@ When scrolling beyond this limit, candidates may be truncated."
     (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise))
   (cond
    (vertico-grid-mode
-    (unless (eq (cadr vertico-map) vertico-grid-map)
-      (setcdr vertico-map (cons vertico-grid-map (cdr vertico-map))))
+    (add-to-list 'minor-mode-map-alist `(vertico--input . ,vertico-grid-map))
     (advice-add #'vertico--arrange-candidates :override #'vertico-grid--arrange-candidates))
    (t
-    (when (eq (cadr vertico-map) vertico-grid-map)
-      (setcdr vertico-map (cddr vertico-map)))
+    (setq minor-mode-map-alist (delete `(vertico--input . ,vertico-grid-map) minor-mode-map-alist))
     (advice-remove #'vertico--arrange-candidates #'vertico-grid--arrange-candidates))))
 
 ;; Emacs 28: Do not show Vertico commands in M-X

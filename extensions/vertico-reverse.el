@@ -27,6 +27,12 @@
 ;;; Commentary:
 
 ;; This package is a Vertico extension, which reverses the list of candidates.
+;;
+;; The mode can be enabled globally or via `vertico-multiform-mode' per
+;; command or completion category. Alternatively the reverse display can be
+;; toggled temporarily if `vertico-multiform-mode' is enabled:
+;;
+;; (define-key vertico-map "\M-R" #'vertico-multiform-reverse)
 
 ;;; Code:
 
@@ -70,12 +76,10 @@
       (overlay-put ov 'before-string nil)))
   (cond
    (vertico-reverse-mode
-    (unless (eq (cadr vertico-map) vertico-reverse-map)
-      (setcdr vertico-map (cons vertico-reverse-map (cdr vertico-map))))
+    (add-to-list 'minor-mode-map-alist `(vertico--input . ,vertico-reverse-map))
     (advice-add #'vertico--display-candidates :override #'vertico-reverse--display-candidates))
    (t
-    (when (eq (cadr vertico-map) vertico-reverse-map)
-      (setcdr vertico-map (cddr vertico-map)))
+    (setq minor-mode-map-alist (delete `(vertico--input . ,vertico-reverse-map) minor-mode-map-alist))
     (advice-remove #'vertico--display-candidates #'vertico-reverse--display-candidates))))
 
 (provide 'vertico-reverse)
