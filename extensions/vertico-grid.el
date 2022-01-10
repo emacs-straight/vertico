@@ -51,7 +51,7 @@
   :group 'vertico)
 
 (defcustom vertico-grid-separator
-  #("  |  " 2 3 (display (space :width (1)) face (:inverse-video t)))
+  #("   |   " 3 4 (display (space :width (1)) face (:inherit shadow :inverse-video t)))
   "Separator between columns."
   :type 'string
   :group 'vertico)
@@ -61,7 +61,7 @@
   :type 'integer
   :group 'vertico)
 
-(defcustom vertico-grid-lookahead 200
+(defcustom vertico-grid-lookahead 100
   "Number of candidates to lookahead for column number computation.
 When scrolling beyond this limit, candidates may be truncated."
   :type 'integer
@@ -71,10 +71,12 @@ When scrolling beyond this limit, candidates may be truncated."
   (let ((map (make-sparse-keymap)))
     (define-key map [remap left-char] #'vertico-grid-left)
     (define-key map [remap right-char] #'vertico-grid-right)
+    (define-key map [remap scroll-down-command] #'vertico-grid-scroll-down)
+    (define-key map [remap scroll-up-command] #'vertico-grid-scroll-up)
     map)
   "Additional keymap activated in grid mode.")
 
-(defvar-local vertico-grid--columns 1
+(defvar-local vertico-grid--columns vertico-grid-min-columns
   "Current number of grid columns.")
 
 (defun vertico-grid--arrange-candidates ()
@@ -136,15 +138,23 @@ When scrolling beyond this limit, candidates may be truncated."
   "Move N columns to the right in the grid."
   (interactive "p")
   (let* ((page (* vertico-count vertico-grid--columns))
-         (p (/ vertico--index page))
-         (q (mod vertico--index page))
-         (x (/ q vertico-count))
-         (y (mod q vertico-count))
-         (z (+ (* p page) (* vertico-grid--columns y) x (or n 1))))
-    (setq x (mod z vertico-grid--columns)
-          y (/ z vertico-grid--columns))
-    (vertico--goto (+ (* x vertico-count) (mod y vertico-count)
-                      (* (/ y vertico-count) page)))))
+         (x1 (/ (% vertico--index page) vertico-count))
+         (cols (min (1- vertico-grid--columns)
+                    (+ x1 (/ (- vertico--total vertico--index 1) vertico-count))))
+         (x2 (if vertico-cycle
+                 (mod (+ x1 (or n 1)) (1+ cols))
+               (min cols (max 0 (+ x1 (or n 1)))))))
+    (vertico--goto (+ vertico--index (* vertico-count (- x2 x1))))))
+
+(defun vertico-grid-scroll-down (&optional n)
+  "Go back by N pages."
+  (interactive "p")
+  (vertico--goto (max 0 (- vertico--index (* (or n 1) vertico-grid--columns vertico-count)))))
+
+(defun vertico-grid-scroll-up (&optional n)
+  "Go forward by N pages."
+  (interactive "p")
+  (vertico-grid-scroll-down (- (or n 1))))
 
 ;;;###autoload
 (define-minor-mode vertico-grid-mode
@@ -162,7 +172,8 @@ When scrolling beyond this limit, candidates may be truncated."
     (advice-remove #'vertico--arrange-candidates #'vertico-grid--arrange-candidates))))
 
 ;; Emacs 28: Do not show Vertico commands in M-X
-(dolist (sym '(vertico-grid-left vertico-grid-right))
+(dolist (sym '(vertico-grid-left vertico-grid-right
+               vertico-grid-scroll-up vertico-grid-scroll-down))
   (put sym 'completion-predicate #'vertico--command-p))
 
 (provide 'vertico-grid)
