@@ -556,6 +556,29 @@ disabled as follows.
                                      (apply args))))
 #+end_src
 
+** Submitting the empty string
+
+The commands ~multi-occur~, ~auto-insert~, ~bbdb-create~ read multiple arguments from
+the minibuffer with ~completing-read~, one at a time, until you submit an empty
+string. You should type =M-RET= (~vertico-exit-input~) to finish the loop. Directly
+pressing =RET= (~vertico-exit~) does not work since the first candidate is
+preselected.
+
+The underlying issue is that ~completing-read~ always allows you to exit with the
+empty string, which is called the /null completion/, even if the ~REQUIRE-MATCH~
+argument is non-nil. Try the following two calls to ~completing-read~ with =C-x C-e=:
+
+#+begin_src emacs-lisp
+  (completing-read "Select: " '("first" "second" "third") nil 'require-match)
+  (completing-read "Select: " '("first" "second" "third") nil 'require-match nil nil "")
+#+end_src
+
+In both cases the empty string can be submitted. In the first case no explicit
+default value is specified and Vertico preselects the *first* candidate. In order
+to exit with the empty string, press =M-RET=. In the second case the explicit
+default value "" is specified and Vertico preselects the prompt, such that
+existing with the empty string is possible by pressing =RET= only.
+
 ** Tramp hostname completion
 
 In combination with Orderless, hostnames are not made available for completion
