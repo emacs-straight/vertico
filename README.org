@@ -62,9 +62,7 @@ binding of =TAB= to ~vertico-insert~ and the bindings of ~vertico-exit/exit-inpu
 Vertico is available from [[http://elpa.gnu.org/packages/vertico.html][GNU ELPA]]. You can install it directly via
 ~package-install~. After installation, you can activate the global minor mode with
 =M-x vertico-mode=. In order to configure Vertico and other packages in your
-init.el, you may want to take advantage of ~use-package~. I recommend to give
-Orderless completion a try, which is different from the prefix TAB completion
-used by the basic default completion system or in shells. Here is an example
+init.el, you may want to take advantage of ~use-package~. Here is an example
 configuration:
 
 #+begin_src emacs-lisp
@@ -85,21 +83,6 @@ configuration:
     ;; Optionally enable cycling for `vertico-next' and `vertico-previous'.
     ;; (setq vertico-cycle t)
     )
-
-  ;; Optionally use the `orderless' completion style. See
-  ;; `+orderless-dispatch' in the Consult wiki for an advanced Orderless style
-  ;; dispatcher. Additionally enable `partial-completion' for file path
-  ;; expansion. `partial-completion' is important for wildcard support.
-  ;; Multiple files can be opened at once with `find-file' if you enter a
-  ;; wildcard. You may also give the `initials' completion style a try.
-  (use-package orderless
-    :init
-    ;; Configure a custom style dispatcher (see the Consult wiki)
-    ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
-    ;;       orderless-component-separator #'orderless-escapable-split-on-space)
-    (setq completion-styles '(orderless)
-          completion-category-defaults nil
-          completion-category-overrides '((file (styles partial-completion)))))
 
   ;; Persist history over Emacs restarts. Vertico sorts by history position.
   (use-package savehist
@@ -128,6 +111,30 @@ configuration:
     ;; Enable recursive minibuffers
     (setq enable-recursive-minibuffers t))
 #+end_src
+
+I recommend to give Orderless completion a try, which is different from the
+prefix TAB completion used by the basic default completion system or in shells.
+
+#+begin_src emacs-lisp
+    ;; Optionally use the `orderless' completion style.
+    (use-package orderless
+      :init
+      ;; Configure a custom style dispatcher (see the Consult wiki)
+      ;; (setq orderless-style-dispatchers '(+orderless-dispatch)
+      ;;       orderless-component-separator #'orderless-escapable-split-on-space)
+      (setq completion-styles '(orderless basic)
+            completion-category-defaults nil
+            completion-category-overrides '((file (styles partial-completion)))))
+#+end_src
+
+The =basic= completion style is specified as fallback in addition to =orderless= in
+order to ensure that completion commands which rely on dynamic completion
+tables, e.g., ~completion-table-dynamic~ or ~completion-table-in-turn~, work
+correctly. See =+orderless-dispatch= in the [[https://github.com/minad/consult/wiki][Consult wiki]] for an advanced Orderless
+style dispatcher. Additionally enable =partial-completion= for file path
+expansion. =partial-completion= is important for file wildcard support. Multiple
+files can be opened at once with =find-file= if you enter a wildcard. You may also
+give the =initials= completion style a try.
 
 See also the [[https://github.com/minad/vertico/wiki][Vertico Wiki]] for additional configuration tips. For more general
 documentation read the chapter about completion in the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Completion.html][Emacs manual]]. If you want
@@ -158,7 +165,7 @@ a prefix. In order to support completing prefixes you may want to combine
 ~orderless~ with ~substring~ in your =completion-styles= configuration.
 
 #+begin_src emacs-lisp
-  (setq completion-styles '(substring orderless))
+  (setq completion-styles '(substring orderless basic))
 #+end_src
 
 Alternatively you can experiment with the built-in completion-styles, e.g.,
@@ -531,6 +538,16 @@ However the list of possible completions becomes much more cluttered.
         org-outline-path-complete-in-steps nil)
 #+end_src
 
+** ~org-agenda-filter~
+
+Similar to ~org-refile~, the ~org-agenda-filter~ completion function
+(~org-agenda-filter-completion-function~) does not make use of completion
+boundaries. Unfortunately =TAB= completion (~minibuffer-complete~) does not work for
+this reason. This affects Vertico and also the Emacs default completion system.
+For example if you enter ~+tag<0 TAB~ the input is replaced with ~0:10~ which is not
+correct. With preserved completion boundaries, the expected result would be
+~+tag<0:10~.
+
 ** ~tmm-menubar~
 
 The text menu bar works well with Vertico but always shows a =*Completions*=
@@ -554,6 +571,27 @@ disabled as follows.
                                    (cl-letf (((symbol-function #'minibuffer-completion-help)
                                               #'ignore))
                                      (apply args))))
+#+end_src
+
+** ~completion-table-dynamic~
+
+Dynamic completion tables (~completion-table-dynamic~, ~completion-table-in-turn~,
+etc.) should work well with Vertico. However the requirement is that the =basic=
+completion style is enabled. The =basic= style performs prefix filtering by
+passing the input to the completion table (or the dynamic completion table
+function). The =basic= completion style must not necessarily be configured with
+highest priority, it can also come after other completion styles like =orderless=,
+=substring= or =flex=.
+
+#+begin_src emacs-lisp
+  (setq completion-styles '(basic))
+  ;; (setq completion-styles '(orderless basic))
+  (completing-read "Dynamic: "
+                   (completion-table-dynamic
+                    (lambda (str)
+                      (list (concat str "1")
+                            (concat str "2")
+                            (concat str "3")))))
 #+end_src
 
 ** Submitting the empty string
@@ -583,10 +621,11 @@ existing with the empty string is possible by pressing =RET= only.
 
 In combination with Orderless, hostnames are not made available for completion
 after entering =/ssh:=. In order to avoid this problem, the =basic= completion style
-should be specified for the file completion category.
+should be specified for the file completion category, such that =basic= is tried
+before =orderless=.
 
 #+begin_src emacs-lisp
-  (setq completion-styles '(orderless)
+  (setq completion-styles '(orderless basic)
         completion-category-overrides '((file (styles basic partial-completion))))
 #+end_src
 
@@ -603,6 +642,6 @@ define a custom completion style which sets in only for remote files!
   (add-to-list
    'completion-styles-alist
    '(basic-remote basic-remote-try-completion basic-remote-all-completions nil))
-  (setq completion-styles '(orderless)
+  (setq completion-styles '(orderless basic)
         completion-category-overrides '((file (styles basic-remote partial-completion))))
 #+end_src
