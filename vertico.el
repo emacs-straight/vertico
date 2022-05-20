@@ -672,7 +672,8 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
 (defun vertico-exit (&optional arg)
   "Exit minibuffer with current candidate or input if prefix ARG is given."
   (interactive "P")
-  (unless arg (vertico-insert))
+  (when (and (not arg) (>= vertico--index 0))
+    (vertico-insert))
   (when (vertico--match-p (minibuffer-contents-no-properties))
     (exit-minibuffer)))
 
