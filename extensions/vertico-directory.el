@@ -40,17 +40,6 @@
 
 (require 'vertico)
 
-(defun vertico-directory--completing-file-p ()
-  "Return non-nil when completing file names."
-  (eq 'file
-      (completion-metadata-get
-       (completion-metadata
-        (buffer-substring (minibuffer-prompt-end)
-                          (max (minibuffer-prompt-end) (point)))
-        minibuffer-completion-table
-        minibuffer-completion-predicate)
-       'category)))
-
 ;;;###autoload
 (defun vertico-directory-enter ()
   "Enter directory or exit completion with current candidate."
@@ -60,7 +49,7 @@
              (or (string-suffix-p "/" cand)
                  (and (vertico--remote-p cand)
                       (string-suffix-p ":" cand))))
-           (vertico-directory--completing-file-p))
+           (eq 'file (vertico--metadata-get 'category)))
       (vertico-insert)
     (vertico-exit)))
 
@@ -70,7 +59,7 @@
   (interactive "p")
   (when (and (> (point) (minibuffer-prompt-end))
              (eq (char-before) ?/)
-             (vertico-directory--completing-file-p))
+             (eq 'file (vertico--metadata-get 'category)))
     (let ((path (buffer-substring (minibuffer-prompt-end) (point))) found)
       (when (string-match-p "\\`~[^/]*/\\'" path)
         (delete-minibuffer-contents)
@@ -102,13 +91,15 @@
 ;;;###autoload
 (defun vertico-directory-tidy ()
   "Tidy shadowed file name, see `rfn-eshadow-overlay'."
-  (when (and (eq this-command #'self-insert-command)
-             (bound-and-true-p rfn-eshadow-overlay)
-             (overlay-buffer rfn-eshadow-overlay)
-             (= (point) (point-max))
-             (or (>= (- (point) (overlay-end rfn-eshadow-overlay)) 2)
-                 (eq ?/ (char-before (- (point) 2)))))
-    (delete-region (overlay-start rfn-eshadow-overlay) (overlay-end rfn-eshadow-overlay))))
+  (when (eq this-command #'self-insert-command)
+    (dolist (ov '(tramp-rfn-eshadow-overlay rfn-eshadow-overlay))
+      (when (and (boundp ov)
+                 (setq ov (symbol-value ov))
+                 (overlay-buffer ov)
+                 (= (point) (point-max))
+                 (or (>= (- (point) (overlay-end ov)) 2)
+                     (eq ?/ (char-before (- (point) 2)))))
+        (delete-region (overlay-start ov) (overlay-end ov))))))
 
 ;; Emacs 28: Do not show Vertico commands in M-X
 (dolist (sym '(vertico-directory-up vertico-directory-enter
