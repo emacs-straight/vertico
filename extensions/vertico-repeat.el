@@ -28,11 +28,13 @@
 
 ;; This package is a Vertico extension, which enables repetition of
 ;; Vertico sessions via the `vertico-repeat', `vertico-repeat-last' and
-;; `vertico-repeat-select' commands. It is necessary to register a
-;; minibuffer setup hook, which saves the Vertico state for repetition.
-;; In order to save the history across Emacs sessions, enable
-;; `savehist-mode' and add `vertico-repeat-history' to
-;; `savehist-additional-variables'.
+;; `vertico-repeat-select' commands. If the repeat commands are called
+;; from an existing Vertico minibuffer session, only sessions
+;; corresponding to the current minibuffer command are offered via
+;; completion. It is necessary to register a minibuffer setup hook,
+;; which saves the Vertico state for repetition. In order to save the
+;; history across Emacs sessions, enable `savehist-mode' and add
+;; `vertico-repeat-history' to `savehist-additional-variables'.
 ;;
 ;; (global-set-key "\M-R" #'vertico-repeat)
 ;; (add-hook 'minibuffer-setup-hook #'vertico-repeat-save)
@@ -109,23 +111,36 @@ This function must be registered as `minibuffer-setup-hook'."
 
 ;;;###autoload
 (defun vertico-repeat-last (&optional session)
-  "Repeat last Vertico completion SESSION."
+  "Repeat last Vertico completion SESSION.
+If called interactively from an existing Vertico session,
+`vertico-repeat-last' will restore the last input and
+last selected candidate for the current command."
   (interactive
-   (list (or (car vertico-repeat-history)
+   (list (or (if vertico-repeat--command
+                 (seq-find (lambda (x) (eq (car x) vertico-repeat--command))
+                           vertico-repeat-history)
+               (car vertico-repeat-history))
              (user-error "No repeatable Vertico session"))))
-  (minibuffer-with-setup-hook
-      (apply-partially #'vertico-repeat--restore session)
-    (command-execute (setq this-command (car session)))))
+  (if (and vertico-repeat--command (eq vertico-repeat--command (car session)))
+      (vertico-repeat--restore session)
+    (minibuffer-with-setup-hook
+        (apply-partially #'vertico-repeat--restore session)
+      (command-execute (setq this-command (car session))))))
 
 ;;;###autoload
 (defun vertico-repeat-select ()
-  "Select a Vertico session from the session history and repeat it."
+  "Select a Vertico session from the session history and repeat it.
+If called from an existing Vertico session, you can select among
+previous sessions for the current command."
   (interactive)
-  (let* ((trimmed
+  (let* ((current-cmd vertico-repeat--command)
+         (trimmed
           (delete-dups
            (or
             (cl-loop
-             for session in vertico-repeat-history collect
+             for session in vertico-repeat-history
+             if (or (not current-cmd) (eq (car session) current-cmd))
+             collect
              (list
               (symbol-name (car session))
               (replace-regexp-in-string
@@ -146,14 +161,19 @@ This function must be registered as `minibuffer-setup-hook'."
                      for (cmd input cand session) in trimmed collect
                      (cons
                       (concat
-                       (propertize cmd 'face 'font-lock-function-name-face)
-                       (make-string (- max-cmd (string-width cmd) -4) ?\s)
-                       (propertize input 'face 'font-lock-string-face)
+                       (and (not current-cmd)
+                            (propertize cmd 'face 'font-lock-function-name-face))
+                       (and (not current-cmd)
+                            (make-string (- max-cmd (string-width cmd) -4) ?\s))
+                       input
                        (make-string (- max-input (string-width input) -4) ?\s)
                        (and cand (propertize cand 'face 'font-lock-comment-face)))
                       session)))
+         (enable-recursive-minibuffers t)
          (selected (or (cdr (assoc (completing-read
-                                    "History: "
+                                    (if current-cmd
+                                        (format "History of %s: " current-cmd)
+                                      "Completion history: ")
                                     (lambda (str pred action)
                                       (if (eq action 'metadata)
                                           '(metadata (display-sort-function . identity)
