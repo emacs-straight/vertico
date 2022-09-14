@@ -127,7 +127,8 @@
   :global t :group 'vertico
   ;; Shrink current minibuffer window
   (when-let (win (active-minibuffer-window))
-    (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise))
+    (unless (frame-root-window-p win)
+      (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise)))
   (cond
    (vertico-flat-mode
     (add-to-list 'minor-mode-map-alist `(vertico--input . ,vertico-flat-map))
