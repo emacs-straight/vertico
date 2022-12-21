@@ -358,9 +358,16 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
       (vertico--lock-candidate . ,lock)
       (vertico--groups . ,(cadr groups))
       (vertico--all-groups . ,(or (caddr groups) vertico--all-groups))
-      ;; Compute new index. Select the prompt if there are no candidates or if
-      ;; the default is missing from the candidate list.
-      (vertico--index . ,(or lock (if (or def-missing (not all)) -1 0))))))
+      ;; Index computation: The prompt is selected if there are no candidates,
+      ;; if the default is missing from the candidate list and for matching
+      ;; input at the field end. The latter is important for directory selection
+      ;; when renaming files.
+      (vertico--index . ,(or lock
+                             (if (or def-missing (not all)
+                                     (and (= (length vertico--base) (length content))
+                                          (test-completion content minibuffer-completion-table
+                                                           minibuffer-completion-predicate)))
+                                 -1 0))))))
 
 (defun vertico--cycle (list n)
   "Rotate LIST to position N."
