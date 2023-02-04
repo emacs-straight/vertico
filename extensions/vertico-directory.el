@@ -31,9 +31,9 @@
 ;; `vertico-map'. Furthermore a cleanup function for shadowed file paths
 ;; is provided.
 ;;
-;; (define-key vertico-map "\r" #'vertico-directory-enter)
-;; (define-key vertico-map "\d" #'vertico-directory-delete-char)
-;; (define-key vertico-map "\M-\d" #'vertico-directory-delete-word)
+;; (keymap-set vertico-map "RET" #'vertico-directory-enter)
+;; (keymap-set vertico-map "DEL" #'vertico-directory-delete-char)
+;; (keymap-set vertico-map "M-DEL" #'vertico-directory-delete-word)
 ;; (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
 
 ;;; Code:
@@ -45,14 +45,14 @@
 (defun vertico-directory-enter ()
   "Enter directory or exit completion with current candidate."
   (interactive)
-  (if-let* (((>= vertico--index 0))
-            ((eq 'file (vertico--metadata-get 'category)))
-            ;; Check vertico--base for stepwise file path completion
-            ((not (equal vertico--base "")))
-            (cand (vertico--candidate))
-            ((or (string-suffix-p "/" cand)
-                 (and (vertico--remote-p cand)
-                      (string-suffix-p ":" cand)))))
+  (if-let (((>= vertico--index 0))
+           ((eq 'file (vertico--metadata-get 'category)))
+           ;; Check vertico--base for stepwise file path completion
+           ((not (equal vertico--base "")))
+           (cand (vertico--candidate))
+           ((or (string-suffix-p "/" cand)
+                (and (vertico--remote-p cand)
+                     (string-suffix-p ":" cand)))))
       (progn
         ;; Handle ./ and ../ manually instead of via `expand-file-name' and
         ;; `abbreviate-file-name', such that we don't accidentially perform
@@ -66,10 +66,9 @@
 
 ;;;###autoload
 (defun vertico-directory-up (&optional n)
-  "Delete N directories before point."
+  "Delete N names before point."
   (interactive "p")
   (when (and (> (point) (minibuffer-prompt-end))
-             (eq (char-before) ?/)
              (eq 'file (vertico--metadata-get 'category)))
     (let ((path (buffer-substring (minibuffer-prompt-end) (point))) found)
       (when (string-match-p "\\`~[^/]*/\\'" path)
@@ -87,14 +86,14 @@
 (defun vertico-directory-delete-char (&optional n)
   "Delete N directories or chars before point."
   (interactive "p")
-  (unless (vertico-directory-up n)
+  (unless (and (eq (char-before) ?/) (vertico-directory-up n))
     (backward-delete-char n)))
 
 ;;;###autoload
 (defun vertico-directory-delete-word (&optional n)
   "Delete N directories or words before point."
   (interactive "p")
-  (unless (vertico-directory-up n)
+  (unless (and (eq (char-before) ?/) (vertico-directory-up n))
     (let ((pt (point)))
       (backward-word n)
       (delete-region pt (point)))))

@@ -28,7 +28,7 @@
 
 ;; This package is a Vertico extension for fine tuning the Vertico
 ;; display and other minibuffer modes per command or completion
-;; category. For some commands you may want to use the `vertico-buffer'
+;; category.  For some commands you may want to use the `vertico-buffer'
 ;; display and for completion categories like file you prefer the
 ;; `vertico-grid-mode'.
 ;;
@@ -47,13 +47,13 @@
 ;;    (vertico-multiform-mode)
 ;;
 ;; Temporary toggling between the different display modes is
-;; possible. Bind the following commands:
+;; possible.  Bind the following commands:
 ;;
-;; (define-key vertico-map "\M-V" #'vertico-multiform-vertical)
-;; (define-key vertico-map "\M-G" #'vertico-multiform-grid)
-;; (define-key vertico-map "\M-F" #'vertico-multiform-flat)
-;; (define-key vertico-map "\M-R" #'vertico-multiform-reverse)
-;; (define-key vertico-map "\M-U" #'vertico-multiform-unobtrusive)
+;; (keymap-set vertico-map "M-V" #'vertico-multiform-vertical)
+;; (keymap-set vertico-map "M-G" #'vertico-multiform-grid)
+;; (keymap-set vertico-map "M-F" #'vertico-multiform-flat)
+;; (keymap-set vertico-map "M-R" #'vertico-multiform-reverse)
+;; (keymap-set vertico-map "M-U" #'vertico-multiform-unobtrusive)
 ;;
 ;;; Code:
 
@@ -62,16 +62,16 @@
 
 (defcustom vertico-multiform-commands nil
   "Alist of commands/regexps and list of settings to turn on per command.
-Takes precedence over `vertico-multiform-categories'. A setting can
+Takes precedence over `vertico-multiform-categories'.  A setting can
 either be a mode symbol, a function, an inverted mode symbol or
-function, or a cons cell of variable name and value. The key t can be
+function, or a cons cell of variable name and value.  The key t can be
 used to specify catch all/default settings."
   :group 'vertico
   :type '(alist :key-type (choice symbol regexp (const t)) :value-type (repeat sexp)))
 
 (defcustom vertico-multiform-categories nil
   "Alist of categories/regexps and list of settings to turn on per category.
-See `vertico-multiform-commands' on details about the settings. The
+See `vertico-multiform-commands' on details about the settings.  The
 category settings have lower precedence than
 `vertico-multiform-commands'."
   :group 'vertico
@@ -135,9 +135,7 @@ The keys in LIST can be symbols or regexps."
     (vertico-multiform--toggle 1)
     (vertico--setup)))
 
-(defun vertico-multiform--advice (&rest app)
-  "Override advice for `vertico--advice' switching modes on and off.
-APP is the original function call."
+(cl-defmethod vertico--advice (&context (vertico-multiform-mode (eql t)) &rest app)
   (unwind-protect
       (progn
         (vertico-multiform--toggle -1)
@@ -153,10 +151,7 @@ APP is the original function call."
     (warn "vertico-multiform must not be toggled from recursive minibuffers"))
   (when vertico-multiform--stack
     (warn "vertico-multiform state is inconsistent")
-    (setq vertico-multiform--stack nil))
-  (if vertico-multiform-mode
-      (advice-add #'vertico--advice :override #'vertico-multiform--advice)
-    (advice-remove #'vertico--advice #'vertico-multiform--advice)))
+    (setq vertico-multiform--stack nil)))
 
 (defun vertico-multiform--ensure ()
   "Ensure that multiform mode is enabled."

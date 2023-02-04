@@ -29,10 +29,10 @@
 ;; This package is a Vertico extension providing a horizontal display.
 ;;
 ;; The mode can be enabled globally or via `vertico-multiform-mode' per
-;; command or completion category. Alternatively the flat display can be
+;; command or completion category.  Alternatively the flat display can be
 ;; toggled temporarily if `vertico-multiform-mode' is enabled:
 ;;
-;; (define-key vertico-map "\M-F" #'vertico-multiform-flat)
+;; (keymap-set vertico-map "M-F" #'vertico-multiform-flat)
 ;;
 ;; The flat display can be made to look like `ido-mode' by setting
 ;; `vertico-cycle' to t. See also the `vertico-flat-format'
@@ -61,15 +61,12 @@
   :type 'plist
   :group 'vertico)
 
-(defvar vertico-flat-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap left-char] #'vertico-previous)
-    (define-key map [remap right-char] #'vertico-next)
-    map)
-  "Additional keymap activated in flat mode.")
+(defvar-keymap vertico-flat-map
+  :doc "Additional keymap activated in flat mode."
+  "<remap> <left-char>" #'vertico-previous
+  "<remap> <right-char>" #'vertico-next)
 
-(defun vertico-flat--display-candidates (candidates)
-  "Display CANDIDATES horizontally."
+(cl-defmethod vertico--display-candidates (candidates &context (vertico-flat-mode (eql t)))
   (setq-local truncate-lines nil
               resize-mini-windows t)
   (move-overlay vertico--candidates-ov (point-max) (point-max))
@@ -84,8 +81,7 @@
             (t (format (plist-get vertico-flat-format (if (< vertico--index 0) :prompt :multiple))
                        (string-join candidates (plist-get vertico-flat-format :separator))))))))
 
-(defun vertico-flat--arrange-candidates ()
-  "Arrange candidates."
+(cl-defmethod vertico--arrange-candidates (&context (vertico-flat-mode (eql t)))
   (let* ((index (max 0 vertico--index)) (count vertico-count)
          (candidates (nthcdr vertico--index vertico--candidates))
          (width (- (* vertico-flat-max-lines (- (vertico--window-width) 4))
@@ -99,7 +95,7 @@
                 (> width 0) (> count 0))
       (let ((cand (car candidates)))
         (setq cand (car (funcall vertico--highlight (list cand))))
-        (when (string-match-p "\n" cand)
+        (when (string-search "\n" cand)
           (setq cand (vertico--truncate-multiline cand width)))
         (setq cand (string-trim
                     (replace-regexp-in-string
@@ -129,15 +125,9 @@
   (when-let (win (active-minibuffer-window))
     (unless (frame-root-window-p win)
       (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise)))
-  (cond
-   (vertico-flat-mode
-    (add-to-list 'minor-mode-map-alist `(vertico--input . ,vertico-flat-map))
-    (advice-add #'vertico--arrange-candidates :override #'vertico-flat--arrange-candidates)
-    (advice-add #'vertico--display-candidates :override #'vertico-flat--display-candidates))
-   (t
-    (setq minor-mode-map-alist (delete `(vertico--input . ,vertico-flat-map) minor-mode-map-alist))
-    (advice-remove #'vertico--arrange-candidates #'vertico-flat--arrange-candidates)
-    (advice-remove #'vertico--display-candidates #'vertico-flat--display-candidates))))
+  (if vertico-flat-mode
+      (add-to-list 'minor-mode-map-alist `(vertico--input . ,vertico-flat-map))
+    (setq minor-mode-map-alist (delete `(vertico--input . ,vertico-flat-map) minor-mode-map-alist))))
 
 (provide 'vertico-flat)
 ;;; vertico-flat.el ends here

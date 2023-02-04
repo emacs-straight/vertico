@@ -31,10 +31,10 @@
 ;; else, it is a simple derivative of `vertico-flat-mode'.
 ;;
 ;; The mode can be enabled globally or via `vertico-multiform-mode' per
-;; command or completion category. Alternatively the unobtrusive display
+;; command or completion category.  Alternatively the unobtrusive display
 ;; can be toggled temporarily if `vertico-multiform-mode' is enabled:
 ;;
-;; (define-key vertico-map "\M-U" #'vertico-multiform-unobtrusive)
+;; (keymap-set vertico-map "M-U" #'vertico-multiform-unobtrusive)
 
 ;;; Code:
 
@@ -42,6 +42,9 @@
 
 (defvar vertico-unobtrusive--orig-count nil)
 (defvar vertico-unobtrusive--orig-count-format nil)
+
+(cl-defmethod vertico--setup :before (&context (vertico-unobtrusive-mode (eql t)))
+  (redisplay))
 
 ;;;###autoload
 (define-minor-mode vertico-unobtrusive-mode
@@ -55,9 +58,7 @@
             vertico-unobtrusive--orig-count-format vertico-count-format
             vertico-count 1
             vertico-count-format nil
-            vertico-flat-format `(:separator nil :ellipsis nil ,@vertico-flat-format)))
-    (advice-add #'vertico--setup :before #'redisplay)
-    (vertico-flat-mode 1))
+            vertico-flat-format `(:separator nil :ellipsis nil ,@vertico-flat-format))))
    (t
     (when vertico-unobtrusive--orig-count
       (setq-default face-remapping-alist
@@ -66,10 +67,8 @@
       (setq vertico-count vertico-unobtrusive--orig-count
             vertico-count-format vertico-unobtrusive--orig-count-format
             vertico-flat-format (nthcdr 4 vertico-flat-format)
-            vertico-unobtrusive--orig-count nil))
-    (advice-remove #'vertico--setup #'redisplay)
-    (vertico-flat-mode -1)))
-  (setq vertico-flat-mode nil))
+            vertico-unobtrusive--orig-count nil))))
+  (vertico-flat-mode (if vertico-unobtrusive-mode 1 -1)))
 
 (provide 'vertico-unobtrusive)
 ;;; vertico-unobtrusive.el ends here

@@ -29,33 +29,30 @@
 ;; This package is a Vertico extension, which reverses the list of candidates.
 ;;
 ;; The mode can be enabled globally or via `vertico-multiform-mode' per
-;; command or completion category. Alternatively the reverse display can be
+;; command or completion category.  Alternatively the reverse display can be
 ;; toggled temporarily if `vertico-multiform-mode' is enabled:
 ;;
-;; (define-key vertico-map "\M-R" #'vertico-multiform-reverse)
+;; (keymap-set vertico-map "M-R" #'vertico-multiform-reverse)
 
 ;;; Code:
 
 (require 'vertico)
 
-(defvar vertico-reverse-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap beginning-of-buffer] #'vertico-last)
-    (define-key map [remap minibuffer-beginning-of-buffer] #'vertico-last)
-    (define-key map [remap end-of-buffer] #'vertico-first)
-    (define-key map [remap scroll-down-command] #'vertico-scroll-up)
-    (define-key map [remap scroll-up-command] #'vertico-scroll-down)
-    (define-key map [remap next-line] #'vertico-previous)
-    (define-key map [remap previous-line] #'vertico-next)
-    (define-key map [remap next-line-or-history-element] #'vertico-previous)
-    (define-key map [remap previous-line-or-history-element] #'vertico-next)
-    (define-key map [remap backward-paragraph] #'vertico-next-group)
-    (define-key map [remap forward-paragraph] #'vertico-previous-group)
-    map)
-  "Additional keymap activated in reverse mode.")
+(defvar-keymap vertico-reverse-map
+  :doc "Additional keymap activated in reverse mode."
+  "<remap> <beginning-of-buffer>" #'vertico-last
+  "<remap> <minibuffer-beginning-of-buffer>" #'vertico-last
+  "<remap> <end-of-buffer>" #'vertico-first
+  "<remap> <scroll-down-command>" #'vertico-scroll-up
+  "<remap> <scroll-up-command>" #'vertico-scroll-down
+  "<remap> <next-line>" #'vertico-previous
+  "<remap> <previous-line>" #'vertico-next
+  "<remap> <next-line-or-history-element>" #'vertico-previous
+  "<remap> <previous-line-or-history-element>" #'vertico-next
+  "<remap> <backward-paragraph>" #'vertico-next-group
+  "<remap> <forward-paragraph>" #'vertico-previous-group)
 
-(defun vertico-reverse--display-candidates (lines)
-  "Display LINES in reverse."
+(cl-defmethod vertico--display-candidates (lines &context (vertico-reverse-mode (eql t)))
   (move-overlay vertico--candidates-ov (point-min) (point-min))
   (setq lines (nreverse lines))
   (unless (eq vertico-resize t)
@@ -74,13 +71,9 @@
   (dolist (buf (buffer-list))
     (when-let (ov (buffer-local-value 'vertico--candidates-ov buf))
       (overlay-put ov 'before-string nil)))
-  (cond
-   (vertico-reverse-mode
-    (add-to-list 'minor-mode-map-alist `(vertico--input . ,vertico-reverse-map))
-    (advice-add #'vertico--display-candidates :override #'vertico-reverse--display-candidates))
-   (t
-    (setq minor-mode-map-alist (delete `(vertico--input . ,vertico-reverse-map) minor-mode-map-alist))
-    (advice-remove #'vertico--display-candidates #'vertico-reverse--display-candidates))))
+  (if vertico-reverse-mode
+      (add-to-list 'minor-mode-map-alist `(vertico--input . ,vertico-reverse-map))
+    (setq minor-mode-map-alist (delete `(vertico--input . ,vertico-reverse-map) minor-mode-map-alist))))
 
 (provide 'vertico-reverse)
 ;;; vertico-reverse.el ends here

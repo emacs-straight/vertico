@@ -6,7 +6,7 @@
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
 ;; Version: 1.0
-;; Package-Requires: ((emacs "27.1"))
+;; Package-Requires: ((emacs "27.1") (compat "29.1.3.0"))
 ;; Homepage: https://github.com/minad/vertico
 
 ;; This file is part of GNU Emacs.
@@ -27,12 +27,13 @@
 ;;; Commentary:
 
 ;; Vertico provides a performant and minimalistic vertical completion UI
-;; based on the default completion system. By reusing the built-in
+;; based on the default completion system.  By reusing the built-in
 ;; facilities, Vertico achieves full compatibility with built-in Emacs
 ;; completion commands and completion tables.
 
 ;;; Code:
 
+(require 'compat)
 (require 'seq)
 (eval-when-compile
   (require 'cl-lib)
@@ -40,6 +41,9 @@
 
 (defgroup vertico nil
   "VERTical Interactive COmpletion."
+  :link '(info-link :tag "Info Manual" "(vertico)")
+  :link '(url-link :tag "Homepage" "https://github.com/minad/vertico")
+  :link '(emacs-library-link :tag "Library Source" "vertico.el")
   :group 'convenience
   :group 'minibuffer
   :prefix "vertico-")
@@ -117,25 +121,24 @@ The value should lie between 0 and vertico-count/2."
 (defface vertico-current '((t :inherit highlight :extend t))
   "Face used to highlight the currently selected candidate.")
 
-(defvar vertico-map
-  (let ((map (make-composed-keymap nil minibuffer-local-map)))
-    (define-key map [remap beginning-of-buffer] #'vertico-first)
-    (define-key map [remap minibuffer-beginning-of-buffer] #'vertico-first)
-    (define-key map [remap end-of-buffer] #'vertico-last)
-    (define-key map [remap scroll-down-command] #'vertico-scroll-down)
-    (define-key map [remap scroll-up-command] #'vertico-scroll-up)
-    (define-key map [remap next-line] #'vertico-next)
-    (define-key map [remap previous-line] #'vertico-previous)
-    (define-key map [remap next-line-or-history-element] #'vertico-next)
-    (define-key map [remap previous-line-or-history-element] #'vertico-previous)
-    (define-key map [remap backward-paragraph] #'vertico-previous-group)
-    (define-key map [remap forward-paragraph] #'vertico-next-group)
-    (define-key map [remap exit-minibuffer] #'vertico-exit)
-    (define-key map [remap kill-ring-save] #'vertico-save)
-    (define-key map "\M-\r" #'vertico-exit-input)
-    (define-key map "\t" #'vertico-insert)
-    map)
-  "Vertico minibuffer keymap derived from `minibuffer-local-map'.")
+(defvar-keymap vertico-map
+  :doc "Vertico minibuffer keymap derived from `minibuffer-local-map'."
+  :parent minibuffer-local-map
+  "<remap> <beginning-of-buffer>" #'vertico-first
+  "<remap> <minibuffer-beginning-of-buffer>" #'vertico-first
+  "<remap> <end-of-buffer>" #'vertico-last
+  "<remap> <scroll-down-command>" #'vertico-scroll-down
+  "<remap> <scroll-up-command>" #'vertico-scroll-up
+  "<remap> <next-line>" #'vertico-next
+  "<remap> <previous-line>" #'vertico-previous
+  "<remap> <next-line-or-history-element>" #'vertico-next
+  "<remap> <previous-line-or-history-element>" #'vertico-previous
+  "<remap> <backward-paragraph>" #'vertico-previous-group
+  "<remap> <forward-paragraph>" #'vertico-next-group
+  "<remap> <exit-minibuffer>" #'vertico-exit
+  "<remap> <kill-ring-save>" #'vertico-save
+  "M-RET" #'vertico-exit-input
+  "TAB" #'vertico-insert)
 
 (defvar-local vertico--highlight #'identity
   "Deferred candidate highlighting function.")
@@ -198,7 +201,7 @@ The value should lie between 0 and vertico-count/2."
                            (and (>= (length elem) base-size)
                                 (eq t (compare-strings base 0 base-size elem 0 base-size))))
                    (let ((file-sep (and (eq minibuffer-history-variable 'file-name-history)
-                                        (string-match-p "/" elem base-size))))
+                                        (string-search "/" elem base-size))))
                      ;; Drop base string from history elements & special file handling.
                      (when (or (> base-size 0) file-sep)
                        (setq elem (substring elem base-size (and file-sep (1+ file-sep)))))
@@ -262,8 +265,7 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
 (defun vertico--move-to-front (elem list)
   "Move ELEM to front of LIST."
   (if-let (found (member elem list))
-      (let ((head (list (car found))))
-        (nconc head (delq (setcar found nil) list)))
+      (nconc (list (car found)) (delq (setcar found nil) list))
     list))
 
 ;; bug#47711: Deferred highlighting for `completion-all-completions'
@@ -413,21 +415,17 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
   "Return t if PATH is a remote path."
   (string-match-p "\\`/[^/|:]+:" (substitute-in-file-name path)))
 
-(defun vertico--prepare ()
-  "Ensure that the state is prepared before running the next command."
-  (when (and (symbolp this-command) (string-prefix-p "vertico-" (symbol-name this-command)))
-    (vertico--update)))
-
 (defun vertico--update (&optional interruptible)
   "Update state, optionally INTERRUPTIBLE."
   (let* ((pt (max 0 (- (point) (minibuffer-prompt-end))))
          (content (minibuffer-contents-no-properties))
          (input (cons content pt)))
     (unless (or (and interruptible (input-pending-p)) (equal vertico--input input))
-      ;; Redisplay the minibuffer such that the input becomes immediately
-      ;; visible before the expensive candidate recomputation (Issue #89).
-      ;; Do not redisplay during initialization, since this leads to flicker.
-      (when (and interruptible (consp vertico--input)) (redisplay))
+      ;; Redisplay to make input immediately visible before expensive candidate
+      ;; recomputation (#89).  No redisplay during init because of flicker.
+      (when (and interruptible (consp vertico--input))
+        ;; Prevent recursive exhibit from timer (`consult-vertico--refresh').
+        (cl-letf (((symbol-function #'vertico--exhibit) #'ignore)) (redisplay)))
       (pcase (let ((vertico--metadata (completion-metadata (substring content 0 pt)
                                                            minibuffer-completion-table
                                                            minibuffer-completion-predicate)))
@@ -473,13 +471,6 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
      (replace-regexp-in-string "\\`[\t\n ]+\\|[\t\n ]+\\'" ""))
    max-width 0 nil (cdr vertico-multiline)))
 
-(defun vertico--format-candidate (cand prefix suffix index _start)
-  "Format CAND given PREFIX, SUFFIX and INDEX."
-  (setq cand (vertico--display-string (concat prefix cand suffix "\n")))
-  (when (= index vertico--index)
-    (add-face-text-property 0 (length cand) 'vertico-current 'append cand))
-  cand)
-
 (defun vertico--compute-scroll ()
   "Compute new scroll position."
   (let ((off (max (min vertico-scroll-margin (/ vertico-count 2)) 0))
@@ -498,7 +489,85 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
     (vertico--remove-face 0 (length title) 'completions-first-difference title))
   (format (concat vertico-group-format "\n") title))
 
-(defun vertico--arrange-candidates ()
+(defun vertico--format-count ()
+  "Format the count string."
+  (format (car vertico-count-format)
+          (format (cdr vertico-count-format)
+                  (cond ((>= vertico--index 0) (1+ vertico--index))
+                        (vertico--allow-prompt "*")
+                        (t "!"))
+                  vertico--total)))
+
+(defun vertico--display-count ()
+  "Update count overlay `vertico--count-ov'."
+  (move-overlay vertico--count-ov (point-min) (point-min))
+  (overlay-put vertico--count-ov 'before-string
+               (if vertico-count-format (vertico--format-count) "")))
+
+(defun vertico--prompt-selection ()
+  "Highlight the prompt if selected."
+  (let ((inhibit-modification-hooks t))
+    (if (and (< vertico--index 0) vertico--allow-prompt)
+        (add-face-text-property (minibuffer-prompt-end) (point-max) 'vertico-current 'append)
+      (vertico--remove-face (minibuffer-prompt-end) (point-max) 'vertico-current))))
+
+(defun vertico--remove-face (beg end face &optional obj)
+  "Remove FACE between BEG and END from OBJ."
+  (while (< beg end)
+    (let ((next (next-single-property-change beg 'face obj end)))
+      (when-let (val (get-text-property beg 'face obj))
+        (put-text-property beg next 'face (remq face (ensure-list val)) obj))
+      (setq beg next))))
+
+(defun vertico--exhibit ()
+  "Exhibit completion UI."
+  (let ((buffer-undo-list t)) ;; Overlays affect point position and undo list!
+    (vertico--update 'interruptible)
+    (vertico--prompt-selection)
+    (vertico--display-count)
+    (vertico--display-candidates (vertico--arrange-candidates))))
+
+(defun vertico--goto (index)
+  "Go to candidate with INDEX."
+  (setq vertico--index
+        (max (if (or vertico--allow-prompt (= 0 vertico--total)) -1 0)
+             (min index (1- vertico--total)))
+        vertico--lock-candidate (or (>= vertico--index 0) vertico--allow-prompt)))
+
+(defun vertico--candidate (&optional hl)
+  "Return current candidate string with optional highlighting if HL is non-nil."
+  (let ((content (substring (or (car-safe vertico--input) (minibuffer-contents-no-properties)))))
+    (cond
+     ((>= vertico--index 0)
+      (let ((cand (substring (nth vertico--index vertico--candidates))))
+        ;; XXX Drop the completions-common-part face which is added by `completion--twq-all'.
+        ;; This is a hack in Emacs and should better be fixed in Emacs itself, the corresponding
+        ;; code is already marked with a FIXME. Should this be reported as a bug?
+        (vertico--remove-face 0 (length cand) 'completions-common-part cand)
+        (concat vertico--base
+                (if hl (car (funcall vertico--highlight (list cand))) cand))))
+     ((and (equal content "") (or (car-safe minibuffer-default) minibuffer-default)))
+     (t content))))
+
+(defun vertico--match-p (input)
+  "Return t if INPUT is a valid match."
+  (or (memq minibuffer--require-match '(nil confirm-after-completion))
+      (equal "" input) ;; Null completion, returns default value
+      (and (functionp minibuffer--require-match) ;; Emacs 29 require-match function
+           (funcall minibuffer--require-match input))
+      (test-completion input minibuffer-completion-table minibuffer-completion-predicate)
+      (if (eq minibuffer--require-match 'confirm)
+          (eq (ignore-errors (read-char "Confirm")) 13)
+        (and (minibuffer-message "Match required") nil))))
+
+(cl-defgeneric vertico--format-candidate (cand prefix suffix index _start)
+  "Format CAND given PREFIX, SUFFIX and INDEX."
+  (setq cand (vertico--display-string (concat prefix cand suffix "\n")))
+  (when (= index vertico--index)
+    (add-face-text-property 0 (length cand) 'vertico-current 'append cand))
+  cand)
+
+(cl-defgeneric vertico--arrange-candidates ()
   "Arrange candidates."
   (vertico--compute-scroll)
   (let ((curr-line 0) lines)
@@ -532,19 +601,19 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
                (pcase (car line)
                  (`(,index ,cand ,prefix ,suffix)
                   (setq start (or start index))
-                  (when (string-match-p "\n" cand)
+                  (when (string-search "\n" cand)
                     (setq cand (vertico--truncate-multiline cand max-width)))
                   (setcar line (vertico--format-candidate cand prefix suffix index start))))))
     lines))
 
-(defun vertico--display-candidates (lines)
+(cl-defgeneric vertico--display-candidates (lines)
   "Update candidates overlay `vertico--candidates-ov' with LINES."
   (move-overlay vertico--candidates-ov (point-max) (point-max))
   (overlay-put vertico--candidates-ov 'after-string
                (apply #'concat #(" " 0 1 (cursor t)) (and lines "\n") lines))
   (vertico--resize-window (length lines)))
 
-(defun vertico--resize-window (height)
+(cl-defgeneric vertico--resize-window (height)
   "Resize active minibuffer window to HEIGHT."
   (setq-local truncate-lines (< (point) (* 0.8 (vertico--window-width)))
               resize-mini-windows 'grow-only
@@ -560,50 +629,27 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
                 (and (< dp 0) (eq vertico-resize t)))
         (window-resize nil dp nil nil 'pixelwise)))))
 
-(defun vertico--format-count ()
-  "Format the count string."
-  (format (car vertico-count-format)
-          (format (cdr vertico-count-format)
-                  (cond ((>= vertico--index 0) (1+ vertico--index))
-                        (vertico--allow-prompt "*")
-                        (t "!"))
-                  vertico--total)))
+(cl-defgeneric vertico--prepare ()
+  "Ensure that the state is prepared before running the next command."
+  (when (and (symbolp this-command) (string-prefix-p "vertico-" (symbol-name this-command)))
+    (vertico--update)))
 
-(defun vertico--display-count ()
-  "Update count overlay `vertico--count-ov'."
-  (move-overlay vertico--count-ov (point-min) (point-min))
-  (overlay-put vertico--count-ov 'before-string
-               (if vertico-count-format (vertico--format-count) "")))
+(cl-defgeneric vertico--setup ()
+  "Setup completion UI."
+  (setq vertico--input t
+        vertico--candidates-ov (make-overlay (point-max) (point-max) nil t t)
+        vertico--count-ov (make-overlay (point-min) (point-min) nil t t))
+  ;; Set priority for compatibility with `minibuffer-depth-indicate-mode'
+  (overlay-put vertico--count-ov 'priority 1)
+  (setq-local completion-auto-help nil
+              completion-show-inline-help nil)
+  (use-local-map vertico-map)
+  (add-hook 'pre-command-hook #'vertico--prepare nil 'local)
+  (add-hook 'post-command-hook #'vertico--exhibit nil 'local))
 
-(defun vertico--prompt-selection ()
-  "Highlight the prompt if selected."
-  (let ((inhibit-modification-hooks t))
-    (if (and (< vertico--index 0) vertico--allow-prompt)
-        (add-face-text-property (minibuffer-prompt-end) (point-max) 'vertico-current 'append)
-      (vertico--remove-face (minibuffer-prompt-end) (point-max) 'vertico-current))))
-
-(defun vertico--remove-face (beg end face &optional obj)
-  "Remove FACE between BEG and END from OBJ."
-  (while (< beg end)
-    (let ((next (next-single-property-change beg 'face obj end)))
-      (when-let (val (get-text-property beg 'face obj))
-        (put-text-property beg next 'face (remq face (if (listp val) val (list val))) obj))
-      (setq beg next))))
-
-(defun vertico--exhibit ()
-  "Exhibit completion UI."
-  (let ((buffer-undo-list t)) ;; Overlays affect point position and undo list!
-    (vertico--update 'interruptible)
-    (vertico--prompt-selection)
-    (vertico--display-count)
-    (vertico--display-candidates (vertico--arrange-candidates))))
-
-(defun vertico--goto (index)
-  "Go to candidate with INDEX."
-  (setq vertico--index
-        (max (if (or vertico--allow-prompt (= 0 vertico--total)) -1 0)
-             (min index (1- vertico--total)))
-        vertico--lock-candidate (or (>= vertico--index 0) vertico--allow-prompt)))
+(cl-defgeneric vertico--advice (&rest app)
+  "Advice for completion function, apply APP."
+  (minibuffer-with-setup-hook #'vertico--setup (apply app)))
 
 (defun vertico-first ()
   "Go to first candidate, or to the prompt when the first candidate is selected."
@@ -640,17 +686,6 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
   "Go backward N candidates."
   (interactive "p")
   (vertico-next (- (or n 1))))
-
-(defun vertico--match-p (input)
-  "Return t if INPUT is a valid match."
-  (or (memq minibuffer--require-match '(nil confirm-after-completion))
-      (equal "" input) ;; Null completion, returns default value
-      (and (functionp minibuffer--require-match) ;; Emacs 29 require-match function
-           (funcall minibuffer--require-match input))
-      (test-completion input minibuffer-completion-table minibuffer-completion-predicate)
-      (if (eq minibuffer--require-match 'confirm)
-          (eq (ignore-errors (read-char "Confirm")) 13)
-        (and (minibuffer-message "Match required") nil))))
 
 (defun vertico-exit (&optional arg)
   "Exit minibuffer with current candidate or input if prefix ARG is given."
@@ -707,48 +742,14 @@ When the prefix argument is 0, the group order is reset."
     (let ((vertico--index (max 0 vertico--index)))
       (insert (prog1 (vertico--candidate) (delete-minibuffer-contents))))))
 
-(defun vertico--candidate (&optional hl)
-  "Return current candidate string with optional highlighting if HL is non-nil."
-  (let ((content (substring (or (car-safe vertico--input) (minibuffer-contents-no-properties)))))
-    (cond
-     ((>= vertico--index 0)
-      (let ((cand (substring (nth vertico--index vertico--candidates))))
-        ;; XXX Drop the completions-common-part face which is added by `completion--twq-all'.
-        ;; This is a hack in Emacs and should better be fixed in Emacs itself, the corresponding
-        ;; code is already marked with a FIXME. Should this be reported as a bug?
-        (vertico--remove-face 0 (length cand) 'completions-common-part cand)
-        (concat vertico--base
-                (if hl (car (funcall vertico--highlight (list cand))) cand))))
-     ((and (equal content "") (or (car-safe minibuffer-default) minibuffer-default)))
-     (t content))))
-
-(defun vertico--setup ()
-  "Setup completion UI."
-  (setq vertico--input t
-        vertico--candidates-ov (make-overlay (point-max) (point-max) nil t t)
-        vertico--count-ov (make-overlay (point-min) (point-min) nil t t))
-  ;; Set priority for compatibility with `minibuffer-depth-indicate-mode'
-  (overlay-put vertico--count-ov 'priority 1)
-  (setq-local completion-auto-help nil
-              completion-show-inline-help nil)
-  (use-local-map vertico-map)
-  (add-hook 'pre-command-hook #'vertico--prepare nil 'local)
-  (add-hook 'post-command-hook #'vertico--exhibit nil 'local))
-
-(defun vertico--advice (&rest args)
-  "Advice for completion function, receiving ARGS."
-  (minibuffer-with-setup-hook #'vertico--setup (apply args)))
-
 ;;;###autoload
 (define-minor-mode vertico-mode
   "VERTical Interactive COmpletion."
   :global t :group 'vertico
-  (if vertico-mode
-      (progn
-        (advice-add #'completing-read-default :around #'vertico--advice)
-        (advice-add #'completing-read-multiple :around #'vertico--advice))
-    (advice-remove #'completing-read-default #'vertico--advice)
-    (advice-remove #'completing-read-multiple #'vertico--advice)))
+  (dolist (fun '(completing-read-default completing-read-multiple))
+    (if vertico-mode
+        (advice-add fun :around #'vertico--advice)
+      (advice-remove fun #'vertico--advice))))
 
 ;; Emacs 28: Do not show Vertico commands in M-X
 (dolist (sym '(vertico-next vertico-next-group vertico-previous vertico-previous-group

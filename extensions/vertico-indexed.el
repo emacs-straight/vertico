@@ -27,8 +27,8 @@
 ;;; Commentary:
 
 ;; This package is a Vertico extension, which prefixes candidates with indices
-;; if enabled via `vertico-indexed-mode'. It allows you to select candidates
-;; with prefix arguments. This is designed to be a faster alternative to
+;; if enabled via `vertico-indexed-mode'.  It allows you to select candidates
+;; with prefix arguments.  This is designed to be a faster alternative to
 ;; selecting a candidate with `vertico-next' and `vertico-previous'.
 
 ;;; Code:
@@ -50,44 +50,35 @@
 (defvar-local vertico-indexed--min 0)
 (defvar-local vertico-indexed--max 0)
 
-(defun vertico-indexed--format-candidate (orig cand prefix suffix index start)
-  "Format candidate, see `vertico--format-candidate' for arguments."
-  (setq vertico-indexed--min start vertico-indexed--max index)
-  (funcall orig cand
-           (concat (propertize (format
-                                (if (> (+ vertico-indexed-start vertico-count) 10)
-                                    "%2d " "%1d ")
-                                (+ (- index start) vertico-indexed-start))
-                               'face 'vertico-indexed)
-                   prefix)
-           suffix index start))
+(cl-defmethod vertico--prepare :before (&context (vertico-indexed-mode (eql t)))
+  (when (and prefix-arg (memq this-command vertico-indexed--commands))
+    (let ((index (+ vertico-indexed--min
+                    (- (prefix-numeric-value prefix-arg)
+                       vertico-indexed-start))))
+        (if (and (>= index vertico-indexed--min)
+                 (< index vertico-indexed--max)
+                 (/= vertico--total 0))
+            (setq vertico--index index)
+          (minibuffer-message "Out of range")
+          (setq this-command #'ignore)))))
 
-(defun vertico-indexed--handle-prefix (orig &rest args)
-  "Handle prefix argument before calling ORIG function with ARGS."
-  (if (and current-prefix-arg (called-interactively-p t))
-      (let ((vertico--index (+ vertico-indexed--min
-                               (- (prefix-numeric-value current-prefix-arg)
-                                  vertico-indexed-start))))
-        (if (or (< vertico--index vertico-indexed--min)
-                (> vertico--index vertico-indexed--max)
-                (= vertico--total 0))
-            (minibuffer-message "Out of range")
-          (funcall orig)))
-    (apply orig args)))
+(cl-defmethod vertico--format-candidate :around
+  (cand prefix suffix index start &context (vertico-indexed-mode (eql t)))
+  (setq vertico-indexed--min start vertico-indexed--max index)
+  (cl-call-next-method
+   cand
+   (concat (propertize (format
+                        (if (> (+ vertico-indexed-start vertico-count) 10)
+                            "%2d " "%1d ")
+                        (+ (- index start) vertico-indexed-start))
+                       'face 'vertico-indexed)
+           prefix)
+   suffix index start))
 
 ;;;###autoload
 (define-minor-mode vertico-indexed-mode
   "Prefix candidates with indices."
-  :global t :group 'vertico
-  (cond
-   (vertico-indexed-mode
-    (advice-add #'vertico--format-candidate :around #'vertico-indexed--format-candidate)
-    (dolist (cmd vertico-indexed--commands)
-      (advice-add cmd :around #'vertico-indexed--handle-prefix)))
-   (t
-    (advice-remove #'vertico--format-candidate #'vertico-indexed--format-candidate)
-    (dolist (cmd vertico-indexed--commands)
-      (advice-remove cmd #'vertico-indexed--handle-prefix)))))
+  :global t :group 'vertico)
 
 (provide 'vertico-indexed)
 ;;; vertico-indexed.el ends here

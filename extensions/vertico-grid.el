@@ -29,10 +29,10 @@
 ;; This package is a Vertico extension providing a grid display.
 ;;
 ;; The mode can be enabled globally or via `vertico-multiform-mode' per
-;; command or completion category. Alternatively the grid display can be
+;; command or completion category.  Alternatively the grid display can be
 ;; toggled temporarily if `vertico-multiform-mode' is enabled:
 ;;
-;; (define-key vertico-map "\M-G" #'vertico-multiform-grid)
+;; (keymap-set vertico-map "M-G" #'vertico-multiform-grid)
 
 ;;; Code:
 
@@ -66,20 +66,17 @@ When scrolling beyond this limit, candidates may be truncated."
   :type 'integer
   :group 'vertico)
 
-(defvar vertico-grid-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap left-char] #'vertico-grid-left)
-    (define-key map [remap right-char] #'vertico-grid-right)
-    (define-key map [remap scroll-down-command] #'vertico-grid-scroll-down)
-    (define-key map [remap scroll-up-command] #'vertico-grid-scroll-up)
-    map)
-  "Additional keymap activated in grid mode.")
+(defvar-keymap vertico-grid-map
+  :doc "Additional keymap activated in grid mode."
+  "<remap> <left-char>" #'vertico-grid-left
+  "<remap> <right-char>" #'vertico-grid-right
+  "<remap> <scroll-down-command>" #'vertico-grid-scroll-down
+  "<remap> <scroll-up-command>" #'vertico-grid-scroll-up)
 
 (defvar-local vertico-grid--columns vertico-grid-min-columns
   "Current number of grid columns.")
 
-(defun vertico-grid--arrange-candidates ()
-  "Arrange candidates."
+(cl-defmethod vertico--arrange-candidates (&context (vertico-grid-mode (eql t)))
   (when (<= vertico--index 0)
     (let ((cand vertico--candidates) (w 1) (n 0))
       (while (and cand (< n vertico-grid-lookahead))
@@ -96,7 +93,7 @@ When scrolling beyond this limit, candidates may be truncated."
          (cands
           (seq-map-indexed (lambda (cand index)
                              (cl-incf index start)
-                             (when (string-match-p "\n" cand)
+                             (when (string-search "\n" cand)
                                (setq cand (vertico--truncate-multiline cand width)))
                              (truncate-string-to-width
                               (string-trim
@@ -163,13 +160,9 @@ When scrolling beyond this limit, candidates may be truncated."
   (when-let (win (active-minibuffer-window))
     (unless (frame-root-window-p win)
       (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise)))
-  (cond
-   (vertico-grid-mode
-    (add-to-list 'minor-mode-map-alist `(vertico--input . ,vertico-grid-map))
-    (advice-add #'vertico--arrange-candidates :override #'vertico-grid--arrange-candidates))
-   (t
-    (setq minor-mode-map-alist (delete `(vertico--input . ,vertico-grid-map) minor-mode-map-alist))
-    (advice-remove #'vertico--arrange-candidates #'vertico-grid--arrange-candidates))))
+  (if vertico-grid-mode
+      (add-to-list 'minor-mode-map-alist `(vertico--input . ,vertico-grid-map))
+    (setq minor-mode-map-alist (delete `(vertico--input . ,vertico-grid-map) minor-mode-map-alist))))
 
 ;; Emacs 28: Do not show Vertico commands in M-X
 (dolist (sym '(vertico-grid-left vertico-grid-right

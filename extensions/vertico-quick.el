@@ -27,12 +27,12 @@
 ;;; Commentary:
 
 ;; This package is a Vertico extension, which prefixes candidates with
-;; quick keys. Typing these quick keys allows you to select the
-;; candidate in front of them. This is designed to be a faster
+;; quick keys.  Typing these quick keys allows you to select the
+;; candidate in front of them.  This is designed to be a faster
 ;; alternative to selecting a candidate with `vertico-next' and
 ;; `vertico-previous'.
-;; (define-key vertico-map "\M-q" #'vertico-quick-insert)
-;; (define-key vertico-map "\C-q" #'vertico-quick-exit)
+;; (keymap-set vertico-map "M-q" #'vertico-quick-insert)
+;; (keymap-set vertico-map "C-q" #'vertico-quick-exit)
 
 ;;; Code:
 
@@ -109,7 +109,7 @@ TWO is non-nil if two keys should be displayed."
                 (pcase-let ((`(,keys . ,events) (vertico-quick--keys first index start)))
                   (setq list (nconc events list))
                   (if (bound-and-true-p vertico-flat-mode)
-                      (setq keys (replace-regexp-in-string " " "" keys)
+                      (setq keys (string-replace " " "" keys)
                             cand (string-trim cand)
                             cand (substring cand (min (length cand) (length keys))))
                     (setq keys (concat keys (make-string (max 1 (- (length prefix) 2)) ?\s))))
