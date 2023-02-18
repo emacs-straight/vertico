@@ -6,7 +6,7 @@
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (vertico "1.0"))
+;; Package-Requires: ((emacs "27.1") (vertico "1.1"))
 ;; Homepage: https://github.com/minad/vertico
 
 ;; This file is part of GNU Emacs.
@@ -137,11 +137,11 @@ The keys in LIST can be symbols or regexps."
 
 (defvar-keymap vertico-multiform-map
   :doc "Additional keymap activated in multiform mode."
-  "M-V" 'vertico-multiform-vertical
-  "M-G" 'vertico-multiform-grid
-  "M-F" 'vertico-multiform-flat
-  "M-R" 'vertico-multiform-reverse
-  "M-U" 'vertico-multiform-unobtrusive)
+  "M-V" #'vertico-multiform-vertical
+  "M-G" #'vertico-multiform-grid
+  "M-F" #'vertico-multiform-flat
+  "M-R" #'vertico-multiform-reverse
+  "M-U" #'vertico-multiform-unobtrusive)
 
 ;;;###autoload
 (define-minor-mode vertico-multiform-mode
@@ -192,6 +192,9 @@ ARG can be nil, t, -1, 1 or toggle."
           (setcar vertico-multiform--stack (remove mode modes))
         (push not-mode (car vertico-multiform--stack))))))
 
+(defvar vertico-multiform--display-modes
+  '(vertico-unobtrusive-mode vertico-flat-mode
+    vertico-grid-mode vertico-reverse-mode))
 (defvar-local vertico-multiform--display-last nil)
 
 (defun vertico-multiform-vertical (&optional mode)
@@ -199,8 +202,7 @@ ARG can be nil, t, -1, 1 or toggle."
 MODE defaults to the vertical display."
   (interactive)
   (let (last)
-    (dolist (m '(vertico-unobtrusive-mode vertico-flat-mode
-                 vertico-grid-mode vertico-reverse-mode))
+    (dolist (m vertico-multiform--display-modes)
       (when (and (boundp m) (symbol-value m))
         (setq last m)
         (vertico-multiform--temporary-mode m -1)))
@@ -210,22 +212,21 @@ MODE defaults to the vertical display."
       (vertico-multiform--temporary-mode mode 1))
     (setq vertico-multiform--display-last last)))
 
-(put #'vertico-multiform-vertical 'completion-predicate #'vertico--command-p)
-
 (defmacro vertico-multiform--define-display-toggle (name)
   "Define toggle for display mode NAME."
-  (let ((sym (intern (format "vertico-multiform-%s" name))))
-    `(progn
-       (defun ,sym ()
-         ,(format "Toggle the %s display." name)
-         (interactive)
-         (vertico-multiform-vertical ',(intern (format "vertico-%s-mode" name))))
-       (put ',sym 'completion-predicate #'vertico--command-p))))
+  `(defun ,(intern (format "vertico-multiform-%s" name)) ()
+     ,(format "Toggle the %s display." name)
+     (interactive)
+     (vertico-multiform-vertical ',(intern (format "vertico-%s-mode" name)))))
 
 (vertico-multiform--define-display-toggle grid)
 (vertico-multiform--define-display-toggle flat)
 (vertico-multiform--define-display-toggle reverse)
 (vertico-multiform--define-display-toggle unobtrusive)
+
+;; Emacs 28: Do not show display toggles in M-X
+(map-keymap (lambda (_ x) (put x 'completion-predicate #'vertico--command-p))
+            (keymap-lookup vertico-multiform-map "ESC"))
 
 (provide 'vertico-multiform)
 ;;; vertico-multiform.el ends here

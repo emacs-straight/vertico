@@ -5,7 +5,7 @@
 ;; Author: Daniel Mendler <mail@daniel-mendler.de>
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
-;; Version: 1.0
+;; Version: 1.1
 ;; Package-Requires: ((emacs "27.1") (compat "29.1.3.4"))
 ;; Homepage: https://github.com/minad/vertico
 
@@ -750,15 +750,15 @@ When the prefix argument is 0, the group order is reset."
         (advice-add fun :around #'vertico--advice)
       (advice-remove fun #'vertico--advice))))
 
+(defun vertico--command-p (_sym buffer)
+  "Return non-nil if Vertico is active in BUFFER."
+  (buffer-local-value 'vertico--input buffer))
+
 ;; Emacs 28: Do not show Vertico commands in M-X
 (dolist (sym '(vertico-next vertico-next-group vertico-previous vertico-previous-group
                vertico-scroll-down vertico-scroll-up vertico-exit vertico-insert
                vertico-exit-input vertico-save vertico-first vertico-last))
   (put sym 'completion-predicate #'vertico--command-p))
-
-(defun vertico--command-p (_sym buffer)
-  "Return non-nil if Vertico is active in BUFFER."
-  (buffer-local-value 'vertico--input buffer))
 
 (provide 'vertico)
 ;;; vertico.el ends here
