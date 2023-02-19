@@ -119,7 +119,11 @@ The keys in LIST can be symbols or regexps."
                    (vertico-multiform--toggle -1)
                    (pop vertico-multiform--stack))))
     (add-hook 'minibuffer-exit-hook exit)
-    (dolist (x (cdr (or (vertico-multiform--lookup this-command vertico-multiform-commands)
+    (dolist (x (cdr (or (vertico-multiform--lookup
+                         (if (boundp 'current-minibuffer-command)
+                             current-minibuffer-command ;; Available on Emacs 28
+                           this-command)
+                         vertico-multiform-commands)
                         (vertico-multiform--lookup cat vertico-multiform-categories))))
       (pcase x
         (`(:not . ,fs)
@@ -163,13 +167,6 @@ The keys in LIST can be symbols or regexps."
         (minibuffer-with-setup-hook #'vertico-multiform--setup
           (apply app)))
     (vertico-multiform--toggle 1)))
-
-(defun vertico-multiform--ensure ()
-  "Ensure that multiform mode is enabled."
-  (unless (minibufferp)
-    (user-error "`%s' must be called inside the minibuffer" this-command))
-  (unless vertico-multiform-mode
-    (user-error "`vertico-multiform-mode' is not enabled")))
 
 (defun vertico-multiform--temporary-mode (mode arg)
   "Enable or disable MODE temporarily in minibuffer given ARG.
