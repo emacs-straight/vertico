@@ -6,7 +6,7 @@
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (vertico "1.1"))
+;; Package-Requires: ((emacs "27.1") (vertico "1.2"))
 ;; Homepage: https://github.com/minad/vertico
 
 ;; This file is part of GNU Emacs.
@@ -60,12 +60,12 @@
     (let ((index (+ vertico-indexed--min
                     (- (prefix-numeric-value prefix-arg)
                        vertico-indexed-start))))
-        (if (and (>= index vertico-indexed--min)
-                 (<= index vertico-indexed--max)
-                 (/= vertico--total 0))
-            (setq vertico--index index)
-          (minibuffer-message "Out of range")
-          (setq this-command #'ignore)))))
+      (if (and (>= index vertico-indexed--min)
+               (<= index vertico-indexed--max)
+               (/= vertico--total 0))
+          (setq vertico--index index prefix-arg nil)
+        (minibuffer-message "Out of range")
+        (setq this-command #'ignore)))))
 
 (cl-defmethod vertico--format-candidate :around
   (cand prefix suffix index start &context (vertico-indexed-mode (eql t)))
