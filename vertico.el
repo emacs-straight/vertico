@@ -192,23 +192,24 @@ The value should lie between 0 and vertico-count/2."
   "Recompute history hash table and return it."
   (or (and (equal (car vertico--history-hash) vertico--base) (cdr vertico--history-hash))
       (let* ((base vertico--base)
-             (base-size (length base))
+             (base-len (length base))
              (hist (and (not (eq minibuffer-history-variable t)) ;; Disabled for `t'.
                         (symbol-value minibuffer-history-variable)))
              (hash (make-hash-table :test #'equal :size (length hist)))
-             (file-hist (eq minibuffer-history-variable 'file-name-history))
-             (curr-file (when-let ((win (and file-hist (minibuffer-selected-window)))
+             (file-p (and (> base-len 0) ;; Step-wise completion, unlike `project-find-file'
+                          (eq minibuffer-history-variable 'file-name-history)))
+             (curr-file (when-let ((win (and file-p (minibuffer-selected-window)))
                                    (file (buffer-file-name (window-buffer win))))
                           (abbreviate-file-name file))))
         (cl-loop for elem in hist for index from 0 do
                  (when (and (not (equal curr-file elem)) ;; Deprioritize current file
-                            (or (= base-size 0)
-                                (and (>= (length elem) base-size)
-                                     (eq t (compare-strings base 0 base-size elem 0 base-size)))))
-                   (let ((file-sep (and file-hist (string-search "/" elem base-size))))
+                            (or (= base-len 0)
+                                (and (>= (length elem) base-len)
+                                     (eq t (compare-strings base 0 base-len elem 0 base-len)))))
+                   (let ((file-sep (and file-p (string-search "/" elem base-len))))
                      ;; Drop base string from history elements & special file handling.
-                     (when (or (> base-size 0) file-sep)
-                       (setq elem (substring elem base-size (and file-sep (1+ file-sep)))))
+                     (when (or (> base-len 0) file-sep)
+                       (setq elem (substring elem base-len (and file-sep (1+ file-sep)))))
                      (unless (gethash elem hash) (puthash elem index hash)))))
         (cdr (setq vertico--history-hash (cons base hash))))))
 
