@@ -231,15 +231,11 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
      (let* ((buckets (make-vector ,bsize nil))
             ,@(and (eq (car by) 'history) '((hhash (vertico--history-hash)) (hcands))))
        (dolist (% candidates)
-         ,(if (eq (car by) 'history)
-              ;; Find recent candidates or fill buckets
-              `(if-let (idx (gethash % hhash))
-                   (push (cons idx %) hcands)
-                 (let ((idx (min ,(1- bsize) ,bindex)))
-                   (aset buckets idx (cons % (aref buckets idx)))))
-            ;; Fill buckets
-            `(let ((idx (min ,(1- bsize) ,bindex)))
-               (aset buckets idx (cons % (aref buckets idx))))))
+         ;; Find recent candidate in history or fill bucket
+         (,@(if (not (eq (car by) 'history)) `(progn)
+              `(if-let (idx (gethash % hhash)) (push (cons idx %) hcands)))
+          (let ((idx (min ,(1- bsize) ,bindex)))
+            (aset buckets idx (cons % (aref buckets idx))))))
        (nconc ,@(and (eq (car by) 'history) '((vertico--sort-decorated hcands)))
               (mapcan (lambda (bucket) (sort bucket #',bpred))
                       (nbutlast (append buckets nil)))
@@ -274,8 +270,8 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
     list))
 
 ;; bug#47711: Deferred highlighting for `completion-all-completions'
-;; XXX There is one complication: `completion--twq-all' already adds `completions-common-part'.
-;; See below `vertico--candidate'.
+;; XXX There is one complication: `completion--twq-all' already adds
+;; `completions-common-part'.  See below `vertico--candidate'.
 (defun vertico--all-completions (&rest args)
   "Compute all completions for ARGS with deferred highlighting."
   (cl-letf* ((orig-pcm (symbol-function #'completion-pcm--hilit-commonality))
@@ -327,7 +323,7 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
                (pred minibuffer-completion-predicate)
                (before (substring content 0 pt))
                (after (substring content pt))
-               ;; bug#47678: `completion-boundaries` fails for `partial-completion`
+               ;; bug#47678: `completion-boundaries' fails for `partial-completion'
                ;; if the cursor is moved between the slashes of "~//".
                ;; See also marginalia.el which has the same issue.
                (bounds (or (condition-case nil
@@ -452,14 +448,17 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
   (let ((end (length str)) (pos 0) chunks)
     (while (< pos end)
       (let ((nextd (next-single-property-change pos 'display str end))
-            (display (get-text-property pos 'display str)))
-        (if (stringp display)
-            (progn (push display chunks) (setq pos nextd))
+            (disp (get-text-property pos 'display str)))
+        (if (stringp disp)
+            (let ((face (get-text-property pos 'face str)))
+              (when face
+                (add-face-text-property 0 (length disp) face t (setq disp (concat disp))))
+              (setq pos nextd chunks (cons disp chunks)))
           (while (< pos nextd)
             (let ((nexti (next-single-property-change pos 'invisible str nextd)))
-              (unless (get-text-property pos 'invisible str)
-                (unless (and (= pos 0) (= nexti end)) ;; full string -> avoid allocation
-                  (push (substring str pos nexti) chunks)))
+              (unless (or (get-text-property pos 'invisible str)
+                          (and (= pos 0) (= nexti end))) ;; full string -> no allocation
+                  (push (substring str pos nexti) chunks))
               (setq pos nexti))))))
     (if chunks (apply #'concat (nreverse chunks)) str)))
 
@@ -556,14 +555,13 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
 
 (defun vertico--match-p (input)
   "Return t if INPUT is a valid match."
-  (or (memq minibuffer--require-match '(nil confirm-after-completion))
-      (equal "" input) ;; Null completion, returns default value
-      (and (functionp minibuffer--require-match) ;; Emacs 29 require-match function
-           (funcall minibuffer--require-match input))
-      (test-completion input minibuffer-completion-table minibuffer-completion-predicate)
-      (if (eq minibuffer--require-match 'confirm)
-          (eq (ignore-errors (read-char "Confirm")) 13)
-        (and (minibuffer-message "Match required") nil))))
+  (let ((rm minibuffer--require-match))
+    (or (memq rm '(nil confirm-after-completion))
+        (equal "" input) ;; Null completion, returns default value
+        (and (functionp rm) (funcall rm input)) ;; Emacs 29 supports functions
+        (test-completion input minibuffer-completion-table minibuffer-completion-predicate)
+        (if (eq rm 'confirm) (eq (ignore-errors (read-char "Confirm")) 13)
+          (minibuffer-message "Match required") nil))))
 
 (cl-defgeneric vertico--format-candidate (cand prefix suffix index _start)
   "Format CAND given PREFIX, SUFFIX and INDEX."
