@@ -6,7 +6,7 @@
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (vertico "1.3"))
+;; Package-Requires: ((emacs "27.1") (vertico "1.4"))
 ;; Homepage: https://github.com/minad/vertico
 
 ;; This file is part of GNU Emacs.
@@ -42,10 +42,12 @@
 (eval-when-compile (require 'subr-x))
 
 ;;;###autoload
-(defun vertico-directory-enter ()
-  "Enter directory or exit completion with current candidate."
-  (interactive)
-  (if-let (((>= vertico--index 0))
+(defun vertico-directory-enter (&optional arg)
+  "Enter directory or exit completion with current candidate.
+Exit with current input if prefix ARG is given."
+  (interactive "P")
+  (if-let (((not arg))
+           ((>= vertico--index 0))
            ((eq 'file (vertico--metadata-get 'category)))
            ;; Check vertico--base for stepwise file path completion
            ((not (equal vertico--base "")))
@@ -62,7 +64,7 @@
           (setq cand (replace-regexp-in-string "/[^/|:]+/\\.\\./\\'" "/" cand)))
         (delete-minibuffer-contents)
         (insert cand))
-    (vertico-exit)))
+    (vertico-exit arg)))
 
 ;;;###autoload
 (defun vertico-directory-up (&optional n)
