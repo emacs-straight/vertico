@@ -466,14 +466,15 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
   "Return minimum width of windows, which display the minibuffer."
   (cl-loop for win in (get-buffer-window-list) minimize (window-width win)))
 
-(defun vertico--truncate-multiline (cand max-width)
-  "Truncate multiline CAND to MAX-WIDTH."
-  (truncate-string-to-width
-   (thread-last cand
-     (replace-regexp-in-string "[\t ]+" " ")
-     (replace-regexp-in-string "[\t\n ]*\n[\t\n ]*" (car vertico-multiline))
-     (replace-regexp-in-string "\\`[\t\n ]+\\|[\t\n ]+\\'" ""))
-   max-width 0 nil (cdr vertico-multiline)))
+(defun vertico--truncate-multiline (str max)
+  "Truncate multiline STR to MAX."
+  (let ((pos 0) (res ""))
+    (while (and (< (length res) (* 2 max)) (string-match "\\(\\S-+\\)\\|\\s-+" str pos))
+      (setq res (concat res (if (match-end 1) (match-string 0 str)
+                              (if (string-search "\n" (match-string 0 str))
+                                  (car vertico-multiline) " ")))
+            pos (match-end 0)))
+    (truncate-string-to-width (string-trim res) max 0 nil (cdr vertico-multiline))))
 
 (defun vertico--compute-scroll ()
   "Compute new scroll position."
