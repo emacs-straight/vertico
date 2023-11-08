@@ -141,7 +141,7 @@ The value should lie between 0 and vertico-count/2."
   "TAB" #'vertico-insert)
 
 (defvar-local vertico--highlight #'identity
-  "Deferred candidate highlighting function.")
+  "Lazy candidate highlighting function.")
 
 (defvar-local vertico--history-hash nil
   "History hash table and corresponding base string.")
@@ -269,43 +269,38 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
       (nconc (list (car found)) (delq (setcar found nil) list))
     list))
 
-;; bug#47711: Deferred highlighting for `completion-all-completions'
-;; XXX There is one complication: `completion--twq-all' already adds
-;; `completions-common-part'.  See below `vertico--candidate'.
-(defun vertico--all-completions (&rest args)
-  "Compute all completions for ARGS with deferred highlighting."
-  (cl-letf* ((orig-pcm (symbol-function #'completion-pcm--hilit-commonality))
-             (orig-flex (symbol-function #'completion-flex-all-completions))
-             ((symbol-function #'completion-flex-all-completions)
-              (lambda (&rest args)
-                ;; Unfortunately for flex we have to undo the deferred highlighting, since flex uses
-                ;; the completion-score for sorting, which is applied during highlighting.
-                (cl-letf (((symbol-function #'completion-pcm--hilit-commonality) orig-pcm))
-                  (apply orig-flex args))))
-             ;; Defer the following highlighting functions
-             (hl #'identity)
+(defun vertico--filter-completions (&rest args)
+  "Compute all completions for ARGS with lazy highlighting."
+  (defvar completion-lazy-hilit)
+  (defvar completion-lazy-hilit-fn)
+  (cl-letf* ((completion-lazy-hilit t)
+             (completion-lazy-hilit-fn nil)
              ((symbol-function #'completion-hilit-commonality)
               (lambda (cands prefix &optional base)
-                (setq hl (lambda (x) (nconc (completion-hilit-commonality x prefix base) nil)))
-                (and cands (nconc cands base))))
-             ((symbol-function #'completion-pcm--hilit-commonality)
-              (lambda (pattern cands)
-                (setq hl (lambda (x)
-                           ;; `completion-pcm--hilit-commonality' sometimes throws an internal error
-                           ;; for example when entering "/sudo:://u".
-                           (condition-case nil
-                               (completion-pcm--hilit-commonality pattern x)
-                             (t x))))
-                cands)))
-    ;; Only advise orderless after it has been loaded to avoid load order issues
-    (if (and (fboundp 'orderless-highlight-matches) (fboundp 'orderless-pattern-compiler))
-        (cl-letf (((symbol-function 'orderless-highlight-matches)
-                   (lambda (pattern cands)
-                     (let ((regexps (orderless-pattern-compiler pattern)))
-                       (setq hl (lambda (x) (orderless-highlight-matches regexps x))))
-                     cands)))
-          (cons (apply #'completion-all-completions args) hl))
-      (cons (apply #'completion-all-completions args) hl))))
+                (setq completion-lazy-hilit-fn
+                      (lambda (x) (car (completion-hilit-commonality (list x) prefix base))))
+                (and cands (nconc cands base)))))
+    (if (eval-when-compile (>= emacs-major-version 30))
+        (cons (apply #'completion-all-completions args) completion-lazy-hilit-fn)
+      (cl-letf* ((orig-pcm (symbol-function #'completion-pcm--hilit-commonality))
+                 (orig-flex (symbol-function #'completion-flex-all-completions))
+                 ((symbol-function #'completion-flex-all-completions)
+                  (lambda (&rest args)
+                    ;; Unfortunately for flex we have to undo the lazy highlighting, since flex uses
+                    ;; the completion-score for sorting, which is applied during highlighting.
+                    (cl-letf (((symbol-function #'completion-pcm--hilit-commonality) orig-pcm))
+                      (apply orig-flex args))))
+                 ((symbol-function #'completion-pcm--hilit-commonality)
+                  (lambda (pattern cands)
+                    (setq completion-lazy-hilit-fn
+                          (lambda (x)
+                            ;; `completion-pcm--hilit-commonality' sometimes throws an internal error
+                            ;; for example when entering "/sudo:://u".
+                            (condition-case nil
+                                (car (completion-pcm--hilit-commonality pattern (list x)))
+                              (t x))))
+                    cands)))
+        (cons (apply #'completion-all-completions args) completion-lazy-hilit-fn)))))
 
 (defun vertico--metadata-get (prop)
   "Return PROP from completion metadata."
@@ -332,7 +327,7 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
                (field (substring content (car bounds) (+ pt (cdr bounds))))
                ;; `minibuffer-completing-file-name' has been obsoleted by the completion category
                (completing-file (eq 'file (vertico--metadata-get 'category)))
-               (`(,all . ,hl) (vertico--all-completions content table pred pt vertico--metadata))
+               (`(,all . ,hl) (vertico--filter-completions content table pred pt vertico--metadata))
                (base (or (when-let (z (last all)) (prog1 (cdr z) (setcdr z nil))) 0))
                (vertico--base (substring content 0 base))
                (def (or (car-safe minibuffer-default) minibuffer-default))
@@ -359,7 +354,7 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
       (vertico--metadata . ,vertico--metadata)
       (vertico--candidates . ,all)
       (vertico--total . ,(length all))
-      (vertico--highlight . ,hl)
+      (vertico--highlight . ,(or hl #'identity))
       (vertico--allow-prompt . ,(or def-missing (eq vertico-preselect 'prompt)
                                     (memq minibuffer--require-match
                                           '(nil confirm confirm-after-completion))))
@@ -488,8 +483,8 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
   "Format group TITLE given the current CAND."
   (when (string-prefix-p title cand)
     ;; Highlight title if title is a prefix of the candidate
-    (setq title (substring (car (funcall vertico--highlight
-                                         (list (propertize cand 'face 'vertico-group-title))))
+    (setq title (substring (funcall vertico--highlight
+                                    (propertize cand 'face 'vertico-group-title))
                            0 (length title)))
     (vertico--remove-face 0 (length title) 'completions-first-difference title))
   (format (concat vertico-group-format "\n") title))
@@ -549,8 +544,7 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
         ;; `completion--twq-all' hack.  This should better be fixed in Emacs
         ;; itself, the corresponding code is already marked with a FIXME.
         (vertico--remove-face 0 (length cand) 'completions-common-part cand)
-        (concat vertico--base
-                (if hl (car (funcall vertico--highlight (list cand))) cand))))
+        (concat vertico--base (if hl (funcall vertico--highlight cand) cand))))
      ((and (equal content "") (or (car-safe minibuffer-default) minibuffer-default)))
      (t content))))
 
@@ -579,10 +573,10 @@ The function is configured by BY, BSIZE, BINDEX, BPRED and PRED."
     (let* (title (index vertico--scroll)
            (group-fun (and vertico-group-format (vertico--metadata-get 'group-function)))
            (candidates
-            (thread-last (seq-subseq vertico--candidates index
-                                     (min (+ index vertico-count) vertico--total))
-              (funcall vertico--highlight)
-              (vertico--affixate))))
+            (vertico--affixate
+             (cl-loop for i from 0 below vertico-count
+                      for c in (nthcdr index vertico--candidates)
+                      collect (funcall vertico--highlight (substring c))))))
       (pcase-dolist ((and cand `(,str . ,_)) candidates)
         (when-let (new-title (and group-fun (funcall group-fun str nil)))
           (unless (equal title new-title)
