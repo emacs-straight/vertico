@@ -5,8 +5,8 @@
 ;; Author: Daniel Mendler <mail@daniel-mendler.de>
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2023
-;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (compat "29.1.4.4") (vertico "1.5"))
+;; Version: 1.6
+;; Package-Requires: ((emacs "27.1") (compat "29.1.4.4") (vertico "1.6"))
 ;; Homepage: https://github.com/minad/vertico
 
 ;; This file is part of GNU Emacs.
@@ -40,16 +40,10 @@
 ;; See also the related extension `vertico-repeat', which uses a
 ;; different technique, storing a completion session history.
 ;;
-;; The extension has the following known issues:
-;;
-;; * `vertico-suspend' restores the window configuration when resuming
-;;   and when `vertico-buffer' is used.  This can be seen as a
-;;   disturbance, however minibuffer exiting also changes the window
-;;   configuration by default.
-;;
-;; * `echo-keystrokes' does not work in recursive minibuffers.  This
-;;   issue cannot be fixed without modifying the C source of Emacs,
-;;   since Emacs disables echo in recursive minibuffers.
+;; There exists a small issue with `vertico-suspend': The setting
+;; `echo-keystrokes' does not work.  Unfortunately this cannot be
+;; fixed without modifying the C source of Emacs, since Emacs forcibly
+;; disables echo in recursive minibuffers.
 
 ;;; Code:
 
@@ -75,7 +69,7 @@ or the latest completion session is restored."
            ((buffer-local-value 'vertico--input buf)))
       (cond
        ((minibufferp)
-        (add-hook 'pre-redisplay-functions #'vertico-suspend--redisplay nil 'local)
+        (add-hook 'pre-redisplay-functions #'vertico-suspend--unselect nil 'local)
         (setq vertico-suspend--ov (make-overlay (point-min) (point-max) nil t t))
         (overlay-put vertico-suspend--ov 'invisible t)
         (overlay-put vertico-suspend--ov 'priority 1000)
@@ -85,22 +79,20 @@ or the latest completion session is restored."
         (when (bound-and-true-p vertico-buffer-mode)
           (vertico-buffer-mode -1)
           (setq vertico-buffer--restore #'ignore))
-        (unless (frame-root-window-p win)
-          (window-resize win (- (window-pixel-height win)) nil nil 'pixelwise))
-        (other-window 1))
+        (vertico-suspend--unselect))
        (t
         (select-window win)
         (set-window-parameter win 'no-other-window nil)
-        (remove-hook 'pre-redisplay-functions #'vertico-suspend--redisplay 'local)
+        (remove-hook 'pre-redisplay-functions #'vertico-suspend--unselect 'local)
         (when vertico-suspend--ov
           (delete-overlay vertico-suspend--ov)
           (setq vertico-suspend--ov nil))
-        (when (bound-and-true-p vertico-buffer--restore)
+        (when (eq #'ignore (bound-and-true-p vertico-buffer--restore))
           (setq vertico-buffer--restore nil)
           (vertico-buffer-mode 1))))
     (user-error "No Vertico session to suspend or resume")))
 
-(defun vertico-suspend--redisplay (_)
+(defun vertico-suspend--unselect (&rest _)
   "Ensure that suspended minibuffer is not selected."
   (let ((win (get-buffer-window)))
     (when (eq win (selected-window))
