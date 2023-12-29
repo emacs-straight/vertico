@@ -103,7 +103,7 @@
         (set-window-hscroll win 0))
       (when vertico-buffer-hide-prompt
         (window-resize mbwin (- (window-pixel-height mbwin)) nil nil 'pixelwise)
-        (set-window-vscroll mbwin 100))
+        (set-window-vscroll mbwin 3))
       (when transient-mark-mode
         (with-silent-modifications
           (vertico--remove-face (point-min) (point-max) 'region)
@@ -146,15 +146,11 @@
                      face-remapping-alist (copy-tree `((mode-line-inactive mode-line)
                                                        ,@face-remapping-alist))
                      mode-line-format
-                     (list (format " %s "
-                                   (propertize
+                     (list (format  #(" %s%s " 1 3 (face mode-line-buffer-id))
+                                    (replace-regexp-in-string ":? *\\'" ""
+                                                              (minibuffer-prompt))
                                     (let ((depth (recursion-depth)))
-                                      (format (if (< depth 2) "*%s*" "*%s [%s]*")
-                                              (replace-regexp-in-string
-                                               ":? *\\'" ""
-                                               (minibuffer-prompt))
-                                              depth))
-                                    'face 'mode-line-buffer-id)))
+                                      (if (< depth 2) "" (format " [%s]" depth)))))
                      vertico-count (- (/ (window-pixel-height win)
                                          (default-line-height)) 2))))
     (set-window-parameter win 'no-other-window t)
