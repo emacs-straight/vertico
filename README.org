@@ -68,12 +68,14 @@ intact and remaps and binds only a handful of commands.
 
 Note in particular the binding of =TAB= to ~vertico-insert~, which inserts the
 currently selected candidate, and the binding of =RET= and =M-RET= to ~vertico-exit~
-and ~vertico-exit-input~ respectively. ~vertico-exit~ exits with the currently
-selected candidate, while ~vertico-exit-input~ exits with the minibuffer input
-instead. You should exit with the current input for example when you want to
-create a new buffer or a new file with ~find-file~ or ~switch-to-buffer~. As an
-alternative to pressing =M-RET=, move the selection first to the input prompt by
-pressing the =up= arrow key and then press =RET=.
+and ~vertico-exit-input~ respectively.
+
+~vertico-exit~ exits with the currently selected candidate, while
+~vertico-exit-input~ exits with the minibuffer input instead. Exiting with the
+current input is needed when you want to create a new buffer or a new file with
+~find-file~ or ~switch-to-buffer~. As an alternative to pressing =M-RET=, move the
+selection up to the input prompt by pressing the =up= arrow key and then press
+=RET=.
 
 * Configuration
 
@@ -123,13 +125,13 @@ to take advantage of ~use-package~. Here is an example configuration:
         '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
-  ;; Emacs 28: Hide commands in M-x which do not work in the current mode.
-  ;; Vertico commands are hidden in normal buffers.
-  ;; (setq read-extended-command-predicate
-  ;;       #'command-completion-default-include-p)
+  ;; Support opening new minibuffers from inside existing minibuffers.
+  (setq enable-recursive-minibuffers t)
 
-  ;; Enable recursive minibuffers
-  (setq enable-recursive-minibuffers t))
+  ;; Emacs 28 and newer: Hide commands in M-x which do not work in the current
+  ;; mode.  Vertico commands are hidden in normal buffers. This setting is
+  ;; useful beyond Vertico.
+  (setq read-extended-command-predicate #'command-completion-default-include-p))
 #+end_src
 
 I recommend to give Orderless completion a try, which is different from the
@@ -495,15 +497,18 @@ There are other interactive completion UIs, which follow a similar philosophy:
 If you want to learn more about Vertico and minibuffer completion, check out the
 following resources:
 
-- [[https://github.com/doomemacs/doomemacs/tree/master/modules/completion/vertico][Doom Emacs Vertico Module]]: Vertico is Doom's default completion system.
-- [[https://github.com/SystemCrafters/crafted-emacs/blob/master/modules/crafted-completion.el][Crafted Emacs Completion Module]]: Vertico and Corfu are used for completion.
-- [[https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/][Prot's Emacs configuration]]: Vertico and Corfu are used for completion.
-- [[https://www.youtube.com/watch?v=fnE0lXoe7Y0][Emacs Completion Explained]] (2022-07-19) by Andrew Tropin.
-- [[https://www.youtube.com/watch?v=w9hHMDyF9V4][Emacs Minibuffer Completions]] (2022-02-12) by Greg Yut.
-- [[https://www.youtube.com/watch?v=hPwDbx--Waw][Vertico Extensions for Emacs]] (2022-01-08) by Karthik Chikmagalur.
-- [[https://youtu.be/5ffb2at2d7w][Using Emacs Episode 80 - Vertico, Marginalia, Consult and Embark]] (2021-10-26) by Mike Zamansky.
-- [[https://www.youtube.com/watch?v=UtqE-lR2HCA][System Crafters Live! - Replacing Ivy and Counsel with Vertico and Consult]] (2021-05-21) by David Wilson.
-- [[https://www.youtube.com/watch?v=J0OaRy85MOo][Streamline Your Emacs Completions with Vertico]] (2021-05-17) by David Wilson.
+- Configurations which use Vertico and Corfu for completion:
+  + [[https://github.com/doomemacs/doomemacs/tree/master/modules/completion/vertico][Doom Emacs Vertico Module]]
+  + [[https://github.com/SystemCrafters/crafted-emacs/blob/master/modules/crafted-completion.el][Crafted Emacs Completion Module]]
+  + [[https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/][Prot's Emacs configuration]]
+- Videos:
+  + [[https://www.youtube.com/watch?v=fnE0lXoe7Y0][Emacs Completion Explained]] (2022-07-19) by Andrew Tropin.
+  + [[https://www.youtube.com/watch?v=w9hHMDyF9V4][Emacs Minibuffer Completions]] (2022-02-12) by Greg Yut.
+  + [[https://www.youtube.com/watch?v=hPwDbx--Waw][Vertico Extensions for Emacs]] (2022-01-08) by Karthik Chikmagalur.
+  + [[https://youtu.be/5ffb2at2d7w][Using Emacs Episode 80 - Vertico, Marginalia, Consult and Embark]] (2021-10-26) by Mike Zamansky.
+  + [[https://www.youtube.com/watch?v=UtqE-lR2HCA][System Crafters Live! - Replacing Ivy and Counsel with Vertico and Consult]] (2021-05-21) by David Wilson.
+  + [[https://www.youtube.com/watch?v=J0OaRy85MOo][Streamline Your Emacs Completions with Vertico]] (2021-05-17) by David Wilson.
+  + [[https://www.youtube.com/watch?v=SOxlQ7ogplA&t=1952s][Modern Emacs: all those new tools that make Emacs better and faster]] (2024-03-06) by Marie-Hélène Burle.
 
 * Contributions
 
