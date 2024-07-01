@@ -180,7 +180,9 @@
                   (set-window-parameter win 'no-delete-other-windows old-no-delete)
                   (set-window-dedicated-p win nil)
                   (set-window-buffer win old-buf))
-                 ((window-live-p win)
+                 ;; Check `window-parent' since the window may be a sole window
+                 ;; (gh:minad/vertico#496).
+                 ((and (window-live-p win) (window-parent win))
                   (delete-window win)))
                 (when vertico-buffer-hide-prompt
                   (set-window-vscroll nil 0))))))
