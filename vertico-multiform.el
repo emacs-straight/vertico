@@ -6,7 +6,7 @@
 ;; Maintainer: Daniel Mendler <mail@daniel-mendler.de>
 ;; Created: 2021
 ;; Version: 1.8
-;; Package-Requires: ((emacs "27.1") (compat "29.1.4.4") (vertico "1.8"))
+;; Package-Requires: ((emacs "27.1") (compat "30") (vertico "1.8"))
 ;; Homepage: https://github.com/minad/vertico
 
 ;; This file is part of GNU Emacs.
@@ -106,7 +106,7 @@ The keys in LIST can be symbols or regexps."
 
 (defun vertico-multiform--setup ()
   "Enable modes at minibuffer setup."
-  (let ((cat (completion-metadata-get
+  (let ((cat (compat-call completion-metadata-get
               (completion-metadata (buffer-substring-no-properties
                                     (minibuffer-prompt-end)
                                     (max (minibuffer-prompt-end) (point)))
