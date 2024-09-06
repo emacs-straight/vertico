@@ -169,9 +169,8 @@ Table of Contents
   │   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
   └────
 
-  I recommend to give Orderless completion a try, which is different
-  from the prefix TAB completion used by the basic default completion
-  system or in shells.
+  I recommend to give Orderless completion a try, which is more flexible
+  and powerful than the default completion styles.
 
   ┌────
   │ ;; Optionally use the `orderless' completion style.
@@ -226,7 +225,7 @@ Table of Contents
   can add new bindings or even replace the Vertico bindings. For example
   you can use `M-TAB' to expand the prefix of candidates (TAB complete)
   or cycle between candidates if `completion-cycle-threshold' is
-  non-nil.
+  non-nil, with the following configuration.
 
   ┌────
   │ ;; Option 1: Additional bindings
@@ -238,23 +237,16 @@ Table of Contents
   │ ;; (keymap-set vertico-map "TAB" #'minibuffer-complete)
   └────
 
-  The `orderless' completion style does not support expansion of a
-  common candidate prefix, as supported by shells or the basic default
-  completion system. The reason is that the Orderless input string is
-  usually not a prefix. In order to support completing prefixes, combine
-  `orderless' with `substring' in your `completion-styles'
-  configuration.
-
-  ┌────
-  │ (setq completion-styles '(substring orderless basic))
-  └────
-
-  Alternatively you can use the built-in completion-styles, e.g.,
-  `partial-completion', `flex' or `initials'. The `partial-completion'
-  style is important if you want to open multiple files at once with
-  `find-file' using wildcards. In order to open multiple files with a
-  wildcard at once, you have to submit the prompt with
-  `M-RET'. Alternative first move to the prompt and then press `RET'.
+  The command `minibuffer-complete' performs prefix expansion for the
+  `basic' completion style, while the `orderless' and `substring'
+  completion styles expand to the longest candidate
+  substring. Alternatively you can use completion-styles like
+  `partial-completion', `flex' or `initials', which perform different
+  expansion and filtering. The `partial-completion' style is important
+  if you want to open multiple files at once with `find-file' using
+  wildcards. In order to open multiple files with a wildcard at once,
+  you have to submit the prompt with `M-RET'.  Alternative first move to
+  the prompt and then press `RET'.
 
   ┌────
   │ (setq completion-styles '(basic substring partial-completion flex))
@@ -264,7 +256,7 @@ Table of Contents
   system, further customization of completion behavior can be achieved
   by setting the designated Emacs variables. For example, one may wish
   to disable case-sensitivity for file and buffer matching when built-in
-  completion styles are used instead of `orderless':
+  completion styles are used:
 
   ┌────
   │ (setq read-file-name-completion-ignore-case t

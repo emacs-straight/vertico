@@ -1,4 +1,4 @@
-This is doc1Enx6R.info, produced by makeinfo version 6.8 from
+This is doc30RltE.info, produced by makeinfo version 6.8 from
 vertico.texi.
 
 INFO-DIR-SECTION Emacs misc features
@@ -7,7 +7,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: doc1Enx6R.info,  Node: Top,  Next: Features,  Up: (dir)
+File: doc30RltE.info,  Node: Top,  Next: Features,  Up: (dir)
 
 vertico.el - VERTical Interactive COmpletion
 ********************************************
@@ -62,7 +62,7 @@ Problematic completion commands
 
 
 
-File: doc1Enx6R.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
+File: doc30RltE.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
 
 1 Features
 **********
@@ -86,7 +86,7 @@ File: doc1Enx6R.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
    <https://github.com/minad/vertico/blob/screenshots/vertico-mx.png?raw=true>
 
 
-File: doc1Enx6R.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
+File: doc30RltE.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
 
 2 Installation
 **************
@@ -97,7 +97,7 @@ directly via ‘M-x package-install RET vertico RET’.  After installation,
 activate the global minor mode with ‘M-x vertico-mode RET’.
 
 
-File: doc1Enx6R.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
+File: doc30RltE.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
 
 3 Key bindings
 **************
@@ -134,7 +134,7 @@ pressing ‘M-RET’, move the selection up to the input prompt by pressing
 the ‘up’ arrow key and then press ‘RET’.
 
 
-File: doc1Enx6R.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
+File: doc30RltE.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
 
 4 Configuration
 ***************
@@ -184,9 +184,8 @@ configuration:
              '(read-only t cursor-intangible t face minibuffer-prompt))
        (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
-   I recommend to give Orderless completion a try, which is different
-from the prefix TAB completion used by the basic default completion
-system or in shells.
+   I recommend to give Orderless completion a try, which is more
+flexible and powerful than the default completion styles.
 
      ;; Optionally use the `orderless' completion style.
      (use-package orderless
@@ -224,7 +223,7 @@ documentation about completion in the Elisp manual
 * Completion-at-point and completion-in-region::
 
 
-File: doc1Enx6R.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
+File: doc30RltE.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.1 Completion styles and TAB completion
 ========================================
@@ -238,7 +237,8 @@ candidate.
    If you prefer to have the default completion commands available you
 can add new bindings or even replace the Vertico bindings.  For example
 you can use ‘M-TAB’ to expand the prefix of candidates (TAB complete) or
-cycle between candidates if ‘completion-cycle-threshold’ is non-nil.
+cycle between candidates if ‘completion-cycle-threshold’ is non-nil,
+with the following configuration.
 
      ;; Option 1: Additional bindings
      (keymap-set vertico-map "?" #'minibuffer-completion-help)
@@ -248,20 +248,16 @@ cycle between candidates if ‘completion-cycle-threshold’ is non-nil.
      ;; Option 2: Replace `vertico-insert' to enable TAB prefix expansion.
      ;; (keymap-set vertico-map "TAB" #'minibuffer-complete)
 
-   The ‘orderless’ completion style does not support expansion of a
-common candidate prefix, as supported by shells or the basic default
-completion system.  The reason is that the Orderless input string is
-usually not a prefix.  In order to support completing prefixes, combine
-‘orderless’ with ‘substring’ in your ‘completion-styles’ configuration.
-
-     (setq completion-styles '(substring orderless basic))
-
-   Alternatively you can use the built-in completion-styles, e.g.,
-‘partial-completion’, ‘flex’ or ‘initials’.  The ‘partial-completion’
-style is important if you want to open multiple files at once with
-‘find-file’ using wildcards.  In order to open multiple files with a
-wildcard at once, you have to submit the prompt with ‘M-RET’.
-Alternative first move to the prompt and then press ‘RET’.
+   The command ‘minibuffer-complete’ performs prefix expansion for the
+‘basic’ completion style, while the ‘orderless’ and ‘substring’
+completion styles expand to the longest candidate substring.
+Alternatively you can use completion-styles like ‘partial-completion’,
+‘flex’ or ‘initials’, which perform different expansion and filtering.
+The ‘partial-completion’ style is important if you want to open multiple
+files at once with ‘find-file’ using wildcards.  In order to open
+multiple files with a wildcard at once, you have to submit the prompt
+with ‘M-RET’.  Alternative first move to the prompt and then press
+‘RET’.
 
      (setq completion-styles '(basic substring partial-completion flex))
 
@@ -269,14 +265,14 @@ Alternative first move to the prompt and then press ‘RET’.
 system, further customization of completion behavior can be achieved by
 setting the designated Emacs variables.  For example, one may wish to
 disable case-sensitivity for file and buffer matching when built-in
-completion styles are used instead of ‘orderless’:
+completion styles are used:
 
      (setq read-file-name-completion-ignore-case t
            read-buffer-completion-ignore-case t
            completion-ignore-case t)
 
 
-File: doc1Enx6R.info,  Node: Completion-at-point and completion-in-region,  Prev: Completion styles and TAB completion,  Up: Configuration
+File: doc30RltE.info,  Node: Completion-at-point and completion-in-region,  Prev: Completion styles and TAB completion,  Up: Configuration
 
 4.2 Completion-at-point and completion-in-region
 ================================================
@@ -304,7 +300,7 @@ Corfu is a narrowly focused package and developed in the same spirit as
 Vertico.  You can even use Corfu in the minibuffer.
 
 
-File: doc1Enx6R.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
+File: doc30RltE.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
 
 5 Extensions
 ************
@@ -387,7 +383,7 @@ according to the buffer height.
 * Configure Vertico per command or completion category::
 
 
-File: doc1Enx6R.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
+File: doc30RltE.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
 
 5.1 Configure Vertico per command or completion category
 ========================================================
@@ -489,7 +485,7 @@ when they scroll off-screen to the left.
            '((buffer flat (vertico-cycle . t))))
 
 
-File: doc1Enx6R.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
+File: doc30RltE.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
 
 6 Complementary packages
 ************************
@@ -536,7 +532,7 @@ functionality not present in Emacs already (e.g., ‘consult-line’) and
 some are substitutes (e.g., ‘consult-buffer’ for ‘switch-to-buffer’).
 
 
-File: doc1Enx6R.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
+File: doc30RltE.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
 
 7 Child frames and Popups
 *************************
@@ -563,7 +559,7 @@ a try and judge for yourself.
      posframe library.
 
 
-File: doc1Enx6R.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
+File: doc30RltE.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
 
 8 Alternatives
 **************
@@ -618,7 +614,7 @@ philosophy:
      flexibility thanks to its *note extensions: Extensions.
 
 
-File: doc1Enx6R.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
+File: doc30RltE.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
 
 9 Resources
 ***********
@@ -656,7 +652,7 @@ out the following resources:
           (2024-03-06) by Marie-Hélène Burle.
 
 
-File: doc1Enx6R.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
+File: doc30RltE.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
 
 10 Contributions
 ****************
@@ -666,7 +662,7 @@ Since this package is part of GNU ELPA
 copyright assignment to the FSF.
 
 
-File: doc1Enx6R.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
+File: doc30RltE.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
 
 11 Debugging Vertico
 ********************
@@ -688,7 +684,7 @@ that the hooks are executed after every command.
      (advice-add #'vertico--exhibit :around #'force-debug)
 
 
-File: doc1Enx6R.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
+File: doc30RltE.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
 
 12 Problematic completion commands
 **********************************
@@ -709,7 +705,7 @@ require minor workarounds.
 * Tramp hostname and username completion::
 
 
-File: doc1Enx6R.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: doc30RltE.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.1 ‘org-refile’
 =================
@@ -753,7 +749,7 @@ much more cluttered.
            org-outline-path-complete-in-steps nil)
 
 
-File: doc1Enx6R.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
+File: doc30RltE.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
 
 12.2 ‘org-agenda-filter’ and ‘org-tags-view’
 ============================================
@@ -775,7 +771,7 @@ separately.  Ideally this issue would be fixed in Org.
      (advice-add #'org-agenda-filter :around #'vertico-enforce-basic-completion)
 
 
-File: doc1Enx6R.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: doc30RltE.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.3 ‘tmm-menubar’
 ==================
@@ -790,7 +786,7 @@ overwrite the default F10 keybinding.
      (advice-add #'tmm-add-prompt :after #'minibuffer-hide-completions)
 
 
-File: doc1Enx6R.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
+File: doc30RltE.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
 
 12.4 ‘ffap-menu’
 ================
@@ -806,7 +802,7 @@ buffer can be disabled as follows.
                      (apply args))))
 
 
-File: doc1Enx6R.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
+File: doc30RltE.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
 
 12.5 ‘completion-table-dynamic’
 ===============================
@@ -831,7 +827,7 @@ Orderless documentation because of ‘completion-table-dynamic’.
                                (concat str "3")))))
 
 
-File: doc1Enx6R.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
+File: doc30RltE.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
 
 12.6 Submitting the empty string
 ================================
@@ -858,7 +854,7 @@ and Vertico preselects the prompt, such that exiting with the empty
 string is possible by pressing ‘RET’ only.
 
 
-File: doc1Enx6R.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
+File: doc30RltE.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
 
 12.7 Tramp hostname and username completion
 ===========================================
@@ -906,24 +902,24 @@ Node: Features1772
 Node: Installation2796
 Node: Key bindings3163
 Node: Configuration5364
-Node: Completion styles and TAB completion9365
-Node: Completion-at-point and completion-in-region11950
-Node: Extensions13288
-Node: Configure Vertico per command or completion category17207
-Node: Complementary packages21797
-Node: Child frames and Popups24054
-Node: Alternatives25431
-Node: Resources28307
-Node: Contributions30040
-Node: Debugging Vertico30317
-Node: Problematic completion commands31129
-Node: org-refile31742
-Node: org-agenda-filter and org-tags-view33685
-Node: tmm-menubar34949
-Node: ffap-menu35573
-Node: completion-table-dynamic36168
-Node: Submitting the empty string37375
-Node: Tramp hostname and username completion38832
+Node: Completion styles and TAB completion9329
+Node: Completion-at-point and completion-in-region11737
+Node: Extensions13075
+Node: Configure Vertico per command or completion category16994
+Node: Complementary packages21584
+Node: Child frames and Popups23841
+Node: Alternatives25218
+Node: Resources28094
+Node: Contributions29827
+Node: Debugging Vertico30104
+Node: Problematic completion commands30916
+Node: org-refile31529
+Node: org-agenda-filter and org-tags-view33472
+Node: tmm-menubar34736
+Node: ffap-menu35360
+Node: completion-table-dynamic35955
+Node: Submitting the empty string37162
+Node: Tramp hostname and username completion38619
 
 End Tag Table
 
