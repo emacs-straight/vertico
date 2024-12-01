@@ -1,4 +1,4 @@
-This is docfxhb2h.info, produced by makeinfo version 6.8 from
+This is docqotnJT.info, produced by makeinfo version 6.8 from
 vertico.texi.
 
 INFO-DIR-SECTION Emacs misc features
@@ -7,7 +7,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: docfxhb2h.info,  Node: Top,  Next: Features,  Up: (dir)
+File: docqotnJT.info,  Node: Top,  Next: Features,  Up: (dir)
 
 vertico.el - VERTical Interactive COmpletion
 ********************************************
@@ -62,7 +62,7 @@ Problematic completion commands
 
 
 
-File: docfxhb2h.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
+File: docqotnJT.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
 
 1 Features
 **********
@@ -86,7 +86,7 @@ File: docfxhb2h.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
    <https://github.com/minad/vertico/blob/screenshots/vertico-mx.png?raw=true>
 
 
-File: docfxhb2h.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
+File: docqotnJT.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
 
 2 Installation
 **************
@@ -97,7 +97,7 @@ directly via ‘M-x package-install RET vertico RET’.  After installation,
 activate the global minor mode with ‘M-x vertico-mode RET’.
 
 
-File: docfxhb2h.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
+File: docqotnJT.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
 
 3 Key bindings
 **************
@@ -134,7 +134,7 @@ pressing ‘M-RET’, move the selection up to the input prompt by pressing
 the ‘up’ arrow key and then press ‘RET’.
 
 
-File: docfxhb2h.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
+File: docqotnJT.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
 
 4 Configuration
 ***************
@@ -223,7 +223,7 @@ documentation about completion in the Elisp manual
 * Completion-at-point and completion-in-region::
 
 
-File: docfxhb2h.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
+File: docqotnJT.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.1 Completion styles and TAB completion
 ========================================
@@ -272,7 +272,7 @@ completion styles are used:
            completion-ignore-case t)
 
 
-File: docfxhb2h.info,  Node: Completion-at-point and completion-in-region,  Prev: Completion styles and TAB completion,  Up: Configuration
+File: docqotnJT.info,  Node: Completion-at-point and completion-in-region,  Prev: Completion styles and TAB completion,  Up: Configuration
 
 4.2 Completion-at-point and completion-in-region
 ================================================
@@ -300,7 +300,7 @@ Corfu is a narrowly focused package and developed in the same spirit as
 Vertico.  You can even use Corfu in the minibuffer.
 
 
-File: docfxhb2h.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
+File: docqotnJT.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
 
 5 Extensions
 ************
@@ -383,7 +383,7 @@ according to the buffer height.
 * Configure Vertico per command or completion category::
 
 
-File: docfxhb2h.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
+File: docqotnJT.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
 
 5.1 Configure Vertico per command or completion category
 ========================================================
@@ -485,7 +485,7 @@ when they scroll off-screen to the left.
            '((buffer flat (vertico-cycle . t))))
 
 
-File: docfxhb2h.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
+File: docqotnJT.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
 
 6 Complementary packages
 ************************
@@ -532,7 +532,7 @@ functionality not present in Emacs already (e.g., ‘consult-line’) and
 some are substitutes (e.g., ‘consult-buffer’ for ‘switch-to-buffer’).
 
 
-File: docfxhb2h.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
+File: docqotnJT.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
 
 7 Child frames and Popups
 *************************
@@ -559,7 +559,7 @@ a try and judge for yourself.
      posframe library.
 
 
-File: docfxhb2h.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
+File: docqotnJT.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
 
 8 Alternatives
 **************
@@ -614,7 +614,7 @@ philosophy:
      flexibility thanks to its *note extensions: Extensions.
 
 
-File: docfxhb2h.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
+File: docqotnJT.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
 
 9 Resources
 ***********
@@ -652,7 +652,7 @@ out the following resources:
           (2024-03-06) by Marie-Hélène Burle.
 
 
-File: docfxhb2h.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
+File: docqotnJT.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
 
 10 Contributions
 ****************
@@ -662,7 +662,7 @@ Since this package is part of GNU ELPA
 copyright assignment to the FSF.
 
 
-File: docfxhb2h.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
+File: docqotnJT.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
 
 11 Debugging Vertico
 ********************
@@ -684,7 +684,7 @@ that the hooks are executed after every command.
      (advice-add #'vertico--exhibit :around #'force-debug)
 
 
-File: docfxhb2h.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
+File: docqotnJT.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
 
 12 Problematic completion commands
 **********************************
@@ -705,7 +705,7 @@ require minor workarounds.
 * Tramp hostname and username completion::
 
 
-File: docfxhb2h.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docqotnJT.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.1 ‘org-refile’
 =================
@@ -749,7 +749,7 @@ much more cluttered.
            org-outline-path-complete-in-steps nil)
 
 
-File: docfxhb2h.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
+File: docqotnJT.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
 
 12.2 ‘org-agenda-filter’ and ‘org-tags-view’
 ============================================
@@ -771,29 +771,32 @@ separately.  Ideally this issue would be fixed in Org.
      (advice-add #'org-agenda-filter :around #'vertico-enforce-basic-completion)
 
 
-File: docfxhb2h.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docqotnJT.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.3 ‘tmm-menubar’
 ==================
 
 The text menu bar works well with Vertico but always shows a
 ‘*Completions*’ buffer, which is unwanted if you use the Vertico UI.
-This completion buffer can be disabled with an advice.  If you disabled
-the standard GUI menu bar and prefer the Vertico interface you may also
-overwrite the default F10 keybinding.
+See bug#74616 (https://debbugs.gnu.org/cgi/bugreport.cgi?bug=74616) for
+the upstream bug report.  Right now the completion buffer can be
+disabled with an advice.  If you disabled the standard GUI menu bar and
+prefer the Vertico interface you may also overwrite the default F10
+keybinding.
 
      (keymap-global-set "<f10>" #'tmm-menubar)
      (advice-add #'tmm-add-prompt :after #'minibuffer-hide-completions)
 
 
-File: docfxhb2h.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
+File: docqotnJT.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
 
 12.4 ‘ffap-menu’
 ================
 
 The command ‘ffap-menu’ shows the ‘*Completions*’ buffer by default like
-‘tmm-menubar’, which is unnecessary with Vertico.  This completion
-buffer can be disabled as follows.
+‘tmm-menubar’, which is unnecessary with Vertico.  See bug#74617
+(https://debbugs.gnu.org/cgi/bugreport.cgi?bug=74617) for the upstream
+bug report.  This completion buffer can be disabled as follows.
 
      (advice-add #'ffap-menu-ask :around
                  (lambda (&rest args)
@@ -802,7 +805,7 @@ buffer can be disabled as follows.
                      (apply args))))
 
 
-File: docfxhb2h.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
+File: docqotnJT.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
 
 12.5 ‘completion-table-dynamic’
 ===============================
@@ -827,7 +830,7 @@ Orderless documentation because of ‘completion-table-dynamic’.
                                (concat str "3")))))
 
 
-File: docfxhb2h.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
+File: docqotnJT.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
 
 12.6 Submitting the empty string
 ================================
@@ -854,14 +857,14 @@ and Vertico preselects the prompt, such that exiting with the empty
 string is possible by pressing ‘RET’ only.
 
 
-File: docfxhb2h.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
+File: docqotnJT.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
 
 12.7 Tramp hostname and username completion
 ===========================================
 
-*NOTE:* On upcoming Emacs 29.2 and Tramp 2.6.1.5 the workarounds
-described in this section are not necessary anymore, since the relevant
-completion tables have been improved.
+*NOTE:* On Emacs 29.2 and Tramp 2.7 the workarounds described in this
+section are not necessary anymore, since the relevant completion tables
+have been improved.
 
    In combination with Orderless or other non-prefix completion styles
 like ‘substring’ or ‘flex’, host names and user names are not made
@@ -916,10 +919,10 @@ Node: Problematic completion commands30895
 Node: org-refile31508
 Node: org-agenda-filter and org-tags-view33451
 Node: tmm-menubar34715
-Node: ffap-menu35339
-Node: completion-table-dynamic35934
-Node: Submitting the empty string37141
-Node: Tramp hostname and username completion38598
+Node: ffap-menu35446
+Node: completion-table-dynamic36139
+Node: Submitting the empty string37346
+Node: Tramp hostname and username completion38803
 
 End Tag Table
 
