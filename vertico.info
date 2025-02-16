@@ -1,4 +1,4 @@
-This is docqxmrvh.info, produced by makeinfo version 6.8 from
+This is docpPiTy0.info, produced by makeinfo version 6.8 from
 vertico.texi.
 
 INFO-DIR-SECTION Emacs misc features
@@ -7,7 +7,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: docqxmrvh.info,  Node: Top,  Next: Features,  Up: (dir)
+File: docpPiTy0.info,  Node: Top,  Next: Features,  Up: (dir)
 
 vertico.el - VERTical Interactive COmpletion
 ********************************************
@@ -62,7 +62,7 @@ Problematic completion commands
 
 
 
-File: docqxmrvh.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
+File: docpPiTy0.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
 
 1 Features
 **********
@@ -86,7 +86,7 @@ File: docqxmrvh.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
    <https://github.com/minad/vertico/blob/screenshots/vertico-mx.png?raw=true>
 
 
-File: docqxmrvh.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
+File: docpPiTy0.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
 
 2 Installation
 **************
@@ -97,7 +97,7 @@ directly via ‘M-x package-install RET vertico RET’.  After installation,
 activate the global minor mode with ‘M-x vertico-mode RET’.
 
 
-File: docqxmrvh.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
+File: docpPiTy0.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
 
 3 Key bindings
 **************
@@ -134,7 +134,7 @@ pressing ‘M-RET’, move the selection up to the input prompt by pressing
 the ‘up’ arrow key and then press ‘RET’.
 
 
-File: docqxmrvh.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
+File: docpPiTy0.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
 
 4 Configuration
 ***************
@@ -168,16 +168,15 @@ configuration:
        ;; Vertico.
        (read-extended-command-predicate #'command-completion-default-include-p)
        :init
-       ;; Emacs bug#76028: Add prompt indicator to `completing-read-multiple'.
-       ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
-       (defun crm-indicator (args)
-         (cons (format "[CRM%s] %s"
-                       (replace-regexp-in-string
-                        "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                        crm-separator)
-                       (car args))
-               (cdr args)))
-       (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+       ;; Prompt indicator for `completing-read-multiple'.  Available out of the box
+       ;; on Emacs 31, see `crm-prompt'.
+       (when (< emacs-major-version 31)
+         (advice-add #'completing-read-multiple :filter-args
+                     (lambda (args)
+                       (cons (format "[CRM%s] %s"
+                                     (string-replace "[ \t]*" "" crm-separator)
+                                     (car args))
+                             (cdr args)))))
 
        ;; Do not allow the cursor in the minibuffer prompt
        (setq minibuffer-prompt-properties
@@ -223,7 +222,7 @@ documentation about completion in the Elisp manual
 * Completion-at-point and completion-in-region::
 
 
-File: docqxmrvh.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
+File: docpPiTy0.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.1 Completion styles and TAB completion
 ========================================
@@ -272,7 +271,7 @@ completion styles are used:
            completion-ignore-case t)
 
 
-File: docqxmrvh.info,  Node: Completion-at-point and completion-in-region,  Prev: Completion styles and TAB completion,  Up: Configuration
+File: docpPiTy0.info,  Node: Completion-at-point and completion-in-region,  Prev: Completion styles and TAB completion,  Up: Configuration
 
 4.2 Completion-at-point and completion-in-region
 ================================================
@@ -300,7 +299,7 @@ Corfu is a narrowly focused package and developed in the same spirit as
 Vertico.  You can even use Corfu in the minibuffer.
 
 
-File: docqxmrvh.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
+File: docpPiTy0.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
 
 5 Extensions
 ************
@@ -383,7 +382,7 @@ according to the buffer height.
 * Configure Vertico per command or completion category::
 
 
-File: docqxmrvh.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
+File: docpPiTy0.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
 
 5.1 Configure Vertico per command or completion category
 ========================================================
@@ -485,7 +484,7 @@ when they scroll off-screen to the left.
            '((buffer flat (vertico-cycle . t))))
 
 
-File: docqxmrvh.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
+File: docpPiTy0.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
 
 6 Complementary packages
 ************************
@@ -532,7 +531,7 @@ functionality not present in Emacs already (e.g., ‘consult-line’) and
 some are substitutes (e.g., ‘consult-buffer’ for ‘switch-to-buffer’).
 
 
-File: docqxmrvh.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
+File: docpPiTy0.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
 
 7 Child frames and Popups
 *************************
@@ -559,7 +558,7 @@ a try and judge for yourself.
      posframe library.
 
 
-File: docqxmrvh.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
+File: docpPiTy0.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
 
 8 Alternatives
 **************
@@ -614,7 +613,7 @@ philosophy:
      flexibility thanks to its *note extensions: Extensions.
 
 
-File: docqxmrvh.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
+File: docpPiTy0.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
 
 9 Resources
 ***********
@@ -652,7 +651,7 @@ out the following resources:
           (2024-03-06) by Marie-Hélène Burle.
 
 
-File: docqxmrvh.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
+File: docpPiTy0.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
 
 10 Contributions
 ****************
@@ -662,7 +661,7 @@ Since this package is part of GNU ELPA
 copyright assignment to the FSF.
 
 
-File: docqxmrvh.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
+File: docpPiTy0.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
 
 11 Debugging Vertico
 ********************
@@ -684,7 +683,7 @@ that the hooks are executed after every command.
      (advice-add #'vertico--exhibit :around #'force-debug)
 
 
-File: docqxmrvh.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
+File: docpPiTy0.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
 
 12 Problematic completion commands
 **********************************
@@ -705,7 +704,7 @@ require minor workarounds.
 * Tramp hostname and username completion::
 
 
-File: docqxmrvh.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docpPiTy0.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.1 ‘org-refile’
 =================
@@ -749,7 +748,7 @@ much more cluttered.
            org-outline-path-complete-in-steps nil)
 
 
-File: docqxmrvh.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
+File: docpPiTy0.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
 
 12.2 ‘org-agenda-filter’ and ‘org-tags-view’
 ============================================
@@ -771,7 +770,7 @@ separately.  Ideally this issue would be fixed in Org.
      (advice-add #'org-agenda-filter :around #'vertico-enforce-basic-completion)
 
 
-File: docqxmrvh.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docpPiTy0.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.3 ‘tmm-menubar’
 ==================
@@ -792,7 +791,7 @@ overwrite the default F10 keybinding.
      (advice-add #'tmm-add-prompt :after #'minibuffer-hide-completions)
 
 
-File: docqxmrvh.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
+File: docpPiTy0.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
 
 12.4 ‘ffap-menu’
 ================
@@ -814,7 +813,7 @@ completions buffer can be disabled as follows.
                      (apply args))))
 
 
-File: docqxmrvh.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
+File: docpPiTy0.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
 
 12.5 ‘completion-table-dynamic’
 ===============================
@@ -839,7 +838,7 @@ Orderless documentation because of ‘completion-table-dynamic’.
                                (concat str "3")))))
 
 
-File: docqxmrvh.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
+File: docpPiTy0.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
 
 12.6 Submitting the empty string
 ================================
@@ -866,7 +865,7 @@ and Vertico preselects the prompt, such that exiting with the empty
 string is possible by pressing ‘RET’ only.
 
 
-File: docqxmrvh.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
+File: docpPiTy0.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
 
 12.7 Tramp hostname and username completion
 ===========================================
@@ -914,24 +913,24 @@ Node: Features1772
 Node: Installation2796
 Node: Key bindings3163
 Node: Configuration5364
-Node: Completion styles and TAB completion9326
-Node: Completion-at-point and completion-in-region11734
-Node: Extensions13072
-Node: Configure Vertico per command or completion category16991
-Node: Complementary packages21581
-Node: Child frames and Popups23838
-Node: Alternatives25215
-Node: Resources28090
-Node: Contributions29823
-Node: Debugging Vertico30100
-Node: Problematic completion commands30912
-Node: org-refile31525
-Node: org-agenda-filter and org-tags-view33468
-Node: tmm-menubar34732
-Node: ffap-menu35618
-Node: completion-table-dynamic36475
-Node: Submitting the empty string37682
-Node: Tramp hostname and username completion39139
+Node: Completion styles and TAB completion9295
+Node: Completion-at-point and completion-in-region11703
+Node: Extensions13041
+Node: Configure Vertico per command or completion category16960
+Node: Complementary packages21550
+Node: Child frames and Popups23807
+Node: Alternatives25184
+Node: Resources28059
+Node: Contributions29792
+Node: Debugging Vertico30069
+Node: Problematic completion commands30881
+Node: org-refile31494
+Node: org-agenda-filter and org-tags-view33437
+Node: tmm-menubar34701
+Node: ffap-menu35587
+Node: completion-table-dynamic36444
+Node: Submitting the empty string37651
+Node: Tramp hostname and username completion39108
 
 End Tag Table
 
