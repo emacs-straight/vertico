@@ -1,4 +1,4 @@
-This is doc5q25hu.info, produced by makeinfo version 6.8 from
+This is dockSyssx.info, produced by makeinfo version 6.8 from
 vertico.texi.
 
 INFO-DIR-SECTION Emacs misc features
@@ -7,7 +7,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: doc5q25hu.info,  Node: Top,  Next: Features,  Up: (dir)
+File: dockSyssx.info,  Node: Top,  Next: Features,  Up: (dir)
 
 vertico.el - VERTical Interactive COmpletion
 ********************************************
@@ -63,7 +63,7 @@ Problematic completion commands
 
 
 
-File: doc5q25hu.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
+File: dockSyssx.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
 
 1 Features
 **********
@@ -76,7 +76,8 @@ File: doc5q25hu.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
      ‘RET’.
    • Non-existing candidates can be submitted with ‘M-RET’ or by moving
      the point to the prompt.
-   • Efficient sorting by history position, length and alphabetically.
+   • Efficient sorting by history position, frequency, length and
+     alphabetically.
    • Long candidates with newlines are formatted to take up less space.
    • Lazy completion candidate highlighting for performance.
    • Annotations are displayed next to the candidates (‘annotation-’ and
@@ -87,7 +88,7 @@ File: doc5q25hu.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
    <https://github.com/minad/vertico/blob/screenshots/vertico-mx.png?raw=true>
 
 
-File: doc5q25hu.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
+File: dockSyssx.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
 
 2 Installation
 **************
@@ -98,7 +99,7 @@ directly via ‘M-x package-install RET vertico RET’.  After installation,
 activate the global minor mode with ‘M-x vertico-mode RET’.
 
 
-File: doc5q25hu.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
+File: dockSyssx.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
 
 3 Key bindings
 **************
@@ -135,7 +136,7 @@ pressing ‘M-RET’, move the selection up to the input prompt by pressing
 the ‘up’ arrow key and then press ‘RET’.
 
 
-File: doc5q25hu.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
+File: dockSyssx.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
 
 4 Configuration
 ***************
@@ -212,7 +213,7 @@ documentation about completion in the Elisp manual
 * Completing-read-multiple::
 
 
-File: doc5q25hu.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
+File: dockSyssx.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.1 Completion styles and TAB completion
 ========================================
@@ -261,7 +262,7 @@ completion styles are used:
            completion-ignore-case t)
 
 
-File: doc5q25hu.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
+File: dockSyssx.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
 
 4.2 Completion-at-point and completion-in-region
 ================================================
@@ -282,7 +283,7 @@ Corfu is a narrowly focused package and developed in the same spirit as
 Vertico.  You can even use Corfu in the minibuffer.
 
 
-File: doc5q25hu.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
+File: dockSyssx.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.3 Completing-read-multiple
 ============================
@@ -306,7 +307,7 @@ versions you can use the following:
                            (cdr args))))))
 
 
-File: doc5q25hu.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
+File: dockSyssx.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
 
 5 Extensions
 ************
@@ -352,6 +353,10 @@ Currently the following extensions come with the Vertico ELPA package:
    • vertico-reverse
      (https://github.com/minad/vertico/blob/main/extensions/vertico-reverse.el):
      ‘vertico-reverse-mode’ to reverse the display.
+   • vertico-sort
+     (https://github.com/minad/vertico/blob/main/extensions/vertico-sort.el):
+     Provides optimized sort functions, by history, by length and
+     lexical.
    • vertico-suspend
      (https://github.com/minad/vertico/blob/main/extensions/vertico-suspend.el):
      The command ‘vertico-suspend’ suspends and restores the current
@@ -389,7 +394,7 @@ according to the buffer height.
 * Configure Vertico per command or completion category::
 
 
-File: doc5q25hu.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
+File: dockSyssx.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
 
 5.1 Configure Vertico per command or completion category
 ========================================================
@@ -491,7 +496,7 @@ when they scroll off-screen to the left.
            '((buffer flat (vertico-cycle . t))))
 
 
-File: doc5q25hu.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
+File: dockSyssx.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
 
 6 Complementary packages
 ************************
@@ -538,7 +543,7 @@ functionality not present in Emacs already (e.g., ‘consult-line’) and
 some are substitutes (e.g., ‘consult-buffer’ for ‘switch-to-buffer’).
 
 
-File: doc5q25hu.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
+File: dockSyssx.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
 
 7 Child frames and Popups
 *************************
@@ -565,7 +570,7 @@ a try and judge for yourself.
      posframe library.
 
 
-File: doc5q25hu.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
+File: dockSyssx.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
 
 8 Alternatives
 **************
@@ -620,7 +625,7 @@ philosophy:
      flexibility thanks to its *note extensions: Extensions.
 
 
-File: doc5q25hu.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
+File: dockSyssx.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
 
 9 Resources
 ***********
@@ -658,7 +663,7 @@ out the following resources:
           (2024-03-06) by Marie-Hélène Burle.
 
 
-File: doc5q25hu.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
+File: dockSyssx.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
 
 10 Contributions
 ****************
@@ -668,7 +673,7 @@ Since this package is part of GNU ELPA
 copyright assignment to the FSF.
 
 
-File: doc5q25hu.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
+File: dockSyssx.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
 
 11 Debugging Vertico
 ********************
@@ -690,7 +695,7 @@ that the hooks are executed after every command.
      (advice-add #'vertico--exhibit :around #'force-debug)
 
 
-File: doc5q25hu.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
+File: dockSyssx.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
 
 12 Problematic completion commands
 **********************************
@@ -711,7 +716,7 @@ require minor workarounds.
 * Tramp hostname and username completion::
 
 
-File: doc5q25hu.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: dockSyssx.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.1 ‘org-refile’
 =================
@@ -755,7 +760,7 @@ much more cluttered.
            org-outline-path-complete-in-steps nil)
 
 
-File: doc5q25hu.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
+File: dockSyssx.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
 
 12.2 ‘org-agenda-filter’ and ‘org-tags-view’
 ============================================
@@ -777,7 +782,7 @@ separately.  Ideally this issue would be fixed in Org.
      (advice-add #'org-agenda-filter :around #'vertico-enforce-basic-completion)
 
 
-File: doc5q25hu.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: dockSyssx.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.3 ‘tmm-menubar’
 ==================
@@ -798,7 +803,7 @@ overwrite the default F10 keybinding.
      (advice-add #'tmm-add-prompt :after #'minibuffer-hide-completions)
 
 
-File: doc5q25hu.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
+File: dockSyssx.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
 
 12.4 ‘ffap-menu’
 ================
@@ -820,7 +825,7 @@ completions buffer can be disabled as follows.
                      (apply args))))
 
 
-File: doc5q25hu.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
+File: dockSyssx.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
 
 12.5 ‘completion-table-dynamic’
 ===============================
@@ -845,7 +850,7 @@ Orderless documentation because of ‘completion-table-dynamic’.
                                (concat str "3")))))
 
 
-File: doc5q25hu.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
+File: dockSyssx.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
 
 12.6 Submitting the empty string
 ================================
@@ -872,7 +877,7 @@ and Vertico preselects the prompt, such that exiting with the empty
 string is possible by pressing ‘RET’ only.
 
 
-File: doc5q25hu.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
+File: dockSyssx.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
 
 12.7 Tramp hostname and username completion
 ===========================================
@@ -917,28 +922,28 @@ preferred style for non-remote files.
 Tag Table:
 Node: Top212
 Node: Features1801
-Node: Installation2825
-Node: Key bindings3192
-Node: Configuration5393
-Node: Completion styles and TAB completion8775
-Node: Completion-at-point and completion-in-region11183
-Node: Completing-read-multiple12253
-Node: Extensions13375
-Node: Configure Vertico per command or completion category17294
-Node: Complementary packages21859
-Node: Child frames and Popups24116
-Node: Alternatives25493
-Node: Resources28368
-Node: Contributions30101
-Node: Debugging Vertico30378
-Node: Problematic completion commands31190
-Node: org-refile31803
-Node: org-agenda-filter and org-tags-view33746
-Node: tmm-menubar35010
-Node: ffap-menu35896
-Node: completion-table-dynamic36753
-Node: Submitting the empty string37960
-Node: Tramp hostname and username completion39417
+Node: Installation2841
+Node: Key bindings3208
+Node: Configuration5409
+Node: Completion styles and TAB completion8791
+Node: Completion-at-point and completion-in-region11199
+Node: Completing-read-multiple12269
+Node: Extensions13391
+Node: Configure Vertico per command or completion category17488
+Node: Complementary packages22053
+Node: Child frames and Popups24310
+Node: Alternatives25687
+Node: Resources28562
+Node: Contributions30295
+Node: Debugging Vertico30572
+Node: Problematic completion commands31384
+Node: org-refile31997
+Node: org-agenda-filter and org-tags-view33940
+Node: tmm-menubar35204
+Node: ffap-menu36090
+Node: completion-table-dynamic36947
+Node: Submitting the empty string38154
+Node: Tramp hostname and username completion39611
 
 End Tag Table
 

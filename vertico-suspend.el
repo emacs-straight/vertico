@@ -50,7 +50,6 @@
 (require 'vertico)
 
 (defvar vertico-buffer--restore)
-(declare-function vertico-buffer-mode "ext:vertico-buffer")
 (defvar-local vertico-suspend--ov nil)
 
 ;;;###autoload
@@ -61,6 +60,7 @@ current session is suspended.  If the command is invoked from
 outside the minibuffer, the active minibuffer is either selected
 or the latest completion session is restored."
   (interactive)
+  (declare-function vertico-buffer-mode "ext:vertico-buffer")
   (unless enable-recursive-minibuffers
     (user-error "Recursive minibuffers must be enabled"))
   (advice-add #'set-minibuffer-message :around #'vertico-suspend--message)
@@ -89,7 +89,7 @@ or the latest completion session is restored."
           (setq vertico-suspend--ov nil))
         (when (eq #'ignore (bound-and-true-p vertico-buffer--restore))
           (setq vertico-buffer--restore nil)
-          (vertico-buffer-mode 1))))
+          (vertico-buffer-mode))))
     (user-error "No Vertico session to suspend or resume")))
 
 (defun vertico-suspend--unselect (&rest _)

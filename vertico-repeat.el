@@ -35,8 +35,7 @@
 ;;
 ;; It is necessary to register a minibuffer setup hook, which saves
 ;; the Vertico state for repetition.  In order to save the history
-;; across Emacs sessions, enable `savehist-mode' and add
-;; `vertico-repeat-history' to `savehist-additional-variables'.
+;; across Emacs sessions, enable `savehist-mode'.
 ;;
 ;; (keymap-global-set "M-R" #'vertico-repeat)
 ;; (keymap-set vertico-map "M-P" #'vertico-repeat-previous)
@@ -66,12 +65,12 @@
 
 (defcustom vertico-repeat-transformers
   (list #'vertico-repeat--filter-empty
-        #'vertico-repeat--filter-commands)
+        #'vertico-repeat--filter-commands
+        #'vertico-repeat--remove-long)
   "List of functions to apply to history element before saving."
   :type '(repeat function)
   :group 'vertico)
 
-(declare-function vertico-multiform-vertical "ext:vertico-multiform")
 (defvar vertico-multiform--display-modes)
 (defvar vertico-repeat-history nil)
 (defvar-local vertico-repeat--command nil)
@@ -86,6 +85,13 @@
 (defun vertico-repeat--filter-empty (session)
   "Filter SESSION if input is empty."
   (and (cadr session) (not (equal (cadr session) "")) session))
+
+(defun vertico-repeat--remove-long (session)
+  "Remove overly long candidate from SESSION."
+  (when-let ((cand (caddr session))
+             ((and (stringp cand) (length> cand 200))))
+    (setf (cddr session) (cdddr session)))
+  session)
 
 (defun vertico-repeat--save-input ()
   "Save current minibuffer input."
@@ -110,6 +116,10 @@
         (transform vertico-repeat-transformers))
     (while (and transform (setq session (funcall (pop transform) session))))
     (when session
+      (unless (or (not (bound-and-true-p savehist-mode))
+                  (memq 'vertico-repeat-history (bound-and-true-p savehist-ignored-variables)))
+        (defvar savehist-minibuffer-history-variables)
+        (add-to-list 'savehist-minibuffer-history-variables 'vertico-repeat-history))
       (add-to-history 'vertico-repeat-history session))))
 
 (defun vertico-repeat--restore (session)
@@ -128,6 +138,7 @@
              (mode (seq-find #'symbolp (cddr session)))
              ((bound-and-true-p vertico-multiform-mode))
              ((not (and (boundp mode) (symbol-value mode)))))
+    (declare-function vertico-multiform-vertical "ext:vertico-multiform")
     (vertico-multiform-vertical mode))
   (vertico--exhibit))
 
