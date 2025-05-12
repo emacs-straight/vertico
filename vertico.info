@@ -1,4 +1,4 @@
-This is docwUxMAt.info, produced by makeinfo version 6.8 from
+This is docrXOZLP.info, produced by makeinfo version 6.8 from
 vertico.texi.
 
 INFO-DIR-SECTION Emacs misc features
@@ -7,7 +7,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: docwUxMAt.info,  Node: Top,  Next: Features,  Up: (dir)
+File: docrXOZLP.info,  Node: Top,  Next: Features,  Up: (dir)
 
 vertico.el - VERTical Interactive COmpletion
 ********************************************
@@ -63,7 +63,7 @@ Problematic completion commands
 
 
 
-File: docwUxMAt.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
+File: docrXOZLP.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
 
 1 Features
 **********
@@ -88,7 +88,7 @@ File: docwUxMAt.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
    <https://github.com/minad/vertico/blob/screenshots/vertico-mx.png?raw=true>
 
 
-File: docwUxMAt.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
+File: docrXOZLP.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
 
 2 Installation
 **************
@@ -99,7 +99,7 @@ directly via ‘M-x package-install RET vertico RET’.  After installation,
 activate the global minor mode with ‘M-x vertico-mode RET’.
 
 
-File: docwUxMAt.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
+File: docrXOZLP.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
 
 3 Key bindings
 **************
@@ -136,7 +136,7 @@ pressing ‘M-RET’, move the selection up to the input prompt by pressing
 the ‘up’ arrow key and then press ‘RET’.
 
 
-File: docwUxMAt.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
+File: docrXOZLP.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
 
 4 Configuration
 ***************
@@ -213,7 +213,7 @@ documentation about completion in the Elisp manual
 * Completing-read-multiple::
 
 
-File: docwUxMAt.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
+File: docrXOZLP.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.1 Completion styles and TAB completion
 ========================================
@@ -262,7 +262,7 @@ completion styles are used:
            completion-ignore-case t)
 
 
-File: docwUxMAt.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
+File: docrXOZLP.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
 
 4.2 Completion-at-point and completion-in-region
 ================================================
@@ -283,7 +283,7 @@ Corfu is a narrowly focused package and developed in the same spirit as
 Vertico.  You can even use Corfu in the minibuffer.
 
 
-File: docwUxMAt.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
+File: docrXOZLP.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.3 Completing-read-multiple
 ============================
@@ -307,7 +307,7 @@ versions you can use the following:
                            (cdr args))))))
 
 
-File: docwUxMAt.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
+File: docrXOZLP.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
 
 5 Extensions
 ************
@@ -394,7 +394,7 @@ according to the buffer height.
 * Configure Vertico per command or completion category::
 
 
-File: docwUxMAt.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
+File: docrXOZLP.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
 
 5.1 Configure Vertico per command or completion category
 ========================================================
@@ -496,7 +496,7 @@ when they scroll off-screen to the left.
            '((buffer flat (vertico-cycle . t))))
 
 
-File: docwUxMAt.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
+File: docrXOZLP.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
 
 6 Complementary packages
 ************************
@@ -543,7 +543,7 @@ functionality not present in Emacs already (e.g., ‘consult-line’) and
 some are substitutes (e.g., ‘consult-buffer’ for ‘switch-to-buffer’).
 
 
-File: docwUxMAt.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
+File: docrXOZLP.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
 
 7 Child frames and Popups
 *************************
@@ -570,7 +570,7 @@ a try and judge for yourself.
      posframe library.
 
 
-File: docwUxMAt.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
+File: docrXOZLP.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
 
 8 Alternatives
 **************
@@ -625,7 +625,7 @@ philosophy:
      flexibility thanks to its *note extensions: Extensions.
 
 
-File: docwUxMAt.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
+File: docrXOZLP.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
 
 9 Resources
 ***********
@@ -663,7 +663,7 @@ out the following resources:
           (2024-03-06) by Marie-Hélène Burle.
 
 
-File: docwUxMAt.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
+File: docrXOZLP.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
 
 10 Contributions
 ****************
@@ -673,29 +673,17 @@ Since this package is part of GNU ELPA
 copyright assignment to the FSF.
 
 
-File: docwUxMAt.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
+File: docrXOZLP.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
 
 11 Debugging Vertico
 ********************
 
-When you observe an error in the ‘vertico--exhibit’ post command hook,
-you should install an advice to enforce debugging.  This allows you to
-obtain a stack trace in order to narrow down the location of the error.
-The reason is that post command hooks are automatically disabled (and
-not debugged) by Emacs.  Otherwise Emacs would become unusable, given
-that the hooks are executed after every command.
-
-     (setq debug-on-error t)
-
-     (defun force-debug (func &rest args)
-       (condition-case e
-           (apply func args)
-         ((debug error) (signal (car e) (cdr e)))))
-
-     (advice-add #'vertico--exhibit :around #'force-debug)
+Vertico will automatically print a stack trace to the ‘*Messages*’
+buffer when an error is detected.  The stack trace allows you to narrow
+down the exact code location which caused the error.
 
 
-File: docwUxMAt.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
+File: docrXOZLP.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
 
 12 Problematic completion commands
 **********************************
@@ -716,7 +704,7 @@ require minor workarounds.
 * Tramp hostname and username completion::
 
 
-File: docwUxMAt.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docrXOZLP.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.1 ‘org-refile’
 =================
@@ -760,7 +748,7 @@ much more cluttered.
            org-outline-path-complete-in-steps nil)
 
 
-File: docwUxMAt.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
+File: docrXOZLP.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
 
 12.2 ‘org-agenda-filter’ and ‘org-tags-view’
 ============================================
@@ -782,7 +770,7 @@ separately.  Ideally this issue would be fixed in Org.
      (advice-add #'org-agenda-filter :around #'vertico-enforce-basic-completion)
 
 
-File: docwUxMAt.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docrXOZLP.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.3 ‘tmm-menubar’
 ==================
@@ -803,7 +791,7 @@ overwrite the default F10 keybinding.
      (advice-add #'tmm-add-prompt :after #'minibuffer-hide-completions)
 
 
-File: docwUxMAt.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
+File: docrXOZLP.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
 
 12.4 ‘ffap-menu’
 ================
@@ -825,7 +813,7 @@ completions buffer can be disabled as follows.
                      (apply args))))
 
 
-File: docwUxMAt.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
+File: docrXOZLP.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
 
 12.5 ‘completion-table-dynamic’
 ===============================
@@ -850,7 +838,7 @@ Orderless documentation because of ‘completion-table-dynamic’.
                                (concat str "3")))))
 
 
-File: docwUxMAt.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
+File: docrXOZLP.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
 
 12.6 Submitting the empty string
 ================================
@@ -877,7 +865,7 @@ and Vertico preselects the prompt, such that exiting with the empty
 string is possible by pressing ‘RET’ only.
 
 
-File: docwUxMAt.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
+File: docrXOZLP.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
 
 12.7 Tramp hostname and username completion
 ===========================================
@@ -936,14 +924,14 @@ Node: Alternatives25687
 Node: Resources28562
 Node: Contributions30295
 Node: Debugging Vertico30572
-Node: Problematic completion commands31384
-Node: org-refile31997
-Node: org-agenda-filter and org-tags-view33940
-Node: tmm-menubar35204
-Node: ffap-menu36090
-Node: completion-table-dynamic36947
-Node: Submitting the empty string38154
-Node: Tramp hostname and username completion39611
+Node: Problematic completion commands30934
+Node: org-refile31547
+Node: org-agenda-filter and org-tags-view33490
+Node: tmm-menubar34754
+Node: ffap-menu35640
+Node: completion-table-dynamic36497
+Node: Submitting the empty string37704
+Node: Tramp hostname and username completion39161
 
 End Tag Table
 
