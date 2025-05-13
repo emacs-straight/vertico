@@ -1,4 +1,4 @@
-This is docrXOZLP.info, produced by makeinfo version 6.8 from
+This is docFyJnSR.info, produced by makeinfo version 6.8 from
 vertico.texi.
 
 INFO-DIR-SECTION Emacs misc features
@@ -7,7 +7,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: docrXOZLP.info,  Node: Top,  Next: Features,  Up: (dir)
+File: docFyJnSR.info,  Node: Top,  Next: Features,  Up: (dir)
 
 vertico.el - VERTical Interactive COmpletion
 ********************************************
@@ -63,7 +63,7 @@ Problematic completion commands
 
 
 
-File: docrXOZLP.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
+File: docFyJnSR.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
 
 1 Features
 **********
@@ -88,7 +88,7 @@ File: docrXOZLP.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
    <https://github.com/minad/vertico/blob/screenshots/vertico-mx.png?raw=true>
 
 
-File: docrXOZLP.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
+File: docFyJnSR.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
 
 2 Installation
 **************
@@ -99,7 +99,7 @@ directly via ‘M-x package-install RET vertico RET’.  After installation,
 activate the global minor mode with ‘M-x vertico-mode RET’.
 
 
-File: docrXOZLP.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
+File: docFyJnSR.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
 
 3 Key bindings
 **************
@@ -136,7 +136,7 @@ pressing ‘M-RET’, move the selection up to the input prompt by pressing
 the ‘up’ arrow key and then press ‘RET’.
 
 
-File: docrXOZLP.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
+File: docFyJnSR.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
 
 4 Configuration
 ***************
@@ -213,7 +213,7 @@ documentation about completion in the Elisp manual
 * Completing-read-multiple::
 
 
-File: docrXOZLP.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
+File: docFyJnSR.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.1 Completion styles and TAB completion
 ========================================
@@ -262,7 +262,7 @@ completion styles are used:
            completion-ignore-case t)
 
 
-File: docrXOZLP.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
+File: docFyJnSR.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
 
 4.2 Completion-at-point and completion-in-region
 ================================================
@@ -283,7 +283,7 @@ Corfu is a narrowly focused package and developed in the same spirit as
 Vertico.  You can even use Corfu in the minibuffer.
 
 
-File: docrXOZLP.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
+File: docFyJnSR.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.3 Completing-read-multiple
 ============================
@@ -307,7 +307,7 @@ versions you can use the following:
                            (cdr args))))))
 
 
-File: docrXOZLP.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
+File: docFyJnSR.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
 
 5 Extensions
 ************
@@ -394,7 +394,7 @@ according to the buffer height.
 * Configure Vertico per command or completion category::
 
 
-File: docrXOZLP.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
+File: docFyJnSR.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
 
 5.1 Configure Vertico per command or completion category
 ========================================================
@@ -496,7 +496,7 @@ when they scroll off-screen to the left.
            '((buffer flat (vertico-cycle . t))))
 
 
-File: docrXOZLP.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
+File: docFyJnSR.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
 
 6 Complementary packages
 ************************
@@ -543,7 +543,7 @@ functionality not present in Emacs already (e.g., ‘consult-line’) and
 some are substitutes (e.g., ‘consult-buffer’ for ‘switch-to-buffer’).
 
 
-File: docrXOZLP.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
+File: docFyJnSR.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
 
 7 Child frames and Popups
 *************************
@@ -570,7 +570,7 @@ a try and judge for yourself.
      posframe library.
 
 
-File: docrXOZLP.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
+File: docFyJnSR.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
 
 8 Alternatives
 **************
@@ -601,31 +601,24 @@ philosophy:
 
    • Mct (https://git.sr.ht/~protesilaos/mct): Minibuffer and
      Completions in Tandem.  Mct reuses the default ‘*Completions*’
-     buffer and enhances it with automatic updates and additional
-     keybindings, to select a candidate and move between minibuffer and
-     completions buffer.  Since Mct uses a fully functional buffer you
-     can use familiar buffer commands inside the completions buffer.
-     The main distinction to Vertico’s approach is that ‘*Completions*’
-     buffer displays all matching candidates.  This has the advantage
-     that you can interact freely with the candidates and jump around
-     with Isearch or Avy.  On the other hand it necessarily causes a
+     buffer and enhances it with automatic updates.  Since Mct uses a
+     regular buffer you can use the usual movement commands.  The main
+     distinction to Vertico’s approach is that ‘*Completions*’ buffer
+     displays all matching candidates.  This has the advantage that you
+     can interact freely with the candidates and jump around with
+     Isearch or Avy.  On the other hand it necessarily causes a
      slowdown.
+   • Icomplete: Emacs comes with the builtin ‘icomplete-vertical-mode’,
+     which is more bare-bone than Vertico.  Vertico offers additional
+     flexibility via its *note extensions: Extensions.
    • Selectrum (https://github.com/radian-software/selectrum): Selectrum
      is the predecessor of Vertico has been deprecated in favor of
      Vertico.  Read the migration guide
      (https://github.com/minad/vertico/wiki/Migrating-from-Selectrum-to-Vertico)
-     when migrating from Selectrum.  Vertico was designed specifically
-     to address the technical shortcomings of Selectrum.  Selectrum is
-     not fully compatible with every Emacs completion command and
-     dynamic completion tables, since it uses its own filtering
-     infrastructure, which deviates from the standard Emacs completion
-     facilities.
-   • Icomplete: Emacs comes with the builtin ‘icomplete-vertical-mode’,
-     which is a more bare-bone than Vertico.  Vertico offers additional
-     flexibility thanks to its *note extensions: Extensions.
+     when migrating from Selectrum.
 
 
-File: docrXOZLP.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
+File: docFyJnSR.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
 
 9 Resources
 ***********
@@ -663,7 +656,7 @@ out the following resources:
           (2024-03-06) by Marie-Hélène Burle.
 
 
-File: docrXOZLP.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
+File: docFyJnSR.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
 
 10 Contributions
 ****************
@@ -673,7 +666,7 @@ Since this package is part of GNU ELPA
 copyright assignment to the FSF.
 
 
-File: docrXOZLP.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
+File: docFyJnSR.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
 
 11 Debugging Vertico
 ********************
@@ -683,7 +676,7 @@ buffer when an error is detected.  The stack trace allows you to narrow
 down the exact code location which caused the error.
 
 
-File: docrXOZLP.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
+File: docFyJnSR.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
 
 12 Problematic completion commands
 **********************************
@@ -704,7 +697,7 @@ require minor workarounds.
 * Tramp hostname and username completion::
 
 
-File: docrXOZLP.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docFyJnSR.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.1 ‘org-refile’
 =================
@@ -748,7 +741,7 @@ much more cluttered.
            org-outline-path-complete-in-steps nil)
 
 
-File: docrXOZLP.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
+File: docFyJnSR.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
 
 12.2 ‘org-agenda-filter’ and ‘org-tags-view’
 ============================================
@@ -770,7 +763,7 @@ separately.  Ideally this issue would be fixed in Org.
      (advice-add #'org-agenda-filter :around #'vertico-enforce-basic-completion)
 
 
-File: docrXOZLP.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docFyJnSR.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.3 ‘tmm-menubar’
 ==================
@@ -791,7 +784,7 @@ overwrite the default F10 keybinding.
      (advice-add #'tmm-add-prompt :after #'minibuffer-hide-completions)
 
 
-File: docrXOZLP.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
+File: docFyJnSR.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
 
 12.4 ‘ffap-menu’
 ================
@@ -813,7 +806,7 @@ completions buffer can be disabled as follows.
                      (apply args))))
 
 
-File: docrXOZLP.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
+File: docFyJnSR.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
 
 12.5 ‘completion-table-dynamic’
 ===============================
@@ -838,7 +831,7 @@ Orderless documentation because of ‘completion-table-dynamic’.
                                (concat str "3")))))
 
 
-File: docrXOZLP.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
+File: docFyJnSR.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
 
 12.6 Submitting the empty string
 ================================
@@ -865,7 +858,7 @@ and Vertico preselects the prompt, such that exiting with the empty
 string is possible by pressing ‘RET’ only.
 
 
-File: docrXOZLP.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
+File: docFyJnSR.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
 
 12.7 Tramp hostname and username completion
 ===========================================
@@ -921,17 +914,17 @@ Node: Configure Vertico per command or completion category17488
 Node: Complementary packages22053
 Node: Child frames and Popups24310
 Node: Alternatives25687
-Node: Resources28562
-Node: Contributions30295
-Node: Debugging Vertico30572
-Node: Problematic completion commands30934
-Node: org-refile31547
-Node: org-agenda-filter and org-tags-view33490
-Node: tmm-menubar34754
-Node: ffap-menu35640
-Node: completion-table-dynamic36497
-Node: Submitting the empty string37704
-Node: Tramp hostname and username completion39161
+Node: Resources28084
+Node: Contributions29817
+Node: Debugging Vertico30094
+Node: Problematic completion commands30456
+Node: org-refile31069
+Node: org-agenda-filter and org-tags-view33012
+Node: tmm-menubar34276
+Node: ffap-menu35162
+Node: completion-table-dynamic36019
+Node: Submitting the empty string37226
+Node: Tramp hostname and username completion38683
 
 End Tag Table
 

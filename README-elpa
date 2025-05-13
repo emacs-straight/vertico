@@ -627,35 +627,29 @@ Table of Contents
   philosophy:
 
   • [Mct]: Minibuffer and Completions in Tandem. Mct reuses the default
-    `*Completions*' buffer and enhances it with automatic updates and
-    additional keybindings, to select a candidate and move between
-    minibuffer and completions buffer. Since Mct uses a fully functional
-    buffer you can use familiar buffer commands inside the completions
-    buffer. The main distinction to Vertico's approach is that
+    `*Completions*' buffer and enhances it with automatic updates. Since
+    Mct uses a regular buffer you can use the usual movement
+    commands. The main distinction to Vertico's approach is that
     `*Completions*' buffer displays all matching candidates. This has
     the advantage that you can interact freely with the candidates and
     jump around with Isearch or Avy. On the other hand it necessarily
     causes a slowdown.
+  • Icomplete: Emacs comes with the builtin `icomplete-vertical-mode',
+    which is more bare-bone than Vertico. Vertico offers additional
+    flexibility via its [extensions].
   • [Selectrum]: Selectrum is the predecessor of Vertico has been
     deprecated in favor of Vertico. Read the [migration guide] when
-    migrating from Selectrum.  Vertico was designed specifically to
-    address the technical shortcomings of Selectrum. Selectrum is not
-    fully compatible with every Emacs completion command and dynamic
-    completion tables, since it uses its own filtering infrastructure,
-    which deviates from the standard Emacs completion facilities.
-  • Icomplete: Emacs comes with the builtin `icomplete-vertical-mode',
-    which is a more bare-bone than Vertico. Vertico offers additional
-    flexibility thanks to its [extensions].
+    migrating from Selectrum.
 
 
 [Mct] <https://git.sr.ht/~protesilaos/mct>
+
+[extensions] See section 5
 
 [Selectrum] <https://github.com/radian-software/selectrum>
 
 [migration guide]
 <https://github.com/minad/vertico/wiki/Migrating-from-Selectrum-to-Vertico>
-
-[extensions] See section 5
 
 
 9 Resources
