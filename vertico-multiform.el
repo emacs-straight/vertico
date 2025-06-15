@@ -37,10 +37,11 @@
 ;;    (setq vertico-multiform-commands
 ;;          '((consult-line buffer)
 ;;            (consult-imenu reverse buffer)
-;;            (execute-extended-command flat)))
+;;            (execute-extended-command flat
+;;              (:keymap "X" execute-extended-command-for-buffer))))
 ;;
 ;;    (setq vertico-multiform-categories
-;;          '((file buffer grid)
+;;          '((file buffer grid (:keymap . vertico-directory-map))
 ;;            (imenu (:not indexed mouse))
 ;;            (symbol (vertico-sort-function . vertico-sort-alpha))))
 ;;
@@ -115,6 +116,7 @@ The keys in LIST can be symbols or regexps."
               'category))
         (exit (make-symbol "vertico-multiform--exit"))
         (depth (recursion-depth))
+        (kmaps nil)
         (modes nil))
     (fset exit (lambda ()
                  (when (= depth (recursion-depth))
@@ -126,6 +128,8 @@ The keys in LIST can be symbols or regexps."
     (dolist (x (cdr (or (vertico-multiform--lookup this-command vertico-multiform-commands)
                         (vertico-multiform--lookup cat vertico-multiform-categories))))
       (pcase x
+        (`(:keymap . ,key)
+         (push (if (keymapp key) key (apply #'define-keymap key)) kmaps))
         (`(:not . ,fs)
          (dolist (f fs)
            (let ((sym (and (symbolp f) (intern-soft (format "vertico-%s-mode" f)))))
@@ -137,7 +141,9 @@ The keys in LIST can be symbols or regexps."
         (_ (error "Invalid multiform setting %S" x))))
     (push modes vertico-multiform--stack)
     (vertico-multiform--toggle 1)
-    (vertico--setup)))
+    (vertico--setup)
+    (when kmaps
+      (use-local-map (make-composed-keymap kmaps (current-local-map))))))
 
 (defvar-keymap vertico-multiform-map
   :doc "Additional keymap activated in multiform mode.")
