@@ -285,11 +285,11 @@ Table of Contents
 
   The function `completing-read-multiple' is similar to
   `completing-read' but returns a list of completed strings. The strings
-  are separated by `crm-separator' in the minibuffer. However
-  `completing-read-multiple' does not indicate to the user that multiple
-  strings can be completed. I have contributed a patch to Emacs 31,
-  which fixes this minor issue. See the variable `crm-prompt' and
-  [bug#76028]. On older Emacs versions you can use the following:
+  are separated by `crm-separator' in the minibuffer. On Emacs 30 and
+  older, `completing-read-multiple' does not indicate to the user that
+  multiple strings can be completed. I have contributed a patch to Emacs
+  31, which fixes this issue. See the variable `crm-prompt' and
+  [bug#76028]. On older Emacs versions you can use the following advice:
 
   ┌────
   │ ;; Prompt indicator for `completing-read-multiple'.
@@ -827,9 +827,9 @@ Consult] <https://www.youtube.com/watch?v=UtqE-lR2HCA>
 12.3 `tmm-menubar'
 ──────────────────
 
-  *NOTE*: I have implemented a fix for this problem which is part of
-  Emacs 31. You can set `completion-eager-display' to `nil' in your
-  configuration. See [bug#74616] for the upstream bug report.
+  *NOTE*: I have implemented a fix for this problem upstream in Emacs,
+  see [bug#74616]. From Emacs 31 and newer the workaround is not needed
+  anymore.
 
   The text menu bar works well with Vertico but always shows a
   `*Completions*' buffer, which is unwanted if Vertico is used. Right
@@ -849,9 +849,9 @@ Consult] <https://www.youtube.com/watch?v=UtqE-lR2HCA>
 12.4 `ffap-menu'
 ────────────────
 
-  *NOTE*: I have implemented a fix for this problem which is part of
-  Emacs 31. You can set `completion-eager-display' to `nil' in your
-  configuration. See [bug#74616] for the upstream bug report.
+  *NOTE*: I have implemented a fix for this problem upstream in Emacs,
+  see [bug#74616]. From Emacs 31 and newer the workaround is not needed
+  anymore.
 
   The command `ffap-menu' shows the `*Completions*' buffer by default
   like `tmm-menubar', which is unwanted if Vertico is used. The
