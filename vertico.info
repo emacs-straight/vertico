@@ -1,4 +1,4 @@
-This is docpFliG2.info, produced by makeinfo version 6.8 from
+This is docL8Hi6x.info, produced by makeinfo version 6.8 from
 vertico.texi.
 
 INFO-DIR-SECTION Emacs misc features
@@ -7,7 +7,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: docpFliG2.info,  Node: Top,  Next: Features,  Up: (dir)
+File: docL8Hi6x.info,  Node: Top,  Next: Features,  Up: (dir)
 
 vertico.el - VERTical Interactive COmpletion
 ********************************************
@@ -63,7 +63,7 @@ Problematic completion commands
 
 
 
-File: docpFliG2.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
+File: docL8Hi6x.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
 
 1 Features
 **********
@@ -88,7 +88,7 @@ File: docpFliG2.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
    <https://github.com/minad/vertico/blob/screenshots/vertico-mx.png?raw=true>
 
 
-File: docpFliG2.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
+File: docL8Hi6x.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
 
 2 Installation
 **************
@@ -99,7 +99,7 @@ directly via ‘M-x package-install RET vertico RET’.  After installation,
 activate the global minor mode with ‘M-x vertico-mode RET’.
 
 
-File: docpFliG2.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
+File: docL8Hi6x.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
 
 3 Key bindings
 **************
@@ -136,7 +136,7 @@ pressing ‘M-RET’, move the selection up to the input prompt by pressing
 the ‘up’ arrow key and then press ‘RET’.
 
 
-File: docpFliG2.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
+File: docL8Hi6x.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
 
 4 Configuration
 ***************
@@ -216,7 +216,7 @@ documentation about completion in the Elisp manual
 * Completing-read-multiple::
 
 
-File: docpFliG2.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
+File: docL8Hi6x.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.1 Completion styles and TAB completion
 ========================================
@@ -265,7 +265,7 @@ completion styles are used:
            completion-ignore-case t)
 
 
-File: docpFliG2.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
+File: docL8Hi6x.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
 
 4.2 Completion-at-point and completion-in-region
 ================================================
@@ -286,7 +286,7 @@ Corfu is a narrowly focused package and developed in the same spirit as
 Vertico.  You can even use Corfu in the minibuffer.
 
 
-File: docpFliG2.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
+File: docL8Hi6x.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.3 Completing-read-multiple
 ============================
@@ -310,7 +310,7 @@ versions you can use the following advice:
                            (cdr args))))))
 
 
-File: docpFliG2.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
+File: docL8Hi6x.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
 
 5 Extensions
 ************
@@ -397,7 +397,7 @@ according to the buffer height.
 * Configure Vertico per command or completion category::
 
 
-File: docpFliG2.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
+File: docL8Hi6x.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
 
 5.1 Configure Vertico per command or completion category
 ========================================================
@@ -460,28 +460,22 @@ category.
      ;; See `vertico-sort-function' and `vertico-sort-override-function'.
      (setq vertico-multiform-commands
            '((describe-symbol (vertico-sort-function . vertico-sort-alpha))
-             (execute-extended-command (:keymap "X" execute-extended-command-for-buffer))))
+             (execute-extended-command (:keymap "X" execute-extended-command-cycle))))
 
      (setq vertico-multiform-categories
            '((symbol (vertico-sort-function . vertico-sort-alpha))
-             (file (vertico-sort-function . sort-directories-first)
+             (file (vertico-sort-function . vertico-sort-directories-first)
                    (:keymap . vertico-directory-map))))
-
-     ;; Sort directories before files
-     (defun sort-directories-first (files)
-       (setq files (vertico-sort-history-length-alpha files))
-       (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) files)
-              (seq-remove (lambda (x) (string-suffix-p "/" x)) files)))
 
    Key maps or key bindings can be set per command or category.
 
-     ;; Bind "X" to `execute-extended-command-for-buffer' in M-x.
+     ;; Bind "X" to `execute-extended-command-cycle' in M-x.
      (setq vertico-multiform-commands
-           '((execute-extended-command (:keymap "X" execute-extended-command-for-buffer))))
+           '((execute-extended-command (:keymap "X" execute-extended-command-cycle))))
 
      ;; Bind directory commands for all commands in file category.
      (setq vertico-multiform-categories
-           '((file (vertico-sort-function . sort-directories-first)
+           '((file (vertico-sort-function . vertico-sort-directories-first)
                    (:keymap . vertico-directory-map))))
 
    Combining these features allows us to fine-tune the completion
@@ -512,7 +506,7 @@ when they scroll off-screen to the left.
            '((buffer flat (vertico-cycle . t))))
 
 
-File: docpFliG2.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
+File: docL8Hi6x.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
 
 6 Complementary packages
 ************************
@@ -561,7 +555,7 @@ functionality not present in Emacs already (e.g., ‘consult-line’) and
 some are substitutes (e.g., ‘consult-buffer’ for ‘switch-to-buffer’).
 
 
-File: docpFliG2.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
+File: docL8Hi6x.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
 
 7 Child frames and Popups
 *************************
@@ -588,7 +582,7 @@ a try and judge for yourself.
      posframe library.
 
 
-File: docpFliG2.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
+File: docL8Hi6x.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
 
 8 Alternatives
 **************
@@ -636,7 +630,7 @@ philosophy:
      when migrating from Selectrum.
 
 
-File: docpFliG2.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
+File: docL8Hi6x.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
 
 9 Resources
 ***********
@@ -674,7 +668,7 @@ out the following resources:
           (2024-03-06) by Marie-Hélène Burle.
 
 
-File: docpFliG2.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
+File: docL8Hi6x.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
 
 10 Contributions
 ****************
@@ -684,7 +678,7 @@ Since this package is part of GNU ELPA
 copyright assignment to the FSF.
 
 
-File: docpFliG2.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
+File: docL8Hi6x.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
 
 11 Debugging Vertico
 ********************
@@ -694,7 +688,7 @@ buffer when an error is detected.  The stack trace allows you to narrow
 down the exact code location which caused the error.
 
 
-File: docpFliG2.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
+File: docL8Hi6x.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
 
 12 Problematic completion commands
 **********************************
@@ -715,7 +709,7 @@ require minor workarounds.
 * Tramp hostname and username completion::
 
 
-File: docpFliG2.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docL8Hi6x.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.1 ‘org-refile’
 =================
@@ -759,7 +753,7 @@ much more cluttered.
            org-outline-path-complete-in-steps nil)
 
 
-File: docpFliG2.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
+File: docL8Hi6x.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
 
 12.2 ‘org-agenda-filter’ and ‘org-tags-view’
 ============================================
@@ -781,7 +775,7 @@ separately.  Ideally this issue would be fixed in Org.
      (advice-add #'org-agenda-filter :around #'vertico-enforce-basic-completion)
 
 
-File: docpFliG2.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docL8Hi6x.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.3 ‘tmm-menubar’
 ==================
@@ -800,7 +794,7 @@ overwrite the default F10 keybinding.
      (advice-add #'tmm-add-prompt :after #'minibuffer-hide-completions)
 
 
-File: docpFliG2.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
+File: docL8Hi6x.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
 
 12.4 ‘ffap-menu’
 ================
@@ -820,7 +814,7 @@ completions buffer can be disabled as follows.
                      (apply args))))
 
 
-File: docpFliG2.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
+File: docL8Hi6x.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
 
 12.5 ‘completion-table-dynamic’
 ===============================
@@ -845,7 +839,7 @@ Orderless documentation because of ‘completion-table-dynamic’.
                                (concat str "3")))))
 
 
-File: docpFliG2.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
+File: docL8Hi6x.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
 
 12.6 Submitting the empty string
 ================================
@@ -872,7 +866,7 @@ and Vertico preselects the prompt, such that exiting with the empty
 string is possible by pressing ‘RET’ only.
 
 
-File: docpFliG2.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
+File: docL8Hi6x.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
 
 12.7 Tramp hostname and username completion
 ===========================================
@@ -925,20 +919,20 @@ Node: Completion-at-point and completion-in-region11349
 Node: Completing-read-multiple12419
 Node: Extensions13557
 Node: Configure Vertico per command or completion category17654
-Node: Complementary packages22856
-Node: Child frames and Popups25243
-Node: Alternatives26620
-Node: Resources29017
-Node: Contributions30750
-Node: Debugging Vertico31027
-Node: Problematic completion commands31389
-Node: org-refile32002
-Node: org-agenda-filter and org-tags-view33945
-Node: tmm-menubar35209
-Node: ffap-menu36041
-Node: completion-table-dynamic36844
-Node: Submitting the empty string38051
-Node: Tramp hostname and username completion39508
+Node: Complementary packages22571
+Node: Child frames and Popups24958
+Node: Alternatives26335
+Node: Resources28732
+Node: Contributions30465
+Node: Debugging Vertico30742
+Node: Problematic completion commands31104
+Node: org-refile31717
+Node: org-agenda-filter and org-tags-view33660
+Node: tmm-menubar34924
+Node: ffap-menu35756
+Node: completion-table-dynamic36559
+Node: Submitting the empty string37766
+Node: Tramp hostname and username completion39223
 
 End Tag Table
 
