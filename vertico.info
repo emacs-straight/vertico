@@ -1,4 +1,4 @@
-This is docGwC0Ym.info, produced by makeinfo version 6.8 from
+This is doc7eX9Pl.info, produced by makeinfo version 6.8 from
 vertico.texi.
 
 INFO-DIR-SECTION Emacs misc features
@@ -7,7 +7,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: docGwC0Ym.info,  Node: Top,  Next: Features,  Up: (dir)
+File: doc7eX9Pl.info,  Node: Top,  Next: Features,  Up: (dir)
 
 vertico.el - VERTical Interactive COmpletion
 ********************************************
@@ -55,15 +55,15 @@ Problematic completion commands
 
 * org-refile::
 * org-agenda-filter and org-tags-view::
-* tmm-menubar::
-* ffap-menu::
 * completion-table-dynamic::
 * Submitting the empty string::
-* Tramp hostname and username completion::
+* tmm-menubar (Fixed on Emacs 31)::
+* ffap-menu (Fixed on Emacs 31)::
+* Tramp hostname and username completion (Fixed on Emacs 29)::
 
 
 
-File: docGwC0Ym.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
+File: doc7eX9Pl.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
 
 1 Features
 **********
@@ -88,7 +88,7 @@ File: docGwC0Ym.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
    <https://github.com/minad/vertico/blob/screenshots/vertico-mx.png?raw=true>
 
 
-File: docGwC0Ym.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
+File: doc7eX9Pl.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
 
 2 Installation
 **************
@@ -99,7 +99,7 @@ directly via ‘M-x package-install RET vertico RET’.  After installation,
 activate the global minor mode with ‘M-x vertico-mode RET’.
 
 
-File: docGwC0Ym.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
+File: doc7eX9Pl.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
 
 3 Key bindings
 **************
@@ -136,7 +136,7 @@ pressing ‘M-RET’, move the selection up to the input prompt by pressing
 the ‘up’ arrow key and then press ‘RET’.
 
 
-File: docGwC0Ym.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
+File: doc7eX9Pl.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
 
 4 Configuration
 ***************
@@ -217,7 +217,7 @@ documentation about completion in the Elisp manual
 * Completing-read-multiple::
 
 
-File: docGwC0Ym.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
+File: doc7eX9Pl.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.1 Completion styles and TAB completion
 ========================================
@@ -266,7 +266,7 @@ completion styles are used:
            completion-ignore-case t)
 
 
-File: docGwC0Ym.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
+File: doc7eX9Pl.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
 
 4.2 Completion-at-point and completion-in-region
 ================================================
@@ -287,7 +287,7 @@ Corfu is a narrowly focused package and developed in the same spirit as
 Vertico.  You can even use Corfu in the minibuffer.
 
 
-File: docGwC0Ym.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
+File: doc7eX9Pl.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.3 Completing-read-multiple
 ============================
@@ -311,7 +311,7 @@ versions you can use the following advice:
                            (cdr args))))))
 
 
-File: docGwC0Ym.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
+File: doc7eX9Pl.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
 
 5 Extensions
 ************
@@ -398,7 +398,7 @@ according to the buffer height.
 * Configure Vertico per command or completion category::
 
 
-File: docGwC0Ym.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
+File: doc7eX9Pl.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
 
 5.1 Configure Vertico per command or completion category
 ========================================================
@@ -507,7 +507,7 @@ when they scroll off-screen to the left.
            '((buffer flat (vertico-cycle . t))))
 
 
-File: docGwC0Ym.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
+File: doc7eX9Pl.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
 
 6 Complementary packages
 ************************
@@ -556,7 +556,7 @@ functionality not present in Emacs already (e.g., ‘consult-line’) and
 some are substitutes (e.g., ‘consult-buffer’ for ‘switch-to-buffer’).
 
 
-File: docGwC0Ym.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
+File: doc7eX9Pl.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
 
 7 Child frames and Popups
 *************************
@@ -583,7 +583,7 @@ a try and judge for yourself.
      posframe library.
 
 
-File: docGwC0Ym.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
+File: doc7eX9Pl.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
 
 8 Alternatives
 **************
@@ -631,7 +631,7 @@ philosophy:
      when migrating from Selectrum.
 
 
-File: docGwC0Ym.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
+File: doc7eX9Pl.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
 
 9 Resources
 ***********
@@ -669,7 +669,7 @@ out the following resources:
           (2024-03-06) by Marie-Hélène Burle.
 
 
-File: docGwC0Ym.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
+File: doc7eX9Pl.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
 
 10 Contributions
 ****************
@@ -679,7 +679,7 @@ Since this package is part of GNU ELPA
 copyright assignment to the FSF.
 
 
-File: docGwC0Ym.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
+File: doc7eX9Pl.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
 
 11 Debugging Vertico
 ********************
@@ -689,7 +689,7 @@ buffer when an error is detected.  The stack trace allows you to narrow
 down the exact code location which caused the error.
 
 
-File: docGwC0Ym.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
+File: doc7eX9Pl.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
 
 12 Problematic completion commands
 **********************************
@@ -703,14 +703,14 @@ require minor workarounds.
 
 * org-refile::
 * org-agenda-filter and org-tags-view::
-* tmm-menubar::
-* ffap-menu::
 * completion-table-dynamic::
 * Submitting the empty string::
-* Tramp hostname and username completion::
+* tmm-menubar (Fixed on Emacs 31)::
+* ffap-menu (Fixed on Emacs 31)::
+* Tramp hostname and username completion (Fixed on Emacs 29)::
 
 
-File: docGwC0Ym.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: doc7eX9Pl.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.1 ‘org-refile’
 =================
@@ -754,7 +754,7 @@ much more cluttered.
            org-outline-path-complete-in-steps nil)
 
 
-File: docGwC0Ym.info,  Node: org-agenda-filter and org-tags-view,  Next: tmm-menubar,  Prev: org-refile,  Up: Problematic completion commands
+File: doc7eX9Pl.info,  Node: org-agenda-filter and org-tags-view,  Next: completion-table-dynamic,  Prev: org-refile,  Up: Problematic completion commands
 
 12.2 ‘org-agenda-filter’ and ‘org-tags-view’
 ============================================
@@ -776,62 +776,21 @@ separately.  Ideally this issue would be fixed in Org.
      (advice-add #'org-agenda-filter :around #'vertico-enforce-basic-completion)
 
 
-File: docGwC0Ym.info,  Node: tmm-menubar,  Next: ffap-menu,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: doc7eX9Pl.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
-12.3 ‘tmm-menubar’
-==================
-
-*NOTE*: I have implemented a fix for this problem upstream in Emacs, see
-bug#74616 (https://debbugs.gnu.org/cgi/bugreport.cgi?bug=74616).  From
-Emacs 31 and newer the workaround is not needed anymore.
-
-   The text menu bar works well with Vertico but always shows a
-‘*Completions*’ buffer, which is unwanted if Vertico is used.  Right now
-the completion buffer can be disabled with an advice.  If you disabled
-the standard GUI menu bar and prefer the Vertico interface you may also
-overwrite the default F10 keybinding.
-
-     (keymap-global-set "<f10>" #'tmm-menubar)
-     (advice-add #'tmm-add-prompt :after #'minibuffer-hide-completions)
-
-
-File: docGwC0Ym.info,  Node: ffap-menu,  Next: completion-table-dynamic,  Prev: tmm-menubar,  Up: Problematic completion commands
-
-12.4 ‘ffap-menu’
-================
-
-*NOTE*: I have implemented a fix for this problem upstream in Emacs, see
-bug#74616 (https://debbugs.gnu.org/cgi/bugreport.cgi?bug=74616).  From
-Emacs 31 and newer the workaround is not needed anymore.
-
-   The command ‘ffap-menu’ shows the ‘*Completions*’ buffer by default
-like ‘tmm-menubar’, which is unwanted if Vertico is used.  The
-completions buffer can be disabled as follows.
-
-     (advice-add #'ffap-menu-ask :around
-                 (lambda (&rest args)
-                   (cl-letf (((symbol-function #'minibuffer-completion-help)
-                              #'ignore))
-                     (apply args))))
-
-
-File: docGwC0Ym.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: ffap-menu,  Up: Problematic completion commands
-
-12.5 ‘completion-table-dynamic’
+12.3 ‘completion-table-dynamic’
 ===============================
 
 Dynamic completion tables (‘completion-table-dynamic’,
-‘completion-table-in-turn’, ...) should work well with Vertico.  The
-only requirement is that the ‘basic’ completion style is enabled.  The
+‘completion-table-in-turn’, ...) work well with Vertico.  The
+requirement is that the ‘basic’ completion style is enabled.  The
 ‘basic’ style performs prefix filtering by passing the input to the
 completion table (or the dynamic completion table function).  The
 ‘basic’ completion style must not necessarily be configured with highest
 priority, it can also come after other completion styles like
-‘orderless’, ‘substring’ or ‘flex’, as is also recommended by the
-Orderless documentation because of ‘completion-table-dynamic’.
+‘orderless’, ‘substring’ or ‘flex’.
 
-     (setq completion-styles '(basic))
-     ;; (setq completion-styles '(orderless basic))
+     (setq completion-styles '(orderless basic))
      (completing-read "Dynamic: "
                       (completion-table-dynamic
                        (lambda (str)
@@ -840,9 +799,9 @@ Orderless documentation because of ‘completion-table-dynamic’.
                                (concat str "3")))))
 
 
-File: docGwC0Ym.info,  Node: Submitting the empty string,  Next: Tramp hostname and username completion,  Prev: completion-table-dynamic,  Up: Problematic completion commands
+File: doc7eX9Pl.info,  Node: Submitting the empty string,  Next: tmm-menubar (Fixed on Emacs 31),  Prev: completion-table-dynamic,  Up: Problematic completion commands
 
-12.6 Submitting the empty string
+12.4 Submitting the empty string
 ================================
 
 The commands ‘multi-occur’, ‘auto-insert’, ‘bbdb-create’ read multiple
@@ -867,14 +826,53 @@ and Vertico preselects the prompt, such that exiting with the empty
 string is possible by pressing ‘RET’ only.
 
 
-File: docGwC0Ym.info,  Node: Tramp hostname and username completion,  Prev: Submitting the empty string,  Up: Problematic completion commands
+File: doc7eX9Pl.info,  Node: tmm-menubar (Fixed on Emacs 31),  Next: ffap-menu (Fixed on Emacs 31),  Prev: Submitting the empty string,  Up: Problematic completion commands
 
-12.7 Tramp hostname and username completion
-===========================================
+12.5 ‘tmm-menubar’ (Fixed on Emacs 31)
+======================================
+
+*NOTE*: I have implemented a fix for this problem upstream in Emacs, see
+bug#74616 (https://debbugs.gnu.org/cgi/bugreport.cgi?bug=74616).  From
+Emacs 31 and newer the workaround is not needed anymore.
+
+   The text menu bar works well with Vertico but always shows a
+‘*Completions*’ buffer, which is unwanted if Vertico is used.  Right now
+the completion buffer can be disabled with an advice.  If you disabled
+the standard GUI menu bar and prefer the Vertico interface you may also
+overwrite the default F10 keybinding.
+
+     (keymap-global-set "<f10>" #'tmm-menubar)
+     (advice-add #'tmm-add-prompt :after #'minibuffer-hide-completions)
+
+
+File: doc7eX9Pl.info,  Node: ffap-menu (Fixed on Emacs 31),  Next: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: tmm-menubar (Fixed on Emacs 31),  Up: Problematic completion commands
+
+12.6 ‘ffap-menu’ (Fixed on Emacs 31)
+====================================
+
+*NOTE*: I have implemented a fix for this problem upstream in Emacs, see
+bug#74616 (https://debbugs.gnu.org/cgi/bugreport.cgi?bug=74616).  From
+Emacs 31 and newer the workaround is not needed anymore.
+
+   The command ‘ffap-menu’ shows the ‘*Completions*’ buffer by default
+like ‘tmm-menubar’, which is unwanted if Vertico is used.  The
+completions buffer can be disabled as follows.
+
+     (advice-add #'ffap-menu-ask :around
+                 (lambda (&rest args)
+                   (cl-letf (((symbol-function #'minibuffer-completion-help)
+                              #'ignore))
+                     (apply args))))
+
+
+File: doc7eX9Pl.info,  Node: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: ffap-menu (Fixed on Emacs 31),  Up: Problematic completion commands
+
+12.7 Tramp hostname and username completion (Fixed on Emacs 29)
+===============================================================
 
 *NOTE:* On Emacs 29.2 and Tramp 2.7 the workarounds described in this
 section are not necessary anymore, since the relevant completion tables
-have been improved.
+have been fixed.
 
    In combination with Orderless or other non-prefix completion styles
 like ‘substring’ or ‘flex’, host names and user names are not made
@@ -888,52 +886,33 @@ overrides for the file completion category.
            completion-category-defaults nil
            completion-category-overrides '((file (styles basic partial-completion))))
 
-   If you are familiar with the ‘completion-style’ machinery, you may
-also define a custom completion style which activates only for remote
-files.  The custom completion style ensures that you can always match
-substrings within non-remote file names, since ‘orderless’ will stay the
-preferred style for non-remote files.
-
-     (defun basic-remote-try-completion (string table pred point)
-       (and (vertico--remote-p string)
-            (completion-basic-try-completion string table pred point)))
-     (defun basic-remote-all-completions (string table pred point)
-       (and (vertico--remote-p string)
-            (completion-basic-all-completions string table pred point)))
-     (add-to-list
-      'completion-styles-alist
-      '(basic-remote basic-remote-try-completion basic-remote-all-completions nil))
-     (setq completion-styles '(orderless basic)
-           completion-category-defaults nil
-           completion-category-overrides '((file (styles basic-remote partial-completion))))
-
 
 
 Tag Table:
 Node: Top212
-Node: Features1801
-Node: Installation2841
-Node: Key bindings3208
-Node: Configuration5409
-Node: Completion styles and TAB completion9077
-Node: Completion-at-point and completion-in-region11485
-Node: Completing-read-multiple12555
-Node: Extensions13693
-Node: Configure Vertico per command or completion category17790
-Node: Complementary packages22707
-Node: Child frames and Popups25094
-Node: Alternatives26471
-Node: Resources28868
-Node: Contributions30601
-Node: Debugging Vertico30878
-Node: Problematic completion commands31240
-Node: org-refile31853
-Node: org-agenda-filter and org-tags-view33796
-Node: tmm-menubar35060
-Node: ffap-menu35892
-Node: completion-table-dynamic36695
-Node: Submitting the empty string37902
-Node: Tramp hostname and username completion39359
+Node: Features1861
+Node: Installation2901
+Node: Key bindings3268
+Node: Configuration5469
+Node: Completion styles and TAB completion9137
+Node: Completion-at-point and completion-in-region11545
+Node: Completing-read-multiple12615
+Node: Extensions13753
+Node: Configure Vertico per command or completion category17850
+Node: Complementary packages22767
+Node: Child frames and Popups25154
+Node: Alternatives26531
+Node: Resources28928
+Node: Contributions30661
+Node: Debugging Vertico30938
+Node: Problematic completion commands31300
+Node: org-refile31973
+Node: org-agenda-filter and org-tags-view33916
+Node: completion-table-dynamic35193
+Node: Submitting the empty string36275
+Node: tmm-menubar (Fixed on Emacs 31)37725
+Node: ffap-menu (Fixed on Emacs 31)38629
+Node: Tramp hostname and username completion (Fixed on Emacs 29)39546
 
 End Tag Table
 
