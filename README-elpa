@@ -449,14 +449,16 @@ Table of Contents
   keys. Depending on preference, these bindings can be changed in the
   `vertico-multiform-map'.
 
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   `M-B'  `vertico-multiform-buffer'      
-   `M-F'  `vertico-multiform-flat'        
-   `M-G'  `vertico-multiform-grid'        
-   `M-R'  `vertico-multiform-reverse'     
-   `M-U'  `vertico-multiform-unobtrusive' 
-   `M-V'  `vertico-multiform-vertical'    
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   Binding  Vertico command                 
+  ──────────────────────────────────────────
+   `M-B'    `vertico-multiform-buffer'      
+   `M-F'    `vertico-multiform-flat'        
+   `M-G'    `vertico-multiform-grid'        
+   `M-R'    `vertico-multiform-reverse'     
+   `M-U'    `vertico-multiform-unobtrusive' 
+   `M-V'    `vertico-multiform-vertical'    
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   For special configuration you can use your own functions or even
   lambdas to configure the completion behavior per command or per
@@ -678,6 +680,7 @@ Table of Contents
     ⁃ [Doom Emacs Vertico Module]
     ⁃ [Crafted Emacs Completion Module]
     ⁃ [Prot's Emacs configuration]
+    ⁃ [Bedrock Emacs Base Enhancements]
   • Videos:
     ⁃ [Emacs Completion Explained] (2022-07-19) by Andrew Tropin.
     ⁃ [Emacs Minibuffer Completions] (2022-02-12) by Greg Yut.
@@ -701,6 +704,9 @@ Table of Contents
 
 [Prot's Emacs configuration]
 <https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/>
+
+[Bedrock Emacs Base Enhancements]
+<https://codeberg.org/ashton314/emacs-bedrock/src/branch/main/extras/base.el>
 
 [Emacs Completion Explained]
 <https://www.youtube.com/watch?v=fnE0lXoe7Y0>
