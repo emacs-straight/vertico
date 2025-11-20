@@ -300,7 +300,7 @@ Table of Contents
   │ 		(cons (format "[CRM%s] %s"
   │ 			      (string-replace "[ \t]*" "" crm-separator)
   │ 			      (car args))
-  │ 		      (cdr args))))))
+  │ 		      (cdr args)))))
   └────
 
 
