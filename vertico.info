@@ -1,4 +1,4 @@
-This is doc4gCaK9.info, produced by makeinfo version 6.8 from
+This is docPgzZJn.info, produced by makeinfo version 6.8 from
 vertico.texi.
 
 INFO-DIR-SECTION Emacs misc features
@@ -7,7 +7,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: doc4gCaK9.info,  Node: Top,  Next: Features,  Up: (dir)
+File: docPgzZJn.info,  Node: Top,  Next: Features,  Up: (dir)
 
 vertico.el - VERTical Interactive COmpletion
 ********************************************
@@ -63,7 +63,7 @@ Problematic completion commands
 
 
 
-File: doc4gCaK9.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
+File: docPgzZJn.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
 
 1 Features
 **********
@@ -88,7 +88,7 @@ File: doc4gCaK9.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
    <https://github.com/minad/vertico/blob/screenshots/vertico-mx.png?raw=true>
 
 
-File: doc4gCaK9.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
+File: docPgzZJn.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
 
 2 Installation
 **************
@@ -99,7 +99,7 @@ directly via ‘M-x package-install RET vertico RET’.  After installation,
 activate the global minor mode with ‘M-x vertico-mode RET’.
 
 
-File: doc4gCaK9.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
+File: docPgzZJn.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
 
 3 Key bindings
 **************
@@ -136,7 +136,7 @@ pressing ‘M-RET’, move the selection up to the input prompt by pressing
 the ‘up’ arrow key and then press ‘RET’.
 
 
-File: doc4gCaK9.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
+File: docPgzZJn.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
 
 4 Configuration
 ***************
@@ -217,7 +217,7 @@ documentation about completion in the Elisp manual
 * Completing-read-multiple::
 
 
-File: doc4gCaK9.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
+File: docPgzZJn.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.1 Completion styles and TAB completion
 ========================================
@@ -266,7 +266,7 @@ completion styles are used:
            completion-ignore-case t)
 
 
-File: doc4gCaK9.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
+File: docPgzZJn.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
 
 4.2 Completion-at-point and completion-in-region
 ================================================
@@ -287,7 +287,7 @@ Corfu is a narrowly focused package and developed in the same spirit as
 Vertico.  You can even use Corfu in the minibuffer.
 
 
-File: doc4gCaK9.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
+File: docPgzZJn.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.3 Completing-read-multiple
 ============================
@@ -311,7 +311,7 @@ versions you can use the following advice:
                            (cdr args)))))
 
 
-File: doc4gCaK9.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
+File: docPgzZJn.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
 
 5 Extensions
 ************
@@ -398,7 +398,7 @@ according to the buffer height.
 * Configure Vertico per command or completion category::
 
 
-File: doc4gCaK9.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
+File: docPgzZJn.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
 
 5.1 Configure Vertico per command or completion category
 ========================================================
@@ -509,7 +509,7 @@ when they scroll off-screen to the left.
            '((buffer flat (vertico-cycle . t))))
 
 
-File: doc4gCaK9.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
+File: docPgzZJn.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
 
 6 Complementary packages
 ************************
@@ -530,19 +530,20 @@ completion UI.  These packages are fully supported:
 the following quick start approach:
 
   1. Start with plain Emacs (‘emacs -Q’).
-  2. Install and enable Vertico to get incremental minibuffer
-     completion.
+  2. Install Vertico and enable ‘vertico-mode’ to get incremental
+     minibuffer completion.
   3. Install Orderless and/or configure the built-in completion styles
      for more flexible minibuffer filtering.
-  4. Install Marginalia if you like rich minibuffer annotations.
-  5. Install Embark and add two keybindings for ‘embark-dwim’ and
+  4. Install Marginalia and enable ‘marginalia-mode’ if you like rich
+     minibuffer annotations.
+  5. Install Consult if you want additional featureful completion
+     commands, e.g., the buffer switcher ‘consult-buffer’ with preview
+     or the line-based search ‘consult-line’.
+  6. Install Embark and add two keybindings for ‘embark-dwim’ and
      ‘embark-act’.  I am using the mnemonic keybindings ‘M-.’ and ‘C-.’
      since these commands allow you to act on the object at point or in
      the minibuffer.
-  6. Install Consult if you want additional featureful completion
-     commands, e.g., the buffer switcher ‘consult-buffer’ with preview
-     or the line-based search ‘consult-line’.
-  7. Install Embark-Consult for export from ‘consult-line’ to editable
+  7. Install Embark-Consult to export from ‘consult-line’ to editable
      ‘occur-mode’ buffers and from ‘consult-grep’ to ‘grep-mode’
      buffers.  On Emacs 31, use ‘grep-edit-mode’ for editing or wgrep
      (https://github.com/mhayashi1120/Emacs-wgrep) on older Emacs
@@ -558,7 +559,7 @@ functionality not present in Emacs already (e.g., ‘consult-line’) and
 some are substitutes (e.g., ‘consult-buffer’ for ‘switch-to-buffer’).
 
 
-File: doc4gCaK9.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
+File: docPgzZJn.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
 
 7 Child frames and Popups
 *************************
@@ -585,7 +586,7 @@ a try and judge for yourself.
      posframe library.
 
 
-File: doc4gCaK9.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
+File: docPgzZJn.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
 
 8 Alternatives
 **************
@@ -633,7 +634,7 @@ philosophy:
      when migrating from Selectrum.
 
 
-File: doc4gCaK9.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
+File: docPgzZJn.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
 
 9 Resources
 ***********
@@ -673,7 +674,7 @@ out the following resources:
           (2024-03-06) by Marie-Hélène Burle.
 
 
-File: doc4gCaK9.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
+File: docPgzZJn.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
 
 10 Contributions
 ****************
@@ -683,7 +684,7 @@ Since this package is part of GNU ELPA
 copyright assignment to the FSF.
 
 
-File: doc4gCaK9.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
+File: docPgzZJn.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
 
 11 Debugging Vertico
 ********************
@@ -693,7 +694,7 @@ buffer when an error is detected.  The stack trace allows you to narrow
 down the exact code location which caused the error.
 
 
-File: doc4gCaK9.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
+File: docPgzZJn.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
 
 12 Problematic completion commands
 **********************************
@@ -714,7 +715,7 @@ require minor workarounds.
 * Tramp hostname and username completion (Fixed on Emacs 29)::
 
 
-File: doc4gCaK9.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docPgzZJn.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.1 ‘org-refile’
 =================
@@ -758,7 +759,7 @@ much more cluttered.
            org-outline-path-complete-in-steps nil)
 
 
-File: doc4gCaK9.info,  Node: org-agenda-filter and org-tags-view,  Next: completion-table-dynamic,  Prev: org-refile,  Up: Problematic completion commands
+File: docPgzZJn.info,  Node: org-agenda-filter and org-tags-view,  Next: completion-table-dynamic,  Prev: org-refile,  Up: Problematic completion commands
 
 12.2 ‘org-agenda-filter’ and ‘org-tags-view’
 ============================================
@@ -780,7 +781,7 @@ separately.  Ideally this issue would be fixed in Org.
      (advice-add #'org-agenda-filter :around #'vertico-enforce-basic-completion)
 
 
-File: doc4gCaK9.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docPgzZJn.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.3 ‘completion-table-dynamic’
 ===============================
@@ -803,7 +804,7 @@ priority, it can also come after other completion styles like
                                (concat str "3")))))
 
 
-File: doc4gCaK9.info,  Node: Submitting the empty string,  Next: tmm-menubar (Fixed on Emacs 31),  Prev: completion-table-dynamic,  Up: Problematic completion commands
+File: docPgzZJn.info,  Node: Submitting the empty string,  Next: tmm-menubar (Fixed on Emacs 31),  Prev: completion-table-dynamic,  Up: Problematic completion commands
 
 12.4 Submitting the empty string
 ================================
@@ -830,7 +831,7 @@ and Vertico preselects the prompt, such that exiting with the empty
 string is possible by pressing ‘RET’ only.
 
 
-File: doc4gCaK9.info,  Node: tmm-menubar (Fixed on Emacs 31),  Next: ffap-menu (Fixed on Emacs 31),  Prev: Submitting the empty string,  Up: Problematic completion commands
+File: docPgzZJn.info,  Node: tmm-menubar (Fixed on Emacs 31),  Next: ffap-menu (Fixed on Emacs 31),  Prev: Submitting the empty string,  Up: Problematic completion commands
 
 12.5 ‘tmm-menubar’ (Fixed on Emacs 31)
 ======================================
@@ -849,7 +850,7 @@ overwrite the default F10 keybinding.
      (advice-add #'tmm-add-prompt :after #'minibuffer-hide-completions)
 
 
-File: doc4gCaK9.info,  Node: ffap-menu (Fixed on Emacs 31),  Next: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: tmm-menubar (Fixed on Emacs 31),  Up: Problematic completion commands
+File: docPgzZJn.info,  Node: ffap-menu (Fixed on Emacs 31),  Next: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: tmm-menubar (Fixed on Emacs 31),  Up: Problematic completion commands
 
 12.6 ‘ffap-menu’ (Fixed on Emacs 31)
 ====================================
@@ -869,7 +870,7 @@ completions buffer can be disabled as follows.
                      (apply args))))
 
 
-File: doc4gCaK9.info,  Node: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: ffap-menu (Fixed on Emacs 31),  Up: Problematic completion commands
+File: docPgzZJn.info,  Node: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: ffap-menu (Fixed on Emacs 31),  Up: Problematic completion commands
 
 12.7 Tramp hostname and username completion (Fixed on Emacs 29)
 ===============================================================
@@ -904,19 +905,19 @@ Node: Completing-read-multiple12615
 Node: Extensions13752
 Node: Configure Vertico per command or completion category17849
 Node: Complementary packages22849
-Node: Child frames and Popups25236
-Node: Alternatives26613
-Node: Resources29010
-Node: Contributions30875
-Node: Debugging Vertico31152
-Node: Problematic completion commands31514
-Node: org-refile32187
-Node: org-agenda-filter and org-tags-view34130
-Node: completion-table-dynamic35407
-Node: Submitting the empty string36489
-Node: tmm-menubar (Fixed on Emacs 31)37939
-Node: ffap-menu (Fixed on Emacs 31)38843
-Node: Tramp hostname and username completion (Fixed on Emacs 29)39760
+Node: Child frames and Popups25292
+Node: Alternatives26669
+Node: Resources29066
+Node: Contributions30931
+Node: Debugging Vertico31208
+Node: Problematic completion commands31570
+Node: org-refile32243
+Node: org-agenda-filter and org-tags-view34186
+Node: completion-table-dynamic35463
+Node: Submitting the empty string36545
+Node: tmm-menubar (Fixed on Emacs 31)37995
+Node: ffap-menu (Fixed on Emacs 31)38899
+Node: Tramp hostname and username completion (Fixed on Emacs 29)39816
 
 End Tag Table
 
