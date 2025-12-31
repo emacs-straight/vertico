@@ -1,4 +1,4 @@
-This is docLOoFIb.info, produced by makeinfo version 7.1.1 from
+This is docrd7ahB.info, produced by makeinfo version 7.1.1 from
 vertico.texi.
 
 INFO-DIR-SECTION Emacs misc features
@@ -7,7 +7,7 @@ START-INFO-DIR-ENTRY
 END-INFO-DIR-ENTRY
 
 
-File: docLOoFIb.info,  Node: Top,  Next: Features,  Up: (dir)
+File: docrd7ahB.info,  Node: Top,  Next: Features,  Up: (dir)
 
 vertico.el - VERTical Interactive COmpletion
 ********************************************
@@ -63,7 +63,7 @@ Problematic completion commands
 
 
 
-File: docLOoFIb.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
+File: docrd7ahB.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
 
 1 Features
 **********
@@ -88,7 +88,7 @@ File: docLOoFIb.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
    <https://github.com/minad/vertico/blob/screenshots/vertico-mx.png?raw=true>
 
 
-File: docLOoFIb.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
+File: docrd7ahB.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  Up: Top
 
 2 Installation
 **************
@@ -99,7 +99,7 @@ directly via ‘M-x package-install RET vertico RET’.  After installation,
 activate the global minor mode with ‘M-x vertico-mode RET’.
 
 
-File: docLOoFIb.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
+File: docrd7ahB.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
 
 3 Key bindings
 **************
@@ -136,7 +136,7 @@ pressing ‘M-RET’, move the selection up to the input prompt by pressing
 the ‘up’ arrow key and then press ‘RET’.
 
 
-File: docLOoFIb.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
+File: docrd7ahB.info,  Node: Configuration,  Next: Extensions,  Prev: Key bindings,  Up: Top
 
 4 Configuration
 ***************
@@ -217,7 +217,7 @@ documentation about completion in the Elisp manual
 * Completing-read-multiple::
 
 
-File: docLOoFIb.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
+File: docrd7ahB.info,  Node: Completion styles and TAB completion,  Next: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.1 Completion styles and TAB completion
 ========================================
@@ -266,7 +266,7 @@ completion styles are used:
            completion-ignore-case t)
 
 
-File: docLOoFIb.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
+File: docrd7ahB.info,  Node: Completion-at-point and completion-in-region,  Next: Completing-read-multiple,  Prev: Completion styles and TAB completion,  Up: Configuration
 
 4.2 Completion-at-point and completion-in-region
 ================================================
@@ -287,7 +287,7 @@ Corfu is a narrowly focused package and developed in the same spirit as
 Vertico.  You can even use Corfu in the minibuffer.
 
 
-File: docLOoFIb.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
+File: docrd7ahB.info,  Node: Completing-read-multiple,  Prev: Completion-at-point and completion-in-region,  Up: Configuration
 
 4.3 Completing-read-multiple
 ============================
@@ -311,7 +311,7 @@ versions you can use the following advice:
                            (cdr args)))))
 
 
-File: docLOoFIb.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
+File: docrd7ahB.info,  Node: Extensions,  Next: Complementary packages,  Prev: Configuration,  Up: Top
 
 5 Extensions
 ************
@@ -398,7 +398,7 @@ according to the buffer height.
 * Configure Vertico per command or completion category::
 
 
-File: docLOoFIb.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
+File: docrd7ahB.info,  Node: Configure Vertico per command or completion category,  Up: Extensions
 
 5.1 Configure Vertico per command or completion category
 ========================================================
@@ -509,7 +509,7 @@ when they scroll off-screen to the left.
            '((buffer flat (vertico-cycle . t))))
 
 
-File: docLOoFIb.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
+File: docrd7ahB.info,  Node: Complementary packages,  Next: Child frames and Popups,  Prev: Extensions,  Up: Top
 
 6 Complementary packages
 ************************
@@ -559,7 +559,7 @@ functionality not present in Emacs already (e.g., ‘consult-line’) and
 some are substitutes (e.g., ‘consult-buffer’ for ‘switch-to-buffer’).
 
 
-File: docLOoFIb.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
+File: docrd7ahB.info,  Node: Child frames and Popups,  Next: Alternatives,  Prev: Complementary packages,  Up: Top
 
 7 Child frames and Popups
 *************************
@@ -586,7 +586,7 @@ a try and judge for yourself.
      posframe library.
 
 
-File: docLOoFIb.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
+File: docrd7ahB.info,  Node: Alternatives,  Next: Resources,  Prev: Child frames and Popups,  Up: Top
 
 8 Alternatives
 **************
@@ -629,7 +629,7 @@ philosophy:
      when migrating from Selectrum.
 
 
-File: docLOoFIb.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
+File: docrd7ahB.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
 
 9 Resources
 ***********
@@ -669,7 +669,7 @@ out the following resources:
           (2024-03-06) by Marie-Hélène Burle.
 
 
-File: docLOoFIb.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
+File: docrd7ahB.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
 
 10 Contributions
 ****************
@@ -679,7 +679,7 @@ Since this package is part of GNU ELPA
 copyright assignment to the FSF.
 
 
-File: docLOoFIb.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
+File: docrd7ahB.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
 
 11 Debugging Vertico
 ********************
@@ -689,7 +689,7 @@ buffer when an error is detected.  The stack trace allows you to narrow
 down the exact code location which caused the error.
 
 
-File: docLOoFIb.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
+File: docrd7ahB.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
 
 12 Problematic completion commands
 **********************************
@@ -710,7 +710,7 @@ require minor workarounds.
 * Tramp hostname and username completion (Fixed on Emacs 29)::
 
 
-File: docLOoFIb.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docrd7ahB.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.1 ‘org-refile’
 =================
@@ -754,7 +754,7 @@ much more cluttered.
            org-outline-path-complete-in-steps nil)
 
 
-File: docLOoFIb.info,  Node: org-agenda-filter and org-tags-view,  Next: completion-table-dynamic,  Prev: org-refile,  Up: Problematic completion commands
+File: docrd7ahB.info,  Node: org-agenda-filter and org-tags-view,  Next: completion-table-dynamic,  Prev: org-refile,  Up: Problematic completion commands
 
 12.2 ‘org-agenda-filter’ and ‘org-tags-view’
 ============================================
@@ -776,7 +776,7 @@ separately.  Ideally this issue would be fixed in Org.
      (advice-add #'org-agenda-filter :around #'vertico-enforce-basic-completion)
 
 
-File: docLOoFIb.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
+File: docrd7ahB.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
 12.3 ‘completion-table-dynamic’
 ===============================
@@ -799,7 +799,7 @@ priority, it can also come after other completion styles like
                                (concat str "3")))))
 
 
-File: docLOoFIb.info,  Node: Submitting the empty string,  Next: tmm-menubar (Fixed on Emacs 31),  Prev: completion-table-dynamic,  Up: Problematic completion commands
+File: docrd7ahB.info,  Node: Submitting the empty string,  Next: tmm-menubar (Fixed on Emacs 31),  Prev: completion-table-dynamic,  Up: Problematic completion commands
 
 12.4 Submitting the empty string
 ================================
@@ -826,7 +826,7 @@ and Vertico preselects the prompt, such that exiting with the empty
 string is possible by pressing ‘RET’ only.
 
 
-File: docLOoFIb.info,  Node: tmm-menubar (Fixed on Emacs 31),  Next: ffap-menu (Fixed on Emacs 31),  Prev: Submitting the empty string,  Up: Problematic completion commands
+File: docrd7ahB.info,  Node: tmm-menubar (Fixed on Emacs 31),  Next: ffap-menu (Fixed on Emacs 31),  Prev: Submitting the empty string,  Up: Problematic completion commands
 
 12.5 ‘tmm-menubar’ (Fixed on Emacs 31)
 ======================================
@@ -845,7 +845,7 @@ overwrite the default F10 keybinding.
      (advice-add #'tmm-add-prompt :after #'minibuffer-hide-completions)
 
 
-File: docLOoFIb.info,  Node: ffap-menu (Fixed on Emacs 31),  Next: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: tmm-menubar (Fixed on Emacs 31),  Up: Problematic completion commands
+File: docrd7ahB.info,  Node: ffap-menu (Fixed on Emacs 31),  Next: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: tmm-menubar (Fixed on Emacs 31),  Up: Problematic completion commands
 
 12.6 ‘ffap-menu’ (Fixed on Emacs 31)
 ====================================
@@ -865,7 +865,7 @@ completions buffer can be disabled as follows.
                      (apply args))))
 
 
-File: docLOoFIb.info,  Node: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: ffap-menu (Fixed on Emacs 31),  Up: Problematic completion commands
+File: docrd7ahB.info,  Node: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: ffap-menu (Fixed on Emacs 31),  Up: Problematic completion commands
 
 12.7 Tramp hostname and username completion (Fixed on Emacs 29)
 ===============================================================
