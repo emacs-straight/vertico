@@ -1,0 +1,151 @@
+                        ━━━━━━━━━━━━━━━━━━━━━━━━
+                         VERTICO.EL - CHANGELOG
+                        ━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+1 Version 2.7 (2026-01-18)
+══════════════════════════
+
+  • `vertico-multiform-mode': Check state of modes during minibuffer
+    setup.
+  • `vertico-next-group', `vertico-previous-group': Simplify group
+    handling.
+
+
+2 Version 2.6 (2025-11-15)
+══════════════════════════
+
+  • Require Emacs 29.1.
+  • `vertico-buffer': Check if `mode-line-format' is `nil' when
+    computing an appropriate `vertico-count' for the window height.
+
+
+3 Version 2.5 (2025-09-08)
+══════════════════════════
+
+  • Introduce new `vertico--locals' variable for easier customization of
+    minibuffer-local variables.
+  • `vertico-mouse', `vertico-group-format': Try to avoid overly long
+    candidates such that no truncation markers are shown if the fringe
+    is disabled.
+  • Undo fringe settings introduced in version 2.3. Users can customize
+    this according to their preference in `vertico--locals'.
+  • Revert to `vertico--resize-window' again (from Vertico 1.9), which
+    takes a minibuffer height argument. Minibuffer resizing is still not
+    correct on Emacs 31 if fringes are disabled, i.e., `(set-fringe-mode
+    0)'.
+
+
+4 Version 2.4 (2025-06-27)
+══════════════════════════
+
+  • New function `vertico-sort-directories-first' which sorts a list of
+    file names, with directories coming first.
+  • `vertico-multiform-mode': Add `:keymap' setting per command or
+    completion category. Either specify a list of key bindings or a
+    keymap directly.
+  • Disable `completion-eager-display' if Vertico is active.
+
+
+5 Version 2.3 (2025-06-10)
+══════════════════════════
+
+  • `vertico-multiform-mode': Add context menu to change display
+    mode. First enable `vertico-multiform-mode' and
+    `context-menu-mode'. The menu will appear with a right click in the
+    Vertico minibuffer.
+  • Hide fringe line truncation indicators in the minibuffer.
+
+
+6 Version 2.2 (2025-05-26)
+══════════════════════════
+
+  • Guard Vertico hooks to automatically print stack traces in order to
+    ease debugging.
+
+
+7 Version 2.1 (2025-04-19)
+══════════════════════════
+
+  • `vertico-flat-format': Customizable `:spacer' string.
+  • `vertico-sort': Extracted sort functions to separate extension.
+  • `vertico-sort-history-duplicate' and `vertico-sort-history-decay':
+    New customization options to adjust the rank of duplicate history
+    elements, such that they appear earlier in the completion list.
+  • `vertico-repeat': Add `vertico-repeat-history' to
+    `savehist-minibuffer-history-variables' in order to save the history
+    if `savehist-mode' is enabled.
+  • `vertico-repeat': Do not store overly long selected candidates in
+    repeat history.
+
+
+8 Version 2.0 (2025-03-11)
+══════════════════════════
+
+  • `vertico-directory-tidy': Cleanup shadowed path more aggressively.
+  • `vertico-directory-delete-char': Respect region.
+  • `vertico-directory-*': Improve responsiveness when using directory
+    commands.
+
+
+9 Version 1.11 (2025-01-28)
+═══════════════════════════
+
+  • Ignore touchscreen events.
+  • Disable `pixel-scroll-precision-mode' locally.
+  • Strip text properties when copying to the kill ring.
+
+
+10 Version 1.10 (2024-12-22)
+════════════════════════════
+
+  • Require Emacs 28.1.
+  • Fix behavior when a function is passed as `REQUIRE-MATCH' argument
+    to `completing-read'.
+  • Drop obsolete command alias `vertico-repeat-last'.
+  • `vertico-buffer': Use `display-buffer-use-least-recent-window' as
+    default buffer display action.
+  • Simplify the mini window resizing implementation, see
+    `vertico--resize'.
+
+
+11 Version 1.9 (2024-07-26)
+═══════════════════════════
+
+  • Bump Compat dependency to Compat 30.
+  • `vertico-buffer': Fix bug regarding deleted windows.
+
+
+12 Version 1.8 (2024-04-24)
+═══════════════════════════
+
+  • `vertico-preselect': Add `no-prompt' configuration choice to
+    entirely disallow the selection of the prompt.
+
+
+13 Version 1.7 (2024-01-23)
+═══════════════════════════
+
+  • `vertico-buffer-mode': Simplify mode line format.
+  • `vertico-buffer-mode': Reduce vscroll value when
+    `vertico-buffer-hide-prompt' is non-nil to avoid redisplay
+    performance issues.
+
+
+14 Version 1.6 (2023-12-27)
+═══════════════════════════
+
+  • `vertico-multiform-buffer': New display toggle command.
+  • `vertico-buffer-mode': Support toggling during an active minibuffer
+    session.
+  • `vertico-buffer-mode': Highlight active region.
+  • `vertico-suspend': Support the setting
+    `read-minibuffer-restore-windows=nil'.
+
+
+15 Version 1.5 (2023-12-01)
+═══════════════════════════
+
+  • `vertico-suspend': New extension to suspend and resume the current
+    Vertico
+  …  …
