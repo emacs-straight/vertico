@@ -3,7 +3,13 @@
                         ━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-1 Version 2.7 (2026-01-18)
+1 Development
+═════════════
+
+  • Do not set `completion-show-inline-help' locally in the minibuffer.
+
+
+2 Version 2.7 (2026-01-18)
 ══════════════════════════
 
   • `vertico-multiform-mode': Check state of modes during minibuffer
@@ -12,7 +18,7 @@
     handling.
 
 
-2 Version 2.6 (2025-11-15)
+3 Version 2.6 (2025-11-15)
 ══════════════════════════
 
   • Require Emacs 29.1.
@@ -20,7 +26,7 @@
     computing an appropriate `vertico-count' for the window height.
 
 
-3 Version 2.5 (2025-09-08)
+4 Version 2.5 (2025-09-08)
 ══════════════════════════
 
   • Introduce new `vertico--locals' variable for easier customization of
@@ -36,7 +42,7 @@
     0)'.
 
 
-4 Version 2.4 (2025-06-27)
+5 Version 2.4 (2025-06-27)
 ══════════════════════════
 
   • New function `vertico-sort-directories-first' which sorts a list of
@@ -47,7 +53,7 @@
   • Disable `completion-eager-display' if Vertico is active.
 
 
-5 Version 2.3 (2025-06-10)
+6 Version 2.3 (2025-06-10)
 ══════════════════════════
 
   • `vertico-multiform-mode': Add context menu to change display
@@ -57,14 +63,14 @@
   • Hide fringe line truncation indicators in the minibuffer.
 
 
-6 Version 2.2 (2025-05-26)
+7 Version 2.2 (2025-05-26)
 ══════════════════════════
 
   • Guard Vertico hooks to automatically print stack traces in order to
     ease debugging.
 
 
-7 Version 2.1 (2025-04-19)
+8 Version 2.1 (2025-04-19)
 ══════════════════════════
 
   • `vertico-flat-format': Customizable `:spacer' string.
@@ -79,7 +85,7 @@
     repeat history.
 
 
-8 Version 2.0 (2025-03-11)
+9 Version 2.0 (2025-03-11)
 ══════════════════════════
 
   • `vertico-directory-tidy': Cleanup shadowed path more aggressively.
@@ -88,15 +94,15 @@
     commands.
 
 
-9 Version 1.11 (2025-01-28)
-═══════════════════════════
+10 Version 1.11 (2025-01-28)
+════════════════════════════
 
   • Ignore touchscreen events.
   • Disable `pixel-scroll-precision-mode' locally.
   • Strip text properties when copying to the kill ring.
 
 
-10 Version 1.10 (2024-12-22)
+11 Version 1.10 (2024-12-22)
 ════════════════════════════
 
   • Require Emacs 28.1.
@@ -109,21 +115,21 @@
     `vertico--resize'.
 
 
-11 Version 1.9 (2024-07-26)
+12 Version 1.9 (2024-07-26)
 ═══════════════════════════
 
   • Bump Compat dependency to Compat 30.
   • `vertico-buffer': Fix bug regarding deleted windows.
 
 
-12 Version 1.8 (2024-04-24)
+13 Version 1.8 (2024-04-24)
 ═══════════════════════════
 
   • `vertico-preselect': Add `no-prompt' configuration choice to
     entirely disallow the selection of the prompt.
 
 
-13 Version 1.7 (2024-01-23)
+14 Version 1.7 (2024-01-23)
 ═══════════════════════════
 
   • `vertico-buffer-mode': Simplify mode line format.
@@ -132,7 +138,7 @@
     performance issues.
 
 
-14 Version 1.6 (2023-12-27)
+15 Version 1.6 (2023-12-27)
 ═══════════════════════════
 
   • `vertico-multiform-buffer': New display toggle command.
@@ -141,11 +147,4 @@
   • `vertico-buffer-mode': Highlight active region.
   • `vertico-suspend': Support the setting
     `read-minibuffer-restore-windows=nil'.
-
-
-15 Version 1.5 (2023-12-01)
-═══════════════════════════
-
-  • `vertico-suspend': New extension to suspend and resume the current
-    Vertico
   …  …
