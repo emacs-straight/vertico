@@ -230,12 +230,12 @@ candidate.
 
    If you prefer to have the default completion commands available you
 can add new bindings or even replace the Vertico bindings.  For example
-you can use ‘M-TAB’ to expand the prefix of candidates (TAB complete) or
-cycle between candidates if ‘completion-cycle-threshold’ is non-nil,
+you can use ‘M-TAB’ to expand the prefix of candidates (TAB completion)
+or cycle between candidates if ‘completion-cycle-threshold’ is non-nil,
 with the following configuration.
 
      ;; Option 1: Additional bindings
-     (keymap-set vertico-map "?" #'minibuffer-completion-help)
+     (keymap-set vertico-map "M-?" #'minibuffer-completion-help)
      (keymap-set vertico-map "M-RET" #'minibuffer-force-complete-and-exit)
      (keymap-set vertico-map "M-TAB" #'minibuffer-complete)
 
@@ -895,24 +895,24 @@ Node: Installation2895
 Node: Key bindings3260
 Node: Configuration5459
 Node: Completion styles and TAB completion9125
-Node: Completion-at-point and completion-in-region11531
-Node: Completing-read-multiple12599
-Node: Extensions13734
-Node: Configure Vertico per command or completion category17829
-Node: Complementary packages22821
-Node: Child frames and Popups25260
-Node: Alternatives26635
-Node: Resources28762
-Node: Contributions30623
-Node: Debugging Vertico30898
-Node: Problematic completion commands31258
-Node: org-refile31929
-Node: org-agenda-filter and org-tags-view33870
-Node: completion-table-dynamic35145
-Node: Submitting the empty string36225
-Node: tmm-menubar (Fixed on Emacs 31)37673
-Node: ffap-menu (Fixed on Emacs 31)38575
-Node: Tramp hostname and username completion (Fixed on Emacs 29)39490
+Node: Completion-at-point and completion-in-region11535
+Node: Completing-read-multiple12603
+Node: Extensions13738
+Node: Configure Vertico per command or completion category17833
+Node: Complementary packages22825
+Node: Child frames and Popups25264
+Node: Alternatives26639
+Node: Resources28766
+Node: Contributions30627
+Node: Debugging Vertico30902
+Node: Problematic completion commands31262
+Node: org-refile31933
+Node: org-agenda-filter and org-tags-view33874
+Node: completion-table-dynamic35149
+Node: Submitting the empty string36229
+Node: tmm-menubar (Fixed on Emacs 31)37677
+Node: ffap-menu (Fixed on Emacs 31)38579
+Node: Tramp hostname and username completion (Fixed on Emacs 29)39494
 
 End Tag Table
 
