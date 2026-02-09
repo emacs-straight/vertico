@@ -1,4 +1,4 @@
-This is vertico.info, produced by makeinfo version 7.1.1 from
+This is vertico.info, produced by makeinfo version 7.2 from
 vertico.texi.
 
 INFO-DIR-SECTION Emacs misc features
@@ -60,7 +60,6 @@ Problematic completion commands
 * tmm-menubar (Fixed on Emacs 31)::
 * ffap-menu (Fixed on Emacs 31)::
 * Tramp hostname and username completion (Fixed on Emacs 29)::
-
 
 
 File: vertico.info,  Node: Features,  Next: Installation,  Prev: Top,  Up: Top
@@ -641,7 +640,7 @@ out the following resources:
         • Doom Emacs Vertico Module
           (https://github.com/doomemacs/doomemacs/tree/master/modules/completion/vertico)
         • Crafted Emacs Completion Module
-          (https://github.com/SystemCrafters/crafted-emacs/blob/master/modules/crafted-completion.el)
+          (https://github.com/SystemCrafters/crafted-emacs/blob/master/modules/crafted-completion-config.el)
         • Prot's Emacs configuration
           (https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/)
         • Bedrock Emacs Base Enhancements
@@ -886,37 +885,37 @@ overrides for the file completion category.
            completion-category-defaults nil
            completion-category-overrides '((file (styles basic partial-completion))))
 
-
 
 Tag Table:
-Node: Top212
-Node: Features1857
-Node: Installation2895
-Node: Key bindings3260
-Node: Configuration5459
-Node: Completion styles and TAB completion9125
-Node: Completion-at-point and completion-in-region11535
-Node: Completing-read-multiple12603
-Node: Extensions13738
-Node: Configure Vertico per command or completion category17833
-Node: Complementary packages22825
-Node: Child frames and Popups25264
-Node: Alternatives26639
-Node: Resources28766
-Node: Contributions30627
-Node: Debugging Vertico30902
-Node: Problematic completion commands31262
-Node: org-refile31933
-Node: org-agenda-filter and org-tags-view33874
-Node: completion-table-dynamic35149
-Node: Submitting the empty string36229
-Node: tmm-menubar (Fixed on Emacs 31)37677
-Node: ffap-menu (Fixed on Emacs 31)38579
-Node: Tramp hostname and username completion (Fixed on Emacs 29)39494
+Node: Top210
+Node: Features1854
+Node: Installation2892
+Node: Key bindings3257
+Node: Configuration5456
+Node: Completion styles and TAB completion9122
+Node: Completion-at-point and completion-in-region11532
+Node: Completing-read-multiple12600
+Node: Extensions13735
+Node: Configure Vertico per command or completion category17830
+Node: Complementary packages22822
+Node: Child frames and Popups25261
+Node: Alternatives26636
+Node: Resources28763
+Node: Contributions30631
+Node: Debugging Vertico30906
+Node: Problematic completion commands31266
+Node: org-refile31937
+Node: org-agenda-filter and org-tags-view33878
+Node: completion-table-dynamic35153
+Node: Submitting the empty string36233
+Node: tmm-menubar (Fixed on Emacs 31)37681
+Node: ffap-menu (Fixed on Emacs 31)38583
+Node: Tramp hostname and username completion (Fixed on Emacs 29)39498
 
 End Tag Table
 
 
 Local Variables:
 coding: utf-8
+Info-documentlanguage: en
 End:

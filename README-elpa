@@ -697,7 +697,7 @@ Table of Contents
 <https://github.com/doomemacs/doomemacs/tree/master/modules/completion/vertico>
 
 [Crafted Emacs Completion Module]
-<https://github.com/SystemCrafters/crafted-emacs/blob/master/modules/crafted-completion.el>
+<https://github.com/SystemCrafters/crafted-emacs/blob/master/modules/crafted-completion-config.el>
 
 [Prot's Emacs configuration]
 <https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/>
