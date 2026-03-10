@@ -3,10 +3,11 @@
                         ━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-1 Development
-═════════════
+1 Version 2.8 (2026-03-09)
+══════════════════════════
 
   • Do not set `completion-show-inline-help' locally in the minibuffer.
+  • `vertico-mouse-mode': Support `vertico-reverse-mode'.
 
 
 2 Version 2.7 (2026-01-18)
@@ -145,6 +146,4 @@
   • `vertico-buffer-mode': Support toggling during an active minibuffer
     session.
   • `vertico-buffer-mode': Highlight active region.
-  • `vertico-suspend': Support the setting
-    `read-minibuffer-restore-windows=nil'.
   …  …
