@@ -35,7 +35,6 @@ space and comments.
 * Child frames and Popups::
 * Alternatives::
 * Resources::
-* Contributions::
 * Debugging Vertico::
 * Problematic completion commands::
 
@@ -92,10 +91,9 @@ File: vertico.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  
 2 Installation
 **************
 
-Vertico is available from GNU ELPA
-(https://elpa.gnu.org/packages/vertico.html).  You can install it
-directly via ‘M-x package-install RET vertico RET’.  After installation,
-activate the global minor mode with ‘M-x vertico-mode RET’.
+Vertico is available on MELPA and can be installed via ‘M-x
+package-install RET vertico RET’.  After installation, activate the
+global minor mode with ‘M-x vertico-mode RET’.
 
 
 File: vertico.info,  Node: Key bindings,  Next: Configuration,  Prev: Installation,  Up: Top
@@ -318,11 +316,11 @@ File: vertico.info,  Node: Extensions,  Next: Complementary packages,  Prev: Con
 We maintain small extension packages to Vertico in this repository in
 the subdirectory extensions/
 (https://github.com/minad/vertico/tree/main/extensions).  The extensions
-are installed together with Vertico if you pull the package from ELPA.
+are installed together with Vertico if you pull the package from MELPA.
 The extensions are inactive by default and can be enabled manually if
 desired.  Furthermore it is possible to install all of the files
 separately, both ‘vertico.el’ and the ‘vertico-*.el’ extensions.
-Currently the following extensions come with the Vertico ELPA package:
+Currently the following extensions come with the Vertico package:
 
    • vertico-buffer
      (https://github.com/minad/vertico/blob/main/extensions/vertico-buffer.el):
@@ -628,7 +626,7 @@ philosophy:
      when migrating from Selectrum.
 
 
-File: vertico.info,  Node: Resources,  Next: Contributions,  Prev: Alternatives,  Up: Top
+File: vertico.info,  Node: Resources,  Next: Debugging Vertico,  Prev: Alternatives,  Up: Top
 
 9 Resources
 ***********
@@ -668,19 +666,9 @@ out the following resources:
           (2024-03-06) by Marie-Hélène Burle.
 
 
-File: vertico.info,  Node: Contributions,  Next: Debugging Vertico,  Prev: Resources,  Up: Top
+File: vertico.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Resources,  Up: Top
 
-10 Contributions
-****************
-
-Since this package is part of GNU ELPA
-(https://elpa.gnu.org/packages/vertico.html) contributions require a
-copyright assignment to the FSF.
-
-
-File: vertico.info,  Node: Debugging Vertico,  Next: Problematic completion commands,  Prev: Contributions,  Up: Top
-
-11 Debugging Vertico
+10 Debugging Vertico
 ********************
 
 Vertico will automatically print a stack trace to the ‘*Messages*’
@@ -690,7 +678,7 @@ down the exact code location which caused the error.
 
 File: vertico.info,  Node: Problematic completion commands,  Prev: Debugging Vertico,  Up: Top
 
-12 Problematic completion commands
+11 Problematic completion commands
 **********************************
 
 Vertico is robust in most scenarios.  However some completion commands
@@ -711,7 +699,7 @@ require minor workarounds.
 
 File: vertico.info,  Node: org-refile,  Next: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
-12.1 ‘org-refile’
+11.1 ‘org-refile’
 =================
 
 ‘org-refile’ uses ‘org-olpath-completing-read’ to complete the outline
@@ -755,7 +743,7 @@ much more cluttered.
 
 File: vertico.info,  Node: org-agenda-filter and org-tags-view,  Next: completion-table-dynamic,  Prev: org-refile,  Up: Problematic completion commands
 
-12.2 ‘org-agenda-filter’ and ‘org-tags-view’
+11.2 ‘org-agenda-filter’ and ‘org-tags-view’
 ============================================
 
 Similar to ‘org-refile’, the commands ‘org-agenda-filter’ and
@@ -777,7 +765,7 @@ separately.  Ideally this issue would be fixed in Org.
 
 File: vertico.info,  Node: completion-table-dynamic,  Next: Submitting the empty string,  Prev: org-agenda-filter and org-tags-view,  Up: Problematic completion commands
 
-12.3 ‘completion-table-dynamic’
+11.3 ‘completion-table-dynamic’
 ===============================
 
 Dynamic completion tables (‘completion-table-dynamic’,
@@ -800,7 +788,7 @@ priority, it can also come after other completion styles like
 
 File: vertico.info,  Node: Submitting the empty string,  Next: tmm-menubar (Fixed on Emacs 31),  Prev: completion-table-dynamic,  Up: Problematic completion commands
 
-12.4 Submitting the empty string
+11.4 Submitting the empty string
 ================================
 
 The commands ‘multi-occur’, ‘auto-insert’, ‘bbdb-create’ read multiple
@@ -827,7 +815,7 @@ string is possible by pressing ‘RET’ only.
 
 File: vertico.info,  Node: tmm-menubar (Fixed on Emacs 31),  Next: ffap-menu (Fixed on Emacs 31),  Prev: Submitting the empty string,  Up: Problematic completion commands
 
-12.5 ‘tmm-menubar’ (Fixed on Emacs 31)
+11.5 ‘tmm-menubar’ (Fixed on Emacs 31)
 ======================================
 
 *NOTE*: I have implemented a fix for this problem upstream in Emacs, see
@@ -846,7 +834,7 @@ overwrite the default F10 keybinding.
 
 File: vertico.info,  Node: ffap-menu (Fixed on Emacs 31),  Next: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: tmm-menubar (Fixed on Emacs 31),  Up: Problematic completion commands
 
-12.6 ‘ffap-menu’ (Fixed on Emacs 31)
+11.6 ‘ffap-menu’ (Fixed on Emacs 31)
 ====================================
 
 *NOTE*: I have implemented a fix for this problem upstream in Emacs, see
@@ -866,7 +854,7 @@ completions buffer can be disabled as follows.
 
 File: vertico.info,  Node: Tramp hostname and username completion (Fixed on Emacs 29),  Prev: ffap-menu (Fixed on Emacs 31),  Up: Problematic completion commands
 
-12.7 Tramp hostname and username completion (Fixed on Emacs 29)
+11.7 Tramp hostname and username completion (Fixed on Emacs 29)
 ===============================================================
 
 *NOTE:* On Emacs 29.2 and Tramp 2.7 the workarounds described in this
@@ -888,29 +876,28 @@ overrides for the file completion category.
 
 Tag Table:
 Node: Top210
-Node: Features1854
-Node: Installation2892
-Node: Key bindings3257
-Node: Configuration5456
-Node: Completion styles and TAB completion9122
-Node: Completion-at-point and completion-in-region11532
-Node: Completing-read-multiple12600
-Node: Extensions13735
-Node: Configure Vertico per command or completion category17830
-Node: Complementary packages22822
-Node: Child frames and Popups25261
-Node: Alternatives26636
-Node: Resources28763
-Node: Contributions30631
-Node: Debugging Vertico30906
-Node: Problematic completion commands31266
-Node: org-refile31937
-Node: org-agenda-filter and org-tags-view33878
-Node: completion-table-dynamic35153
-Node: Submitting the empty string36233
-Node: tmm-menubar (Fixed on Emacs 31)37681
-Node: ffap-menu (Fixed on Emacs 31)38583
-Node: Tramp hostname and username completion (Fixed on Emacs 29)39498
+Node: Features1836
+Node: Installation2874
+Node: Key bindings3180
+Node: Configuration5379
+Node: Completion styles and TAB completion9045
+Node: Completion-at-point and completion-in-region11455
+Node: Completing-read-multiple12523
+Node: Extensions13658
+Node: Configure Vertico per command or completion category17749
+Node: Complementary packages22741
+Node: Child frames and Popups25180
+Node: Alternatives26555
+Node: Resources28682
+Node: Debugging Vertico30554
+Node: Problematic completion commands30910
+Node: org-refile31581
+Node: org-agenda-filter and org-tags-view33522
+Node: completion-table-dynamic34797
+Node: Submitting the empty string35877
+Node: tmm-menubar (Fixed on Emacs 31)37325
+Node: ffap-menu (Fixed on Emacs 31)38227
+Node: Tramp hostname and username completion (Fixed on Emacs 29)39142
 
 End Tag Table
 
