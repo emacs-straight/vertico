@@ -3,14 +3,20 @@
                         ━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-1 Version 2.8 (2026-03-09)
+1 Development
+═════════════
+
+  • Improve deduplication of candidates.
+
+
+2 Version 2.8 (2026-03-09)
 ══════════════════════════
 
   • Do not set `completion-show-inline-help' locally in the minibuffer.
   • `vertico-mouse-mode': Support `vertico-reverse-mode'.
 
 
-2 Version 2.7 (2026-01-18)
+3 Version 2.7 (2026-01-18)
 ══════════════════════════
 
   • `vertico-multiform-mode': Check state of modes during minibuffer
@@ -19,7 +25,7 @@
     handling.
 
 
-3 Version 2.6 (2025-11-15)
+4 Version 2.6 (2025-11-15)
 ══════════════════════════
 
   • Require Emacs 29.1.
@@ -27,7 +33,7 @@
     computing an appropriate `vertico-count' for the window height.
 
 
-4 Version 2.5 (2025-09-08)
+5 Version 2.5 (2025-09-08)
 ══════════════════════════
 
   • Introduce new `vertico--locals' variable for easier customization of
@@ -43,7 +49,7 @@
     0)'.
 
 
-5 Version 2.4 (2025-06-27)
+6 Version 2.4 (2025-06-27)
 ══════════════════════════
 
   • New function `vertico-sort-directories-first' which sorts a list of
@@ -54,7 +60,7 @@
   • Disable `completion-eager-display' if Vertico is active.
 
 
-6 Version 2.3 (2025-06-10)
+7 Version 2.3 (2025-06-10)
 ══════════════════════════
 
   • `vertico-multiform-mode': Add context menu to change display
@@ -64,14 +70,14 @@
   • Hide fringe line truncation indicators in the minibuffer.
 
 
-7 Version 2.2 (2025-05-26)
+8 Version 2.2 (2025-05-26)
 ══════════════════════════
 
   • Guard Vertico hooks to automatically print stack traces in order to
     ease debugging.
 
 
-8 Version 2.1 (2025-04-19)
+9 Version 2.1 (2025-04-19)
 ══════════════════════════
 
   • `vertico-flat-format': Customizable `:spacer' string.
@@ -86,8 +92,8 @@
     repeat history.
 
 
-9 Version 2.0 (2025-03-11)
-══════════════════════════
+10 Version 2.0 (2025-03-11)
+═══════════════════════════
 
   • `vertico-directory-tidy': Cleanup shadowed path more aggressively.
   • `vertico-directory-delete-char': Respect region.
@@ -95,7 +101,7 @@
     commands.
 
 
-10 Version 1.11 (2025-01-28)
+11 Version 1.11 (2025-01-28)
 ════════════════════════════
 
   • Ignore touchscreen events.
@@ -103,7 +109,7 @@
   • Strip text properties when copying to the kill ring.
 
 
-11 Version 1.10 (2024-12-22)
+12 Version 1.10 (2024-12-22)
 ════════════════════════════
 
   • Require Emacs 28.1.
@@ -116,21 +122,21 @@
     `vertico--resize'.
 
 
-12 Version 1.9 (2024-07-26)
+13 Version 1.9 (2024-07-26)
 ═══════════════════════════
 
   • Bump Compat dependency to Compat 30.
   • `vertico-buffer': Fix bug regarding deleted windows.
 
 
-13 Version 1.8 (2024-04-24)
+14 Version 1.8 (2024-04-24)
 ═══════════════════════════
 
   • `vertico-preselect': Add `no-prompt' configuration choice to
     entirely disallow the selection of the prompt.
 
 
-14 Version 1.7 (2024-01-23)
+15 Version 1.7 (2024-01-23)
 ═══════════════════════════
 
   • `vertico-buffer-mode': Simplify mode line format.
@@ -139,11 +145,10 @@
     performance issues.
 
 
-15 Version 1.6 (2023-12-27)
+16 Version 1.6 (2023-12-27)
 ═══════════════════════════
 
   • `vertico-multiform-buffer': New display toggle command.
   • `vertico-buffer-mode': Support toggling during an active minibuffer
     session.
-  • `vertico-buffer-mode': Highlight active region.
   …  …
