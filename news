@@ -7,6 +7,9 @@
 ═════════════
 
   • Improve deduplication of candidates.
+  • `vertico-flat-format': Support override via
+    `vertico-multiform-mode'.
+  • Require Compat 31.
 
 
 2 Version 2.8 (2026-03-09)
@@ -149,6 +152,4 @@
 ═══════════════════════════
 
   • `vertico-multiform-buffer': New display toggle command.
-  • `vertico-buffer-mode': Support toggling during an active minibuffer
-    session.
   …  …
