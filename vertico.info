@@ -91,7 +91,9 @@ File: vertico.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  
 2 Installation
 **************
 
-Vertico is available on MELPA and can be installed via ‘M-x
+Vertico is available from ELPA
+(https://elpa.gnu.org/packages/vertico.html) or MELPA
+(https://melpa.org/#/vertico).  You can install it directly via ‘M-x
 package-install RET vertico RET’.  After installation, activate the
 global minor mode with ‘M-x vertico-mode RET’.
 
@@ -316,11 +318,11 @@ File: vertico.info,  Node: Extensions,  Next: Complementary packages,  Prev: Con
 We maintain small extension packages to Vertico in this repository in
 the subdirectory extensions/
 (https://github.com/minad/vertico/tree/main/extensions).  The extensions
-are installed together with Vertico if you pull the package from MELPA.
-The extensions are inactive by default and can be enabled manually if
-desired.  Furthermore it is possible to install all of the files
-separately, both ‘vertico.el’ and the ‘vertico-*.el’ extensions.
-Currently the following extensions come with the Vertico package:
+are installed together with Vertico.  The extensions are inactive by
+default and can be enabled manually if desired.  Furthermore it is
+possible to install all of the files separately, both ‘vertico.el’ and
+the ‘vertico-*.el’ extensions.  Currently the following extensions come
+with the Vertico package:
 
    • vertico-buffer
      (https://github.com/minad/vertico/blob/main/extensions/vertico-buffer.el):
@@ -878,26 +880,26 @@ Tag Table:
 Node: Top210
 Node: Features1836
 Node: Installation2874
-Node: Key bindings3180
-Node: Configuration5379
-Node: Completion styles and TAB completion9045
-Node: Completion-at-point and completion-in-region11455
-Node: Completing-read-multiple12523
-Node: Extensions13658
-Node: Configure Vertico per command or completion category17749
-Node: Complementary packages22741
-Node: Child frames and Popups25180
-Node: Alternatives26555
-Node: Resources28682
-Node: Debugging Vertico30554
-Node: Problematic completion commands30910
-Node: org-refile31581
-Node: org-agenda-filter and org-tags-view33522
-Node: completion-table-dynamic34797
-Node: Submitting the empty string35877
-Node: tmm-menubar (Fixed on Emacs 31)37325
-Node: ffap-menu (Fixed on Emacs 31)38227
-Node: Tramp hostname and username completion (Fixed on Emacs 29)39142
+Node: Key bindings3274
+Node: Configuration5473
+Node: Completion styles and TAB completion9139
+Node: Completion-at-point and completion-in-region11549
+Node: Completing-read-multiple12617
+Node: Extensions13752
+Node: Configure Vertico per command or completion category17810
+Node: Complementary packages22802
+Node: Child frames and Popups25241
+Node: Alternatives26616
+Node: Resources28743
+Node: Debugging Vertico30615
+Node: Problematic completion commands30971
+Node: org-refile31642
+Node: org-agenda-filter and org-tags-view33583
+Node: completion-table-dynamic34858
+Node: Submitting the empty string35938
+Node: tmm-menubar (Fixed on Emacs 31)37386
+Node: ffap-menu (Fixed on Emacs 31)38288
+Node: Tramp hostname and username completion (Fixed on Emacs 29)39203
 
 End Tag Table
 
