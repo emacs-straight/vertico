@@ -3,8 +3,8 @@
                         ━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-1 Development
-═════════════
+1 Version 2.9 (2026-05-19)
+══════════════════════════
 
   • Improve deduplication of candidates.
   • `vertico-flat-format': Support override via
