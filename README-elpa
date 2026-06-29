@@ -83,7 +83,7 @@ Table of Contents
 
 [ELPA] <https://elpa.gnu.org/packages/vertico.html>
 
-[MELPA] <https://melpa.org/#/vertico>
+[MELPA] <https://releases.melpa.org/#/vertico>
 
 
 3 Key bindings

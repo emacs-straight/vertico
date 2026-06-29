@@ -94,8 +94,8 @@ File: vertico.info,  Node: Installation,  Next: Key bindings,  Prev: Features,  
 
 Vertico is available from ELPA
 (https://elpa.gnu.org/packages/vertico.html) or MELPA
-(https://melpa.org/#/vertico).  You can install it directly via ‘M-x
-package-install RET vertico RET’.  After installation, activate the
+(https://releases.melpa.org/#/vertico).  You can install it directly via
+‘M-x package-install RET vertico RET’.  After installation, activate the
 global minor mode with ‘M-x vertico-mode RET’.
 
 
@@ -882,26 +882,26 @@ Tag Table:
 Node: Top212
 Node: Features1839
 Node: Installation2877
-Node: Key bindings3277
-Node: Configuration5476
-Node: Completion styles and TAB completion9142
-Node: Completion-at-point and completion-in-region11552
-Node: Completing-read-multiple12620
-Node: Extensions13755
-Node: Configure Vertico per command or completion category17813
-Node: Complementary packages22805
-Node: Child frames and Popups25244
-Node: Alternatives26619
-Node: Resources28746
-Node: Debugging Vertico30618
-Node: Problematic completion commands30974
-Node: org-refile31645
-Node: org-agenda-filter and org-tags-view33586
-Node: completion-table-dynamic34861
-Node: Submitting the empty string35941
-Node: tmm-menubar (Fixed on Emacs 31)37389
-Node: ffap-menu (Fixed on Emacs 31)38291
-Node: Tramp hostname and username completion (Fixed on Emacs 29)39206
+Node: Key bindings3286
+Node: Configuration5485
+Node: Completion styles and TAB completion9151
+Node: Completion-at-point and completion-in-region11561
+Node: Completing-read-multiple12629
+Node: Extensions13764
+Node: Configure Vertico per command or completion category17822
+Node: Complementary packages22814
+Node: Child frames and Popups25253
+Node: Alternatives26628
+Node: Resources28755
+Node: Debugging Vertico30627
+Node: Problematic completion commands30983
+Node: org-refile31654
+Node: org-agenda-filter and org-tags-view33595
+Node: completion-table-dynamic34870
+Node: Submitting the empty string35950
+Node: tmm-menubar (Fixed on Emacs 31)37398
+Node: ffap-menu (Fixed on Emacs 31)38300
+Node: Tramp hostname and username completion (Fixed on Emacs 29)39215
 
 End Tag Table
 
