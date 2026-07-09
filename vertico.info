@@ -615,7 +615,7 @@ users interacts with Emacs.
    There are other interactive completion UIs, which follow a similar
 philosophy:
 
-   • Mct (https://git.sr.ht/~protesilaos/mct): Minibuffer and
+   • Mct (https://github.com/protesilaos/mct): Minibuffer and
      Completions in Tandem.  Mct reuses the default ‘*Completions*’
      buffer and enhances it with automatic updates.  From Emacs version
      31 automatic updates are built-in, see the settings
@@ -643,7 +643,7 @@ out the following resources:
         • Crafted Emacs Completion Module
           (https://github.com/SystemCrafters/crafted-emacs/blob/master/modules/crafted-completion-config.el)
         • Prot's Emacs configuration
-          (https://git.sr.ht/~protesilaos/dotfiles/tree/master/item/emacs/.emacs.d/)
+          (https://github.com/protesilaos/dotfiles/tree/master/emacs/.emacs.d)
         • Bedrock Emacs Base Enhancements
           (https://codeberg.org/ashton314/emacs-bedrock/src/branch/main/extras/base.el)
    • Videos:
@@ -893,15 +893,15 @@ Node: Complementary packages22814
 Node: Child frames and Popups25253
 Node: Alternatives26628
 Node: Resources28755
-Node: Debugging Vertico30627
-Node: Problematic completion commands30983
-Node: org-refile31654
-Node: org-agenda-filter and org-tags-view33595
-Node: completion-table-dynamic34870
-Node: Submitting the empty string35950
-Node: tmm-menubar (Fixed on Emacs 31)37398
-Node: ffap-menu (Fixed on Emacs 31)38300
-Node: Tramp hostname and username completion (Fixed on Emacs 29)39215
+Node: Debugging Vertico30621
+Node: Problematic completion commands30977
+Node: org-refile31648
+Node: org-agenda-filter and org-tags-view33589
+Node: completion-table-dynamic34864
+Node: Submitting the empty string35944
+Node: tmm-menubar (Fixed on Emacs 31)37392
+Node: ffap-menu (Fixed on Emacs 31)38294
+Node: Tramp hostname and username completion (Fixed on Emacs 29)39209
 
 End Tag Table
 
