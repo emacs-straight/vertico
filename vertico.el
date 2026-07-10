@@ -612,6 +612,7 @@ the stack trace is shown in the *Messages* buffer."
 
 (cl-defgeneric vertico--setup ()
   "Setup completion UI."
+  (remove-hook 'minibuffer-setup-hook #'vertico--setup)
   (dolist (var vertico--locals)
     (set-local (car var) (cdr var)))
   (setq-local vertico--input t
@@ -624,8 +625,11 @@ the stack trace is shown in the *Messages* buffer."
 
 (cl-defgeneric vertico--advice (&rest app)
   "Advice for completion function, apply APP."
-  (dlet ((completion-eager-display nil)) ;; Available on Emacs 31
-    (minibuffer-with-setup-hook #'vertico--setup (apply app))))
+  (unwind-protect ;; Do not use `minibuffer-setup-hook' for idempotency.
+      (dlet ((completion-eager-display nil)) ;; Available on Emacs 31
+        (add-hook 'minibuffer-setup-hook #'vertico--setup)
+        (apply app))
+    (remove-hook 'minibuffer-setup-hook #'vertico--setup)))
 
 (defun vertico-first ()
   "Go to first candidate, or to the prompt when the first candidate is selected."
