@@ -3,8 +3,8 @@
                         ━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-1 Development
-═════════════
+1 Version 2.11 (2026-07-22)
+═══════════════════════════
 
   • Bugfix: Fix double Vertico setup for `completing-read-multiple' on
     Emacs 31.
@@ -156,5 +156,4 @@
 17 Version 1.7 (2024-01-23)
 ═══════════════════════════
 
-  • `vertico-buffer-mode': Simplify mode line format.
   …  …
