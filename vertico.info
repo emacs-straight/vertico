@@ -389,9 +389,7 @@ according to the buffer height.
        :bind (:map vertico-map
                    ("RET" . vertico-directory-enter)
                    ("DEL" . vertico-directory-delete-char)
-                   ("M-DEL" . vertico-directory-delete-word))
-       ;; Tidy shadowed file names
-       :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+                   ("M-DEL" . vertico-directory-delete-word)))
 
 * Menu:
 
@@ -888,20 +886,20 @@ Node: Completion styles and TAB completion9151
 Node: Completion-at-point and completion-in-region11561
 Node: Completing-read-multiple12629
 Node: Extensions13764
-Node: Configure Vertico per command or completion category17822
-Node: Complementary packages22814
-Node: Child frames and Popups25253
-Node: Alternatives26628
-Node: Resources28755
-Node: Debugging Vertico30621
-Node: Problematic completion commands30977
-Node: org-refile31648
-Node: org-agenda-filter and org-tags-view33589
-Node: completion-table-dynamic34864
-Node: Submitting the empty string35944
-Node: tmm-menubar (Fixed on Emacs 31)37392
-Node: ffap-menu (Fixed on Emacs 31)38294
-Node: Tramp hostname and username completion (Fixed on Emacs 29)39209
+Node: Configure Vertico per command or completion category17720
+Node: Complementary packages22712
+Node: Child frames and Popups25151
+Node: Alternatives26526
+Node: Resources28653
+Node: Debugging Vertico30519
+Node: Problematic completion commands30875
+Node: org-refile31546
+Node: org-agenda-filter and org-tags-view33487
+Node: completion-table-dynamic34762
+Node: Submitting the empty string35842
+Node: tmm-menubar (Fixed on Emacs 31)37290
+Node: ffap-menu (Fixed on Emacs 31)38192
+Node: Tramp hostname and username completion (Fixed on Emacs 29)39107
 
 End Tag Table
 

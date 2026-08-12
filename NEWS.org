@@ -1,6 +1,10 @@
-#+title: vertico.el - Changelog
+#+title: vertico.el - News
 #+author: Daniel Mendler
 #+language: en
+
+* Development
+
+- =vertico-directory-tidy=: New customization variable. Enable by default.
 
 * Version 2.12 (2026-08-05)
 
