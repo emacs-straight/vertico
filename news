@@ -3,14 +3,22 @@
                           ━━━━━━━━━━━━━━━━━━━
 
 
-1 Version 2.13 (2026-08-21)
+1 Development
+═════════════
+
+  • `vertico-reverse-candidates', `vertico-reverse-prompt': New options
+    to selectively only reverse the list of candidates, and to move the
+    prompt to the bottom.
+
+
+2 Version 2.13 (2026-08-21)
 ═══════════════════════════
 
   • `vertico-directory-tidy': New customization variable. Enable by
     default.
 
 
-2 Version 2.12 (2026-08-05)
+3 Version 2.12 (2026-08-05)
 ═══════════════════════════
 
   • `vertico-mouse': Handle `wheel-up' and `wheel-down' events directly.
@@ -18,21 +26,21 @@
     hooks.
 
 
-3 Version 2.11 (2026-07-22)
+4 Version 2.11 (2026-07-22)
 ═══════════════════════════
 
   • Bugfix: Fix double Vertico setup for `completing-read-multiple' on
     Emacs 31.
 
 
-4 Version 2.10 (2026-06-05)
+5 Version 2.10 (2026-06-05)
 ═══════════════════════════
 
   • `vertico--display-string': Better treatment of computed space in
     candidate display.
 
 
-5 Version 2.9 (2026-05-19)
+6 Version 2.9 (2026-05-19)
 ══════════════════════════
 
   • Improve deduplication of candidates.
@@ -41,14 +49,14 @@
   • Require Compat 31.
 
 
-6 Version 2.8 (2026-03-09)
+7 Version 2.8 (2026-03-09)
 ══════════════════════════
 
   • Do not set `completion-show-inline-help' locally in the minibuffer.
   • `vertico-mouse-mode': Support `vertico-reverse-mode'.
 
 
-7 Version 2.7 (2026-01-18)
+8 Version 2.7 (2026-01-18)
 ══════════════════════════
 
   • `vertico-multiform-mode': Check state of modes during minibuffer
@@ -57,7 +65,7 @@
     handling.
 
 
-8 Version 2.6 (2025-11-15)
+9 Version 2.6 (2025-11-15)
 ══════════════════════════
 
   • Require Emacs 29.1.
@@ -65,8 +73,8 @@
     computing an appropriate `vertico-count' for the window height.
 
 
-9 Version 2.5 (2025-09-08)
-══════════════════════════
+10 Version 2.5 (2025-09-08)
+═══════════════════════════
 
   • Introduce new `vertico--locals' variable for easier customization of
     minibuffer-local variables.
@@ -81,7 +89,7 @@
     0)'.
 
 
-10 Version 2.4 (2025-06-27)
+11 Version 2.4 (2025-06-27)
 ═══════════════════════════
 
   • New function `vertico-sort-directories-first' which sorts a list of
@@ -92,7 +100,7 @@
   • Disable `completion-eager-display' if Vertico is active.
 
 
-11 Version 2.3 (2025-06-10)
+12 Version 2.3 (2025-06-10)
 ═══════════════════════════
 
   • `vertico-multiform-mode': Add context menu to change display
@@ -102,14 +110,14 @@
   • Hide fringe line truncation indicators in the minibuffer.
 
 
-12 Version 2.2 (2025-05-26)
+13 Version 2.2 (2025-05-26)
 ═══════════════════════════
 
   • Guard Vertico hooks to automatically print stack traces in order to
     ease debugging.
 
 
-13 Version 2.1 (2025-04-19)
+14 Version 2.1 (2025-04-19)
 ═══════════════════════════
 
   • `vertico-flat-format': Customizable `:spacer' string.
@@ -124,7 +132,7 @@
     repeat history.
 
 
-14 Version 2.0 (2025-03-11)
+15 Version 2.0 (2025-03-11)
 ═══════════════════════════
 
   • `vertico-directory-tidy': Cleanup shadowed path more aggressively.
@@ -133,7 +141,7 @@
     commands.
 
 
-15 Version 1.11 (2025-01-28)
+16 Version 1.11 (2025-01-28)
 ════════════════════════════
 
   • Ignore touchscreen events.
@@ -141,7 +149,7 @@
   • Strip text properties when copying to the kill ring.
 
 
-16 Version 1.10 (2024-12-22)
+17 Version 1.10 (2024-12-22)
 ════════════════════════════
 
   • Require Emacs 28.1.
@@ -149,12 +157,5 @@
     to `completing-read'.
   • Drop obsolete command alias `vertico-repeat-last'.
   • `vertico-buffer': Use `display-buffer-use-least-recent-window' as
-    default buffer display action.
-  • Simplify the mini window resizing implementation, see
-    `vertico--resize'.
-
-
-17 Version 1.9 (2024-07-26)
-═══════════════════════════
-
+    default buffer
   …  …
