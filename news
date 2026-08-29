@@ -9,6 +9,13 @@
   • `vertico-reverse-candidates', `vertico-reverse-prompt': New options
     to selectively only reverse the list of candidates, and to move the
     prompt to the bottom.
+  • Minor optimizations during candidate computation.
+  • Improve prompt selection behavior. Always allow prompt selection if
+    the input is valid, according to `test-completion' or a
+    `REQUIRE-MATCH' function.
+  • Do not remove a file from the candidate list if it matches the input
+    exactly, even if it should be filtered according to
+    `completion-ignored-extensions'.
 
 
 2 Version 2.13 (2026-08-21)
@@ -144,18 +151,4 @@
 16 Version 1.11 (2025-01-28)
 ════════════════════════════
 
-  • Ignore touchscreen events.
-  • Disable `pixel-scroll-precision-mode' locally.
-  • Strip text properties when copying to the kill ring.
-
-
-17 Version 1.10 (2024-12-22)
-════════════════════════════
-
-  • Require Emacs 28.1.
-  • Fix behavior when a function is passed as `REQUIRE-MATCH' argument
-    to `completing-read'.
-  • Drop obsolete command alias `vertico-repeat-last'.
-  • `vertico-buffer': Use `display-buffer-use-least-recent-window' as
-    default buffer
   …  …

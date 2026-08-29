@@ -246,7 +246,10 @@ The value should lie between 0 and vertico-count/2."
                (base (or (when-let* ((z (last all))) (prog1 (cdr z) (setcdr z nil))) 0))
                (vertico--base (substring str 0 base))
                (def (or (car-safe minibuffer-default) minibuffer-default))
-               (groups) (def-missing) (lock))
+               (rm minibuffer--require-match)
+               (valid (if (functionp rm) (funcall rm str)
+                        (test-completion str table pred)))
+               (groups) (def-missing) (allow-prompt) (lock))
     ;; Filter the ignored file extensions. We cannot use modified predicate for
     ;; this filtering, since this breaks the special casing in the
     ;; `completion-file-name-table' for `file-exists-p' and `file-directory-p'.
@@ -267,8 +270,11 @@ The value should lie between 0 and vertico-count/2."
     (when-let* ((fun (and all (vertico--metadata-get 'group-function))))
       (setq groups (vertico--group-by fun all) all (car groups)))
     (setq def-missing (and def (equal str "") (not (member def all)))
+          allow-prompt (and (not (eq vertico-preselect 'no-prompt))
+                            (or valid def-missing (eq vertico-preselect 'prompt)
+                                (memq rm '(nil confirm confirm-after-completion))))
           lock (and vertico--lock-candidate ;; Locked position of old candidate.
-                    (if (< vertico--index 0) -1
+                    (if (< vertico--index 0) (and allow-prompt -1)
                       (seq-position all (nth vertico--index vertico--candidates)))))
     `((vertico--input . ,input)
       (vertico--base . ,vertico--base)
@@ -276,17 +282,13 @@ The value should lie between 0 and vertico-count/2."
       (vertico--candidates . ,all)
       (vertico--total . ,(length all))
       (vertico--hilit . ,(or hl #'identity))
-      (vertico--allow-prompt . ,(and (not (eq vertico-preselect 'no-prompt))
-                                     (or def-missing (eq vertico-preselect 'prompt)
-                                         (memq minibuffer--require-match
-                                               '(nil confirm confirm-after-completion)))))
+      (vertico--allow-prompt . ,allow-prompt)
       (vertico--lock-candidate . ,lock)
       (vertico--groups . ,(cdr groups))
       (vertico--index . ,(or lock
                              (if (or def-missing (eq vertico-preselect 'prompt) (not all)
                                      (and completing-file (eq vertico-preselect 'directory)
-                                          (= (length vertico--base) (length str))
-                                          (test-completion str table pred)))
+                                          valid (= (length vertico--base) (length str))))
                                  -1 0))))))
 
 (defun vertico--hilit (cand)
