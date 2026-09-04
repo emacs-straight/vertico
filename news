@@ -3,8 +3,8 @@
                           ━━━━━━━━━━━━━━━━━━━
 
 
-1 Development
-═════════════
+1 Version 2.14 (2026-09-03)
+═══════════════════════════
 
   • `vertico-reverse-candidates', `vertico-reverse-prompt': New options
     to selectively only reverse the list of candidates, and to move the
@@ -146,9 +146,4 @@
   • `vertico-directory-delete-char': Respect region.
   • `vertico-directory-*': Improve responsiveness when using directory
     commands.
-
-
-16 Version 1.11 (2025-01-28)
-════════════════════════════
-
   …  …
