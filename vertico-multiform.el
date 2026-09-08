@@ -120,6 +120,8 @@ The keys in LIST can be symbols or regexps."
         kmaps modes)
     (add-hook 'minibuffer-exit-hook #'vertico-multiform--exit nil 'local)
     (add-hook 'context-menu-functions #'vertico-multiform--display-menu nil 'local)
+    ;; TODO: Check on Emacs 32 if `current-minibuffer-command' is stable for
+    ;; multiple prompts, see Emacs bug#80815 and gh:minad/vertico#664.
     (dolist (x (cdr (or (vertico-multiform--lookup this-command vertico-multiform-commands)
                         (vertico-multiform--lookup cat vertico-multiform-categories))))
       (pcase x

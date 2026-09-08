@@ -90,8 +90,8 @@
     (setf (cddr session) (cdddr session)))
   session)
 
-(defun vertico-repeat--save-input ()
-  "Save current minibuffer input."
+(defun vertico-repeat--remember-input ()
+  "Remember current minibuffer input."
   (setq vertico-repeat--input (minibuffer-contents-no-properties)))
 
 (defun vertico-repeat--current ()
@@ -107,8 +107,8 @@
             (seq-find (lambda (x) (and (boundp x) (symbol-value x)))
                       vertico-multiform--display-modes)))))
 
-(defun vertico-repeat--save-exit ()
-  "Save command session in `vertico-repeat-history'."
+(defun vertico-repeat--save-on-exit ()
+  "Save Vertico session in `vertico-repeat-history'."
   (let ((session (vertico-repeat--current))
         (transform vertico-repeat-transformers))
     (while (and transform (setq session (funcall (pop transform) session))))
@@ -154,9 +154,11 @@
   "Save Vertico session for `vertico-repeat'.
 This function must be registered as `minibuffer-setup-hook'."
   (when (and vertico--input (symbolp this-command))
+    ;; TODO: On Emacs 32 we can likely use `current-minibuffer-command' instead
+    ;; of remembering `this-command', see Emacs bug#80815.
     (setq vertico-repeat--command this-command)
-    (add-hook 'post-command-hook #'vertico-repeat--save-input nil 'local)
-    (add-hook 'minibuffer-exit-hook #'vertico-repeat--save-exit nil 'local)))
+    (add-hook 'post-command-hook #'vertico-repeat--remember-input nil 'local)
+    (add-hook 'minibuffer-exit-hook #'vertico-repeat--save-on-exit nil 'local)))
 
 ;;;###autoload
 (defun vertico-repeat-next (n)
