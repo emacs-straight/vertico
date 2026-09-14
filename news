@@ -3,7 +3,14 @@
                           ━━━━━━━━━━━━━━━━━━━
 
 
-1 Version 2.14 (2026-09-03)
+1 Version 2.15 (2026-09-13)
+═══════════════════════════
+
+  • Call `REQUIRE-MATCH' function only on minibuffer exit to avoid
+    performance issues.
+
+
+2 Version 2.14 (2026-09-03)
 ═══════════════════════════
 
   • `vertico-reverse-candidates', `vertico-reverse-prompt': New options
@@ -18,14 +25,14 @@
     `completion-ignored-extensions'.
 
 
-2 Version 2.13 (2026-08-21)
+3 Version 2.13 (2026-08-21)
 ═══════════════════════════
 
   • `vertico-directory-tidy': New customization variable. Enable by
     default.
 
 
-3 Version 2.12 (2026-08-05)
+4 Version 2.12 (2026-08-05)
 ═══════════════════════════
 
   • `vertico-mouse': Handle `wheel-up' and `wheel-down' events directly.
@@ -33,21 +40,21 @@
     hooks.
 
 
-4 Version 2.11 (2026-07-22)
+5 Version 2.11 (2026-07-22)
 ═══════════════════════════
 
   • Bugfix: Fix double Vertico setup for `completing-read-multiple' on
     Emacs 31.
 
 
-5 Version 2.10 (2026-06-05)
+6 Version 2.10 (2026-06-05)
 ═══════════════════════════
 
   • `vertico--display-string': Better treatment of computed space in
     candidate display.
 
 
-6 Version 2.9 (2026-05-19)
+7 Version 2.9 (2026-05-19)
 ══════════════════════════
 
   • Improve deduplication of candidates.
@@ -56,14 +63,14 @@
   • Require Compat 31.
 
 
-7 Version 2.8 (2026-03-09)
+8 Version 2.8 (2026-03-09)
 ══════════════════════════
 
   • Do not set `completion-show-inline-help' locally in the minibuffer.
   • `vertico-mouse-mode': Support `vertico-reverse-mode'.
 
 
-8 Version 2.7 (2026-01-18)
+9 Version 2.7 (2026-01-18)
 ══════════════════════════
 
   • `vertico-multiform-mode': Check state of modes during minibuffer
@@ -72,15 +79,15 @@
     handling.
 
 
-9 Version 2.6 (2025-11-15)
-══════════════════════════
+10 Version 2.6 (2025-11-15)
+═══════════════════════════
 
   • Require Emacs 29.1.
   • `vertico-buffer': Check if `mode-line-format' is `nil' when
     computing an appropriate `vertico-count' for the window height.
 
 
-10 Version 2.5 (2025-09-08)
+11 Version 2.5 (2025-09-08)
 ═══════════════════════════
 
   • Introduce new `vertico--locals' variable for easier customization of
@@ -96,7 +103,7 @@
     0)'.
 
 
-11 Version 2.4 (2025-06-27)
+12 Version 2.4 (2025-06-27)
 ═══════════════════════════
 
   • New function `vertico-sort-directories-first' which sorts a list of
@@ -107,7 +114,7 @@
   • Disable `completion-eager-display' if Vertico is active.
 
 
-12 Version 2.3 (2025-06-10)
+13 Version 2.3 (2025-06-10)
 ═══════════════════════════
 
   • `vertico-multiform-mode': Add context menu to change display
@@ -117,14 +124,14 @@
   • Hide fringe line truncation indicators in the minibuffer.
 
 
-13 Version 2.2 (2025-05-26)
+14 Version 2.2 (2025-05-26)
 ═══════════════════════════
 
   • Guard Vertico hooks to automatically print stack traces in order to
     ease debugging.
 
 
-14 Version 2.1 (2025-04-19)
+15 Version 2.1 (2025-04-19)
 ═══════════════════════════
 
   • `vertico-flat-format': Customizable `:spacer' string.
@@ -139,11 +146,9 @@
     repeat history.
 
 
-15 Version 2.0 (2025-03-11)
+16 Version 2.0 (2025-03-11)
 ═══════════════════════════
 
   • `vertico-directory-tidy': Cleanup shadowed path more aggressively.
   • `vertico-directory-delete-char': Respect region.
-  • `vertico-directory-*': Improve responsiveness when using directory
-    commands.
   …  …
